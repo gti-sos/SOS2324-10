@@ -41,7 +41,7 @@ let lines = csvData
 let columnas = lines[0].split(',');
 let csv = [];
 
-// Añadir Mapas al Array
+
 for (let i = 1; i < lines.length; i++) {
     let elementos = lines[i].split(',');
     let mapa = new Map();
@@ -52,25 +52,25 @@ for (let i = 1; i < lines.length; i++) {
 }
 
 function calcularMediaObsValuePorPais(csv) {
-    let mediasPorPais = {};
+    let mediasPais = {};
     csv.forEach(function(n) {
         let pais = n.get('geo');
         let obsValue = parseInt(n.get('obs_value'));
-        if (!mediasPorPais[pais]) {
-            mediasPorPais[pais] = {
+        if (!mediasPais[pais]) {
+            mediasPais[pais] = {
                 totalObsValue: 0,
-                contador: 0
+                cont: 0
             };
         }
-        mediasPorPais[pais].totalObsValue += obsValue;
-        mediasPorPais[pais].contador++;
+        mediasPais[pais].totalObsValue += obsValue;
+        mediasPais[pais].cont++;
     });
-    for (let pais in mediasPorPais) {
-        let media = mediasPorPais[pais].totalObsValue / mediasPorPais[pais].contador;
-        mediasPorPais[pais].media = media;
-        mediasPorPais[pais].mensaje = "La media de coches vendidos en " + pais + " es: " + media.toFixed(1) + " coches";
+    for (let pais in mediasPais) {
+        let media = mediasPais[pais].totalObsValue / mediasPais[pais].cont;
+        mediasPais[pais].media = media;
+        mediasPais[pais].mensaje = "La media de coches vendidos en " + pais + " es: " + media.toFixed(1) + " coches";
     }
-    return mediasPorPais;
+    return mediasPais;
 }
 
 let mediasObsValuePorPais = calcularMediaObsValuePorPais(csv);
