@@ -72,4 +72,4 @@ function calcularMediaMuertesPorPais(datos, pais) {
 }
 
 let mediaMuertesEspaña = calcularMediaMuertesPorPais(csv, "ES");
-console.log("La media de muertes en España es: " + mediaMuertesEspaña);
+console.log("La media de muertes en España por accidentes: " + mediaMuertesEspaña);
