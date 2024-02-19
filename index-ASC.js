@@ -32,9 +32,13 @@ ESTAT:ROAD_EQS_CARAGE(1.0),19/12/23 23:00:00,A,NR,Y_GT20,UK,2017,617953,1.7,103.
 ESTAT:ROAD_EQS_CARAGE(1.0),19/12/23 23:00:00,A,NR,Y_GT20,UK,2018,692318,1.3,103.8
 `;
 
-let lines = csvData.split('\n');
+
+
+let lines = csvData
+.split('\n');
 let columnas = lines[0].split(',');
 let csv = [];
+
 
 for (let i = 1; i < lines.length; i++) {
     let elementos = lines[i].split(',');
@@ -45,25 +49,29 @@ for (let i = 1; i < lines.length; i++) {
     csv.push(mapa);
 }
 
-function calcularMaximoObsValuePorPais(csv) {
-    let maximosPais = {};
+function calcularMediaObsValuePorPais(csv) {
+    let mediasPais = {};
     csv.forEach(function(n) {
         let pais = n.get('geo');
         let obsValue = parseInt(n.get('obs_value'));
-        let timePeriod = parseInt(n.get('time_period'));
-        let unit = n.get('unit');
-        if (!maximosPais[pais] || obsValue > maximosPais[pais].maxObsValue) {
-            maximosPais[pais] = {
-                maxObsValue: obsValue,
-                year: timePeriod,
-                unit: unit
+        if (!mediasPais[pais]) {
+            mediasPais[pais] = {
+                totalObsValue: 0,
+                cont: 0
             };
         }
+        mediasPais[pais].totalObsValue += obsValue;
+        mediasPais[pais].cont++;
     });
-    return maximosPais;
+    for (let pais in mediasPais) {
+        let media = mediasPais[pais].totalObsValue / mediasPais[pais].cont;
+        mediasPais[pais].media = media;
+        mediasPais[pais].mensaje = "La media de coches vendidos en " + pais + " es: " + media.toFixed(1) + " coches";
+    }
+    return mediasPais;
 }
 
-let maximosObsValuePorPais = calcularMaximoObsValuePorPais(csv);
-for (let pais in maximosObsValuePorPais) {
-    console.log(`El mayor numero de venta de coches en ${pais} fue ${maximosObsValuePorPais[pais].maxObsValue} en el año ${maximosObsValuePorPais[pais].year}. El coche tenia ${maximosObsValuePorPais[pais].unit} años`);
+let mediasObsValuePorPais = calcularMediaObsValuePorPais(csv);
+for (let pais in mediasObsValuePorPais) {
+    console.log(mediasObsValuePorPais[pais].mensaje);
 }
