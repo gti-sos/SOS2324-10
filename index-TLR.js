@@ -63,7 +63,6 @@ for (let i = 1; i < lines.length; i++) {
 }
 
 
-
 function calcularMediasMuertesPorPais(csv) {
     let mediasPorPais = {};
     csv.forEach(function(mapa) {
@@ -183,4 +182,3 @@ for (let pais in mediasMuertesPorPais) {
     console.log(mediasMuertesPorPais[pais].mensaje);
 }
 
->>>>>>> d1f75a4d47c7af0290ffc2ece9d29e3102ef2165
