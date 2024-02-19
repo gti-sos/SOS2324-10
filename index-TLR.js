@@ -62,7 +62,6 @@ for (let i = 1; i < lines.length; i++) {
 }
 
 
-
 function calcularMediasMuertesPorPais(csv) {
     let mediasPorPais = {};
     csv.forEach(function(mapa) {
