@@ -1,0 +1,23 @@
+{
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "name": "sos2324-10",
+  "description": "Primer paquete ",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Tomas",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gti-sos/SOS2324-10.git"
+  },
+  "bugs": {
+    "url": "https://github.com/gti-sos/SOS2324-10/issues"
+  },
+  "homepage": "https://github.com/gti-sos/SOS2324-10#readme"
+}
