@@ -4,6 +4,7 @@ let express = require("express");
 let app = express();
 const PORT = (process.env.PORT || 8080);
 
+app.use("/static/",express.static("./public/index.html"))
 
 //Puerto en el que se despliega
 app.listen(PORT);
