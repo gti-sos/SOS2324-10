@@ -1,4 +1,4 @@
-let cool = require("cool-ascii-faces");
+//let cool = require("cool-ascii-faces");
 let express = require("express");
 
 let app = express();
@@ -6,3 +6,4 @@ let app = express();
 app.listen(8080);
 
 console.log(cool());
+console.log("hola caracola");
