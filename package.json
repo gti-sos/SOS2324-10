@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "cool-ascii-faces": "^1.3.4",
     "express": "^4.18.2"
   },
   "name": "sos2324-10",
