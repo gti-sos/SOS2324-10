@@ -327,5 +327,5 @@ const datos_TLR= [
   }
   
   const mediaMuertes = calcularMediaMuertes(datos_TLR);
-  console.log(mediaMuertes);
+  //console.log(mediaMuertes);
   

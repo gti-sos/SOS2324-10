@@ -46,5 +46,5 @@ function calcularMediasMuertesPorPais(datos_TLR) {
 app.get("/samples/TLR", (req,res)=>{
     const mediaMuertesPorPais = calcularMediasMuertesPorPais(datos_TLR); 
     const mediaMuertesJSON = JSON.stringify(mediaMuertesPorPais);
-    res.send(`<html> <body> <h1> ${mediaMuertesJSON}</h1> </body> </html>`)
+    res.send(`<html> <body> ${mediaMuertesJSON} </body> </html>`)
 });
