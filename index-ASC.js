@@ -67,7 +67,7 @@ function calcularMediaObsValuePorPais(csv) {
     for (let pais in mediasPais) {
         let media = mediasPais[pais].totalObsValue / mediasPais[pais].cont;
         mediasPais[pais].media = media;
-        mediasPais[pais].mensaje = "La media de coches vendidos en " + pais + " es: " + media.toFixed(1) + " coches";
+        mediasPais[pais].mensaje = "La media de coches vendidos en " + pais + " es: " + media.toFixed(1) + "  coches";
     }
     return mediasPais;
 }
