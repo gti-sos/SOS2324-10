@@ -48,6 +48,7 @@ for (let i = 1; i < lines.length; i++) {
     }
     csv.push(mapa);
 }
+module.exports = csv;
 
 function calcularMediaObsValuePorPais(csv) {
     let mediasPais = {};
@@ -72,6 +73,6 @@ function calcularMediaObsValuePorPais(csv) {
 }
 
 let mediasObsValuePorPais = calcularMediaObsValuePorPais(csv);
-for (let pais in mediasObsValuePorPais) {
-    console.log(mediasObsValuePorPais[pais].mensaje);
-}
+//for (let pais in mediasObsValuePorPais) {
+//    console.log(mediasObsValuePorPais[pais].mensaje);
+//}
