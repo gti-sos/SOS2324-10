@@ -189,9 +189,9 @@ module.exports = datos_MRF;
 
 function previsionPIBporGeo(datos_MRF) {
     let mediasPorPais = {};
-    datos_MRF.forEach(function(mapa) {
-        let geo = mapa.get('geo');
-        let crecimiento = parseInt(mapa.get('growth_rate_2030'));
+    datos_MRF.forEach((dato) => {
+        let geo = dato.geo;
+        let crecimiento = dato.growth_rate_2030;
         if (!mediasPorPais[geo]) {
             mediasPorPais[geo] = {
                 totalCrecimiento: 0,
