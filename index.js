@@ -16,10 +16,6 @@ app.use("/",express.static("./public"));
 app.get("/cool", (req,res)=>{
     res.send(`<html><body><h1>${cool()}</h1></body></html>`)
 });
-<<<<<<< HEAD
-//console.log(cool());
-console.log(`Server listening on port ${PORT}`);
-=======
 
 console.log(`Server listening on port ${PORT}`);
 
@@ -51,6 +47,37 @@ app.get("/samples/TLR", (req,res)=>{
     const mediaMuertesPorPais = calcularMediasMuertesPorPais(datos_TLR); 
     const mediaMuertesJSON = JSON.stringify(mediaMuertesPorPais);
     res.send(`<html> <body> ${mediaMuertesJSON} </body> </html>`)
+});
+
+//Funcion index-MRF.js
+const datos_MRF = require('./index-MRF');
+function previsionPIBporGeo(datos_MRF) {
+    let mediasPorPais = {};
+    datos_MRF.forEach(function(mapa) {
+        let geo = mapa.get('geo');
+        let crecimiento = parseInt(mapa.get('growth_rate_2030'));
+        if (!mediasPorPais[geo]) {
+            mediasPorPais[geo] = {
+                totalCrecimiento: 0,
+                contador: 0
+            };
+        }
+        mediasPorPais[geo].totalCrecimiento += crecimiento;
+        mediasPorPais[geo].contador++;
+    });
+
+    for (let pais in mediasPorPais) {
+        let media = mediasPorPais[pais].totalCrecimiento / mediasPorPais[pais].contador;
+        mediasPorPais[pais].media = media;
+        mediasPorPais[pais].mensaje = "La media de crecimiento para 2030 en " + pais + " es: " + media.toFixed(1) + " millones de euros";
+    }
+    return mediasPorPais;
+}
+
+app.get("/samples/MRF", (req,res)=>{
+    const mediasPorPais = previsionPIBporGeo(datos_MRF); 
+    const mediaPIBJSON = JSON.stringify(mediasPorPais);
+    res.send(`<html> <body> ${mediaPIBJSON} </body> </html>`)
 });
 
 
@@ -90,4 +117,8 @@ app.get("/samples/ASC", (req, res) => {
     
     res.send(htmlResponse);
 })
->>>>>>> c2dbc51c47396885ee4c1c8f9db9e130e9a15224
+
+
+
+
+
