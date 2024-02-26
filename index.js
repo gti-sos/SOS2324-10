@@ -117,7 +117,39 @@ app.get("/samples/ASC", (req, res) => {
     
     res.send(htmlResponse);
 })
+//Funcion ASB
+const data = require('./index-ASB');
+function calcularPorcentajeMuertosPorKilometro(datos) {
+    let aux = new Map();
 
+    datos.forEach(obj => {
+        let pais = obj.get('geo');
+        let muertos = parseFloat(obj.get('road_deaths_per_million_inhabitants'));
+        let kilometros = parseFloat(obj.get('millions_of_passenger_per_kilometres'));
+
+        if (aux.has(pais)) {
+            let promedioAnterior = aux.get(pais);
+            let promedioMuertos = (promedioAnterior.muertos * promedioAnterior.contador + muertos) / (promedioAnterior.contador + 1);
+            let promedioKm = (promedioAnterior.kilometros * promedioAnterior.contador + kilometros) / (promedioAnterior.contador + 1);
+            aux.set(pais, { muertos: promedioMuertos, kilometros: promedioKm, contador: promedioAnterior.contador + 1 });
+        } else {
+            aux.set(pais, { muertos: muertos, kilometros: kilometros, contador: 1 });
+        }
+    });
+
+    let resultados = {};
+    aux.forEach((valor, clave) => {
+        resultados[clave] = (valor.muertos / valor.kilometros) * 100;
+    });
+
+    return resultados;
+}
+
+app.get("/samples/ASB", (req,res)=>{
+    const porcentajeMuertos = calcularPorcentajeMuertosPorKilometro(datos_TLR); 
+    const porcentajeMuertosJSON = JSON.stringify(porcentajeMuertos);
+    res.send(`<html> <body> ${porcentajeMuertosJSON} </body> </html>`)
+});
 
 
 
