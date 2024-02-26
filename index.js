@@ -146,7 +146,7 @@ function calcularPorcentajeMuertosPorKilometro(datos) {
 }
 
 app.get("/samples/ASB", (req,res)=>{
-    const porcentajeMuertos = calcularPorcentajeMuertosPorKilometro(datos_TLR); 
+    const porcentajeMuertos = calcularPorcentajeMuertosPorKilometro(data); 
     const porcentajeMuertosJSON = JSON.stringify(porcentajeMuertos);
     res.send(`<html> <body> ${porcentajeMuertosJSON} </body> </html>`)
 });
