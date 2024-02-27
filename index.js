@@ -1,5 +1,6 @@
 let cool = require("cool-ascii-faces");
 let express = require("express");
+let bodyParser = require("body-parser");
 
 let app = express();
 const PORT = (process.env.PORT || 8080);
@@ -18,6 +19,37 @@ app.get("/cool", (req,res)=>{
 });
 
 console.log(`Server listening on port ${PORT}`);
+
+//API Global
+const API_BASE="/api/v1";
+app.use(bodyParser.json());
+
+//API Tomás
+app.get(API_BASE + "/vehicles-stock", (req,res)=>{
+    res.send(JSON.stringify(datos_TLR));
+});
+
+app.get(API_BASE + "/vehicles-stock", (req,res)=>{
+    let vehicle = req.body;
+    datos_TLR.push(vehicle);
+});
+
+//API Miguel
+app.get(API_BASE + "/gdp-growth-rates", (req,res)=>{
+    res.send(JSON.stringify(datos_MRF));
+});
+
+app.get(API_BASE + "/gdp-growth-rates", (req,res)=>{
+    let growth = req.body;
+    datos_MRF.push(growth);
+});
+
+
+
+
+
+
+
 
 //Función index-TLR.js
 const datos_TLR = require('./index-TLR');
