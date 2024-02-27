@@ -29,9 +29,10 @@ app.get(API_BASE + "/vehicles-stock", (req,res)=>{
     res.send(JSON.stringify(datos_TLR));
 });
 
-app.get(API_BASE + "/vehicles-stock", (req,res)=>{
+app.post(API_BASE + "/vehicles-stock", (req,res)=>{
     let vehicle = req.body;
     datos_TLR.push(vehicle);
+    res.sendStatus(201, "Created");
 });
 
 //API Miguel
@@ -39,9 +40,10 @@ app.get(API_BASE + "/gdp-growth-rates", (req,res)=>{
     res.send(JSON.stringify(datos_MRF));
 });
 
-app.get(API_BASE + "/gdp-growth-rates", (req,res)=>{
+app.post(API_BASE + "/gdp-growth-rates", (req,res)=>{
     let growth = req.body;
     datos_MRF.push(growth);
+    res.sendStatus(201, "Created");
 });
 
 
