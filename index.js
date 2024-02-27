@@ -5,6 +5,15 @@ let bodyParser = require("body-parser");
 let app = express();
 const PORT = (process.env.PORT || 8080);
 app.listen(PORT);
+app.use(bodyParser.json());
+
+//API Global
+const API_BASE = "/api/v1";
+module.exports = API_BASE;
+import { loadAPI_TLR } from "./api/index-TLR.js";
+//import {loadAPI_MRF} from "./api/index-MRF";
+loadAPI_TLR(app);
+//loadAPI_MRF(app);
 
 //Establecemos subdirectorios de la web
 const path = require('path');
@@ -19,54 +28,6 @@ app.get("/cool", (req, res) => {
 });
 
 console.log(`Server listening on port ${PORT}`);
-
-//API Global
-const API_BASE = "/api/v1";
-app.use(bodyParser.json());
-
-//API Tomás
-app.get(API_BASE + "/vehicles-stock/loadInitialData", (req, res) => {
-    res.send(JSON.stringify(datos_TLR));
-});
-
-app.post(API_BASE + "/vehicles-stock", (req, res) => {
-    let vehicle = req.body;
-    datos_TLR.push(vehicle);
-    res.sendStatus(201, "Created");
-});
-
-app.delete(API_BASE + "/vehicles-stock", (req, res) => {
-    datos_TLR.remove({}, { multi: true }, (err, numRemoved) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).send({ error: 'Internal server error' });
-        }
-        return res.status(200).send({ message: `Deleted ${numRemoved} vehicles-stock` });
-    });
-});
-
-//API Miguel
-app.get(API_BASE + "/gdp-growth-rates/loadInitialData", (req, res) => {
-    res.send(JSON.stringify(datos_MRF));
-});
-
-app.post(API_BASE + "/gdp-growth-rates", (req, res) => {
-    let growth = req.body;
-    datos_MRF.push(growth);
-    res.sendStatus(201, "Created");
-});
-
-app.delete(API_BASE + "/gdp-growth-rates", (req, res) => {
-    datos_MRF.remove({}, { multi: true }, (err, numRemoved) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).send({ error: 'Internal server error' });
-        }
-        return res.status(200).send({ message: `Deleted ${numRemoved} gdp-growth-rates` });
-    });
-});
-
-
 
 
 
