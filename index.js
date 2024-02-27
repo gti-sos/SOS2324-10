@@ -12,38 +12,58 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.use("/",express.static("./public"));
+app.use("/", express.static("./public"));
 
-app.get("/cool", (req,res)=>{
+app.get("/cool", (req, res) => {
     res.send(`<html><body><h1>${cool()}</h1></body></html>`)
 });
 
 console.log(`Server listening on port ${PORT}`);
 
 //API Global
-const API_BASE="/api/v1";
+const API_BASE = "/api/v1";
 app.use(bodyParser.json());
 
 //API Tomás
-app.get(API_BASE + "/vehicles-stock", (req,res)=>{
+app.get(API_BASE + "/vehicles-stock/loadInitialData", (req, res) => {
     res.send(JSON.stringify(datos_TLR));
 });
 
-app.post(API_BASE + "/vehicles-stock", (req,res)=>{
+app.post(API_BASE + "/vehicles-stock", (req, res) => {
     let vehicle = req.body;
     datos_TLR.push(vehicle);
     res.sendStatus(201, "Created");
 });
 
+app.delete(API_BASE + "/vehicles-stock", (req, res) => {
+    datos_TLR.remove({}, { multi: true }, (err, numRemoved) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send({ error: 'Internal server error' });
+        }
+        return res.status(200).send({ message: `Deleted ${numRemoved} vehicles-stock` });
+    });
+});
+
 //API Miguel
-app.get(API_BASE + "/gdp-growth-rates", (req,res)=>{
+app.get(API_BASE + "/gdp-growth-rates/loadInitialData", (req, res) => {
     res.send(JSON.stringify(datos_MRF));
 });
 
-app.post(API_BASE + "/gdp-growth-rates", (req,res)=>{
+app.post(API_BASE + "/gdp-growth-rates", (req, res) => {
     let growth = req.body;
     datos_MRF.push(growth);
     res.sendStatus(201, "Created");
+});
+
+app.delete(API_BASE + "/gdp-growth-rates", (req, res) => {
+    datos_MRF.remove({}, { multi: true }, (err, numRemoved) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send({ error: 'Internal server error' });
+        }
+        return res.status(200).send({ message: `Deleted ${numRemoved} gdp-growth-rates` });
+    });
 });
 
 
@@ -58,27 +78,27 @@ const datos_TLR = require('./index-TLR');
 function calcularMediasMuertesPorPais(datos_TLR) {
     const muertesPorPais = {};
     datos_TLR.forEach((dato) => {
-      const pais = dato.geo;
-      const muertes = dato.cars_deaths;
-      if (!muertesPorPais[pais]) {
-        muertesPorPais[pais] = { totalMuertes: 0, conteo: 0 };
-      }
-      muertesPorPais[pais].totalMuertes += muertes;
-      muertesPorPais[pais].conteo++;
+        const pais = dato.geo;
+        const muertes = dato.cars_deaths;
+        if (!muertesPorPais[pais]) {
+            muertesPorPais[pais] = { totalMuertes: 0, conteo: 0 };
+        }
+        muertesPorPais[pais].totalMuertes += muertes;
+        muertesPorPais[pais].conteo++;
     });
-  
+
     const mediaMuertesPorPais = {};
     for (const pais in muertesPorPais) {
-      const totalMuertes = muertesPorPais[pais].totalMuertes;
-      const conteo = muertesPorPais[pais].conteo;
-      mediaMuertesPorPais[pais] = totalMuertes / conteo;
+        const totalMuertes = muertesPorPais[pais].totalMuertes;
+        const conteo = muertesPorPais[pais].conteo;
+        mediaMuertesPorPais[pais] = totalMuertes / conteo;
     }
-  
+
     return mediaMuertesPorPais;
 }
 
-app.get("/samples/TLR", (req,res)=>{
-    const mediaMuertesPorPais = calcularMediasMuertesPorPais(datos_TLR); 
+app.get("/samples/TLR", (req, res) => {
+    const mediaMuertesPorPais = calcularMediasMuertesPorPais(datos_TLR);
     const mediaMuertesJSON = JSON.stringify(mediaMuertesPorPais);
     res.send(`<html> <body> ${mediaMuertesJSON} </body> </html>`)
 });
@@ -108,8 +128,8 @@ function previsionPIBporGeo(datos_MRF) {
     return mediasPorPais;
 }
 
-app.get("/samples/MRF", (req,res)=>{
-    const mediasPorPais = previsionPIBporGeo(datos_MRF); 
+app.get("/samples/MRF", (req, res) => {
+    const mediasPorPais = previsionPIBporGeo(datos_MRF);
     const mediaPIBJSON = JSON.stringify(mediasPorPais);
     res.send(`<html> <body> ${mediaPIBJSON} </body> </html>`)
 });
@@ -148,7 +168,7 @@ app.get("/samples/ASC", (req, res) => {
     }
 
     htmlResponse += "</ul></body></html>";
-    
+
     res.send(htmlResponse);
 })
 //Funcion ASB
@@ -179,8 +199,8 @@ function calcularPorcentajeMuertosPorKilometro(datos) {
     return resultados;
 }
 
-app.get("/samples/ASB", (req,res)=>{
-    const porcentajeMuertos = calcularPorcentajeMuertosPorKilometro(data); 
+app.get("/samples/ASB", (req, res) => {
+    const porcentajeMuertos = calcularPorcentajeMuertosPorKilometro(data);
     const porcentajeMuertosJSON = JSON.stringify(porcentajeMuertos);
     res.send(`<html> <body> ${porcentajeMuertosJSON} </body> </html>`)
 });
