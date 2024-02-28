@@ -1,21 +1,21 @@
-let cool = require("cool-ascii-faces");
-let express = require("express");
-let bodyParser = require("body-parser");
+const cool = require("cool-ascii-faces");
+const express = require("express");
+const bodyParser = require("body-parser");
+let API_TLR = require("./api/api-TLR")
 
-let app = express();
-const PORT = (process.env.PORT || 8080);
+const app = express();
+const PORT = process.env.PORT || 8080;
+
 app.listen(PORT);
 app.use(bodyParser.json());
 
-//API Global
 const API_BASE = "/api/v1";
-module.exports = API_BASE;
-import { loadAPI_TLR } from "./api/index-TLR.js";
-//import {loadAPI_MRF} from "./api/index-MRF";
-loadAPI_TLR(app);
-//loadAPI_MRF(app);
+const datos_TLR = require('./index-TLR');
+API_TLR(app);
 
-//Establecemos subdirectorios de la web
+
+
+// Establecemos subdirectorios de la web
 const path = require('path');
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
@@ -30,12 +30,8 @@ app.get("/cool", (req, res) => {
 console.log(`Server listening on port ${PORT}`);
 
 
-
-
-
-
 //Función index-TLR.js
-const datos_TLR = require('./index-TLR');
+
 function calcularMediasMuertesPorPais(datos_TLR) {
     const muertesPorPais = {};
     datos_TLR.forEach((dato) => {

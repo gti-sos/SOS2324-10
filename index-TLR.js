@@ -1,6 +1,6 @@
 
-// datos_TLR inicial
-const datos_TLR= [
+// datos_TLR
+const data= [
     {
       DATAFLOW: 'ESTAT:TRAN_R_VEHST(1.0)',
       last_update: '13/10/23 23:00:00',
@@ -302,7 +302,15 @@ const datos_TLR= [
       cars_deaths: 1397
     }
   ]
+
+  const datos_TLR = data.map((entry, index) => {
+    // Creamos un nuevo objeto con todos los campos excepto DATAFLOW y last_update
+    const { DATAFLOW, last_update, ...rest } = entry;
+    // Agregamos un nuevo campo id al objeto
+    return { id: index + 1, ...rest };
+});
   module.exports = datos_TLR;
+
 
   function calcularMediaMuertes(datos_TLR) {
     const muertesPorPais = {};
