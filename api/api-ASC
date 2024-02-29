@@ -3,11 +3,11 @@ const express = require("express");
 const app = express();
 const API_BASE = "/api/v1"
 app.use(bodyParser.json());
-const datos_MRF = require('./../index-ASC');
+const csv = require('./../index-ASC');
 
 
 module.exports = (app) => {
     app.get(API_BASE + "/datosASC", (req, res) => {
-        res.send(req.body());
+        res.send(JSON.stringify(csv));
     });
 };
