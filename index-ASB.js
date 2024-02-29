@@ -264,18 +264,6 @@ let data = [
         return { id: index + 1, ...rest };
 });
   
-  
-
-
-
-for (let i = 1; i < lines.length; i++) {
-    let elem = lines[i].split(',');
-    let map = new Map();
-    for (let j = 0; j < columnas.length; j++) {
-        map.set(columnas[j], elem[j]);
-    }
-    datos.push(map);
-}
 module.exports = datos;
 
 function calcularPorcentajeMuertosPorKilometro(datos) {
