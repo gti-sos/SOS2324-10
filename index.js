@@ -135,7 +135,7 @@ app.get("/samples/ASC", (req, res) => {
     res.send(htmlResponse);
 })
 //Funcion ASB
-const data = require('./index-ASB');
+const datos = require('./index-ASB');
 function calcularPorcentajeMuertosPorKilometro(datos) {
     let aux = new Map();
 
@@ -163,7 +163,7 @@ function calcularPorcentajeMuertosPorKilometro(datos) {
 }
 
 app.get("/samples/ASB", (req, res) => {
-    const porcentajeMuertos = calcularPorcentajeMuertosPorKilometro(data);
+    const porcentajeMuertos = calcularPorcentajeMuertosPorKilometro(datos);
     const porcentajeMuertosJSON = JSON.stringify(porcentajeMuertos);
     res.send(`<html> <body> ${porcentajeMuertosJSON} </body> </html>`)
 });
