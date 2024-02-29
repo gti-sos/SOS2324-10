@@ -19,9 +19,18 @@ module.exports = (app) => {
 
     app.post(API_BASE + "/datosasc", (req, res) => {
         let growth = req.body;
-        csv.push(growth);
-        res.sendStatus(201, "Created");
+    
+        // Verificar si el recurso ya existe en csv
+        if (csv.some(entry => entry.id === growth.id)) {
+            // El recurso ya existe, devolver error 409
+            res.status(409).send("Conflict: Resource already exists");
+        } else {
+            // El recurso no existe, agregarlo a csv
+            csv.push(growth);
+            res.status(201).send("Created");
+        }
     });
+    
     
     app.delete(API_BASE + "/datosasc", (req, res) => {
         csv.splice(0, csv.length); 
