@@ -21,15 +21,10 @@ module.exports = (app) => {
         res.sendStatus(201, "Created");
     });
     
-   /**  app.delete(API_BASE + "/gdp-growth-rates", (req, res) => {
-        datos_MRF.remove({}, { multi: true }, (err, numRemoved) => {
-            if (err) {
-                console.error(err);
-                return res.status(500).send({ error: 'Internal server error' });
-            }
-            return res.status(200).send({ message: `Deleted ${numRemoved} gdp-growth-rates` });
-        });
-    });*/
+    app.delete(API_BASE + "/gdp-growth-rates", (req, res) => {
+        datos_MRF.splice(0, datos_MRF.length); 
+        res.status(200).send({ message: `Deleted all -> GDP Growth rates` });
+    });
     
 };
 
