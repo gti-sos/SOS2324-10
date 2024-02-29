@@ -270,9 +270,9 @@ function calcularPorcentajeMuertosPorKilometro(datos) {
     let aux = new Map();
 
     datos.forEach(obj => {
-        let pais = obj.get('geo');
-        let muertos = parseFloat(obj.get('road_deaths_per_million_inhabitants'));
-        let kilometros = parseFloat(obj.get('millions_of_passenger_per_kilometres'));
+        let pais = obj.geo;
+        let muertos = parseFloat(obj.road_deaths_per_million_inhabitants);
+        let kilometros = parseFloat(obj.millions_of_passenger_per_kilometres);
 
         if (aux.has(pais)) {
             let promedioAnterior = aux.get(pais);
