@@ -1,7 +1,7 @@
 
 
 
-const datos_MRF = [
+const data = [
     {
         dataflow: 'estat:teco0115(1.0)',
         last_update: '02/02/24 23:00:00',
@@ -184,6 +184,10 @@ const datos_MRF = [
     }
 ]
 
+const datos_MRF = data.map((entry, index) => {
+    const { dataflow, last_update, ...rest } = entry;
+    return { id: index + 1, ...rest };
+});
 module.exports = datos_MRF;
 
 
