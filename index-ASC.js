@@ -315,7 +315,7 @@ const data = [
 ]
 
 const csv = data.map((entry, index) => {
-    return { id: index + 1, ...rest };
+    return { id: index + 1, ...entry };
 });
 
 module.exports = csv;
@@ -323,8 +323,8 @@ module.exports = csv;
 function calcularMediaObsValuePorPais(csv) {
     let mediasPais = {};
     csv.forEach(function(n) {
-        let pais = n.get('geo');
-        let obsValue = parseInt(n.get('obs_value'));
+        let pais = csv.geo;
+        let obsValue = parseInt(csv.obs_value);
         if (!mediasPais[pais]) {
             mediasPais[pais] = {
                 totalObsValue: 0,
