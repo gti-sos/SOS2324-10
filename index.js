@@ -65,7 +65,7 @@ app.get("/samples/TLR", (req, res) => {
 });
 
 //Funcion index-MRF.js
-const datos_MRF = require('./index-MRF');
+
 function previsionPIBporGeo(datos_MRF) {
     let mediasPorPais = {};
     datos_MRF.forEach((dato) => {
