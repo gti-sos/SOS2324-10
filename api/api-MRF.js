@@ -12,7 +12,9 @@ module.exports = (app) => {
     });
     
     app.get(API_BASE + "/gdp-growth-rates/loadInitialData", (req, res) => {
-        res.send(JSON.stringify(datos_MRF));
+        if(datos_MRF == null){
+            res.send(JSON.stringify(datos_MRF));
+        }
     });
     
     app.post(API_BASE + "/gdp-growth-rates", (req, res) => {
@@ -23,7 +25,7 @@ module.exports = (app) => {
     
     app.delete(API_BASE + "/gdp-growth-rates", (req, res) => {
         datos_MRF.splice(0, datos_MRF.length); 
-        res.status(200).send({ message: `Deleted all -> GDP Growth rates` });
+        res.sendStatus(200,"Deleted all -> GDP Growth rates");
     });
     
 };
