@@ -3,7 +3,7 @@ const express = require("express");
 const app = express();
 const API_BASE = "/api/v1"
 app.use(bodyParser.json());
-const csv = require('./../index-ASC');
+const csv = require('../index-ASC');
 
 
 module.exports = (app) => {
