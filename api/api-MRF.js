@@ -12,9 +12,8 @@ module.exports = (app) => {
     });
     
     app.get(API_BASE + "/gdp-growth-rates/loadInitialData", (req, res) => {
-        if(datos_MRF == null){
             res.send(JSON.stringify(datos_MRF));
-        }
+            res.sendStatus(200, "Correcto")
     });
 
 
