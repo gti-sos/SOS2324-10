@@ -11,7 +11,7 @@ module.exports = (app) => {
 // -------------------------------- GET -------------------------------------
    
     app.get(API_BASE + "/gdp-growth-rates", (req, res) => {
-        const query = request.query;
+        const query = req.query;
 
         if (Object.keys(query).length === 0) {
 
@@ -19,30 +19,30 @@ module.exports = (app) => {
             datos_MRF.find({}, (err, arrayDatos) => {
                 if (err) {
                     console.log(`Error getting /gdp-frowth-rates: ${err}`);
-                    response.status(500).send({ error: "Error interno del servidor" });
+                    res.sendStatus(500, "Error interno del servidor");
                 } else {
                     console.log(`Returned ${arrayDatos.length}`);
                     const datosSinId = arrayDatos.map((n) => {
                         delete n._id;
                         return n;
                     });
-                    response.status(200).json(datosSinId);
+                    res.status(200).json(datosSinId);
                 }
             });
-        } else if(request.query.offset || request.query.limit){
-            const { offset, limit } = request.query;
+        } else if(req.query.offset || req.query.limit){
+            const { offset, limit } = req.query;
             console.log(`New request to /gdp-frowth-rates?offset="${offset}"&limit="${limit}"`);
             if (!offset || !limit) {
-                return response.status(400).send('faltan parametros requeridos');
+                return res.status(400).send('faltan parametros requeridos');
             } else {
                 const startIndex = parseInt(offset);
                 const endIndex = parseInt(offset) + parseInt(limit);
 
                 ddbb.find({}, (err, docs) => {
                     if (err) {
-                        response.status(500).send('Error retrieving data from database');
+                        res.status(500).send('Error retrieving data from database');
                     } else if(offset < 0 || offset > limit || offset > docs.length || limit < 0 || limit > docs.length){
-                        response.status(400).send('Bad request');
+                        res.status(400).send('Bad request');
                     } else {
                         const data = docs.slice(startIndex,endIndex);
                         data.map((n) => {
@@ -50,9 +50,9 @@ module.exports = (app) => {
                             return n;
                         });
                         if(data.length == 1){
-                            response.send(data[0]);
+                            res.send(data[0]);
                         }else{
-                            response.send(data);    
+                            res.send(data);    
                         }  
                     }
                 });
