@@ -25,7 +25,7 @@ module.exports = (app) => {
         const duplicateId = datos_MRF.some(gdp => gdp.id === newGDP.id);
         if (duplicateId) {
             //Si hay elemento con mismo id, devolver error
-            return res.sendStatus(409).send("Ya existe una entrada con ese id");
+            return res.sendStatus(409, "Ya existe una entrada con ese id");
         }
         //Función para agragar id si no tiene
         if (!newGDP.id) {
@@ -37,8 +37,8 @@ module.exports = (app) => {
             }
         }
         datos_MRF.push(newGDP);
-        //Mensaje de 201 OK
-        res.sendStatus(200, "Created");
+
+        res.sendStatus(201, "Created");
     });
 
     
@@ -80,12 +80,12 @@ module.exports = (app) => {
             // Verificar si el ID es válido (es un número entero positivo)
             if (isNaN(parseInt(idToUpdate)) || parseInt(idToUpdate) < 0 ) {
                 // Si el ID no es válido, devolver un código de estado 400 (solicitud incorrecta)
-                return res.sendStatus(400).send({message:"Elemento no encontrado"});
+                return res.sendStatus(404, "NOT FOUND"});
             }
 
             if (updatedGDP.id && parseInt(updatedGDP.id) !== parseInt(idToUpdate)) {
                 // Si el ID del objeto no coincide con el ID de la URL, devolver un código de estado 400
-                return res.sendStatus(400).send({message:"Los IDs no coinciden"});
+                return res.sendStatus(400, "BAD REQUEST");
             }
     
             // Buscar el índice del elemento con el ID proporcionado en datos_MRF
@@ -94,14 +94,14 @@ module.exports = (app) => {
             // Verificar si el elemento con el ID proporcionado existe en datos_MRF
             if (indexToUpdate === -1) {
                 // Si no se encuentra el elemento, devolver un código de estado 404 (no encontrado)
-                return res.sendStatus(404).send({message:"Elemento no encontrado"});
+                return res.sendStatus(404, "NOT FOUND");
             }
     
             // Actualizar el elemento en datos_MRF
             datos_MRF[indexToUpdate] = updatedGDP;
     
             // Enviar una respuesta con el vehículo actualizado
-            return res.status(200).send({message:"Elemento modificado"}).send(updatedGDP);
+            return res.sendStatus(200, "OK").send(updatedGDP);
         } else {
             // Si no se proporciona un ID en la URL, actualizar todas las entradas
             return res.sendStatus(405, "Método no permitido para todos los datos");
