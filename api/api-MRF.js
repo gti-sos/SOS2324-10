@@ -1,83 +1,303 @@
-const bodyParser = require("body-parser");
-const express = require("express");
-const app = express();
+//const bodyParser = require("body-parser");
+//const express = require("express");
+//const app = express();
+import Datastore from "nedb";
+var db = new Datastore();
+
 const API_BASE = "/api/v1"
-app.use(bodyParser.json());
-const datos_MRF = require('./../index-MRF');
+//app.use(bodyParser.json());
+//const datos_MRF = require('./../index-MRF');
+
 
 //API Miguel
-module.exports = (app) => {
+//module.exports = (app) => {
+
+function loadBackend_MRF(app){
+
+    var datos = [
+
+        {
+            dataflow: 'estat:teco0115(1.0)',
+            last_update: '02/02/24 23:00:00',
+            frequency: 'a',
+            unit: 'clv_pch_pre',
+            na_item: 'b1gq',
+            geo: 'austria',
+            time_period: 2020,
+            obs_value: -6.6,
+            growth_rate_2030: 30357,
+            growth_rate_2040: 34360
+        },
+        {
+            dataflow: 'estat:teco0115(1.0)',
+            last_update: '02/02/24 23:00:00',
+            frequency: 'a',
+            unit: 'clv_pch_pre',
+            na_item: 'b1gq',
+            geo: 'austria',
+            time_period: 2021,
+            obs_value: 4.2,
+            growth_rate_2030: 34832,
+            growth_rate_2040: 39426
+        },
+        {
+            dataflow: 'estat:teco0115(1.0)',
+            last_update: '02/02/24 23:00:00',
+            frequency: 'a',
+            unit: 'clv_pch_pre',
+            na_item: 'b1gq',
+            geo: 'austria',
+            time_period: 2022,
+            obs_value: 4.8,
+            growth_rate_2030: 51398,
+            growth_rate_2040: 58177
+        },
+        {
+            dataflow: 'estat:teco0115(1.0)',
+            last_update: '02/02/24 23:00:00',
+            frequency: 'a',
+            unit: 'clv_pch_pre',
+            na_item: 'b1gq',
+            geo: 'belgium',
+            time_period: 2020,
+            obs_value: -5.3,
+            growth_rate_2030: 71573,
+            growth_rate_2040: 81533
+        },
+        {
+            dataflow: 'estat:teco0115(1.0)',
+            last_update: '02/02/24 23:00:00',
+            frequency: 'a',
+            unit: 'clv_pch_pre',
+            na_item: 'b1gq',
+            geo: 'belgium',
+            time_period: 2021,
+            obs_value: 6.9,
+            growth_rate_2030: 44930,
+            growth_rate_2040: 51183
+        },
+        {
+            dataflow: 'estat:teco0115(1.0)',
+            last_update: '02/02/24 23:00:00',
+            frequency: 'a',
+            unit: 'clv_pch_pre',
+            na_item: 'b1gq',
+            geo: 'belgium',
+            time_period: 2022,
+            obs_value: 3.0,
+            growth_rate_2030: 32478,
+            growth_rate_2040: 36998
+        },
+        {
+            dataflow: 'estat:teco0115(1.0)',
+            last_update: '02/02/24 23:00:00',
+            frequency: 'a',
+            unit: 'clv_pch_pre',
+            na_item: 'b1gq',
+            geo: 'czech_republic',
+            time_period: 2020,
+            obs_value: -5.5,
+            growth_rate_2030: 42058,
+            growth_rate_2040: 49646
+        },
+        {
+            dataflow: 'estat:teco0115(1.0)',
+            last_update: '02/02/24 23:00:00',
+            frequency: 'a',
+            unit: 'clv_pch_pre',
+            na_item: 'b1gq',
+            geo: 'czech_republic',
+            time_period: 2021,
+            obs_value: 3.6,
+            growth_rate_2030: 15609,
+            growth_rate_2040: 18424
+        },
+        {
+            dataflow: 'estat:teco0115(1.0)',
+            last_update: '02/02/24 23:00:00',
+            frequency: 'a',
+            unit: 'clv_pch_pre',
+            na_item: 'b1gq',
+            geo: 'czech_republic',
+            time_period: 2022,
+            obs_value: 2.4,
+            growth_rate_2030: 17403,
+            growth_rate_2040: 20542
+        },
+        {
+            dataflow: 'estat:teco0115(1.0)',
+            last_update: '02/02/24 23:00:00',
+            frequency: 'a',
+            unit: 'clv_pch_pre',
+            na_item: 'b1gq',
+            geo: 'denmark',
+            time_period: 2020,
+            obs_value: -2.4,
+            growth_rate_2030: 66538,
+            growth_rate_2040: 75680
+        },
+        {
+            dataflow: 'estat:teco0115(1.0)',
+            last_update: '02/02/24 23:00:00',
+            frequency: 'a',
+            unit: 'clv_pch_pre',
+            na_item: 'b1gq',
+            geo: 'denmark',
+            time_period: 2021,
+            obs_value: 6.8,
+            growth_rate_2030: 38794,
+            growth_rate_2040: 44123
+        },
+        {
+            dataflow: 'estat:teco0115(1.0)',
+            last_update: '02/02/24 23:00:00',
+            frequency: 'a',
+            unit: 'clv_pch_pre',
+            na_item: 'b1gq',
+            geo: 'denmark',
+            time_period: 2022,
+            obs_value: 2.7,
+            growth_rate_2030: 49658,
+            growth_rate_2040: 56480
+        },
+        {
+            dataflow: 'estat:teco0115(1.0)',
+            last_update: '02/02/24 23:00:00',
+            frequency: 'a',
+            unit: 'clv_pch_pre',
+            na_item: 'b1gq',
+            geo: 'spain',
+            time_period: 2021,
+            obs_value: 6.4,
+            growth_rate_2030: 33894,
+            growth_rate_2040: 37961
+        },
+        {
+            dataflow: 'estat:teco0115(1.0)',
+            last_update: '02/02/24 23:00:00',
+            frequency: 'a',
+            unit: 'clv_pch_pre',
+            na_item: 'b1gq',
+            geo: 'spain',
+            time_period: 2022,
+            obs_value: 5.8,
+            growth_rate_2030: 36109,
+            growth_rate_2040: 40443
+        },
+        {
+            dataflow: 'estat:teco0115(1.0)',
+            last_update: '02/02/24 23:00:00',
+            frequency: 'a',
+            unit: 'clv_pch_pre',
+            na_item: 'b1gq',
+            geo: 'spain',
+            time_period: 2023,
+            obs_value: 2.5,
+            growth_rate_2030: 32608,
+            growth_rate_2040: 36522
+        }
+    ]
+
+    db.insert(datos);
+    console.log("New GET to /data")
 
 // -------------------------------- GET -------------------------------------
    
-    app.get(API_BASE + "/gdp-growth-rates", (req, res) => {
-        const query = req.query;
 
-        if (Object.keys(query).length === 0) {
+    // Carga inicial de datos
 
-            console.log("New request to /gdp-frowth-rates");
-            datos_MRF.find({}, (err, arrayDatos) => {
-                if (err) {
-                    console.log(`Error getting /gdp-frowth-rates: ${err}`);
-                    res.sendStatus(500, "Error interno del servidor");
-                } else {
-                    console.log(`Returned ${arrayDatos.length}`);
-                    const datosSinId = arrayDatos.map((n) => {
-                        delete n._id;
-                        return n;
-                    });
-                    res.status(200).json(datosSinId);
-                }
-            });
-        } else if(req.query.offset || req.query.limit){
-            const { offset, limit } = req.query;
-            console.log(`New request to /gdp-frowth-rates?offset="${offset}"&limit="${limit}"`);
-            if (!offset || !limit) {
-                return res.status(400).send('faltan parametros requeridos');
-            } else {
-                const startIndex = parseInt(offset);
-                const endIndex = parseInt(offset) + parseInt(limit);
-
-                ddbb.find({}, (err, docs) => {
-                    if (err) {
-                        res.status(500).send('Error retrieving data from database');
-                    } else if(offset < 0 || offset > limit || offset > docs.length || limit < 0 || limit > docs.length){
-                        res.status(400).send('Bad request');
-                    } else {
-                        const data = docs.slice(startIndex,endIndex);
-                        data.map((n) => {
-                            delete n._id;
-                            return n;
-                        });
-                        if(data.length == 1){
-                            res.send(data[0]);
-                        }else{
-                            res.send(data);    
-                        }  
-                    }
-                });
-            }
-        }
-    });
-    
     app.get(API_BASE + "/gdp-growth-rates/loadInitialData", (req, res) => {
-        datos_MRF.find({}, (err, dato) => {
-            if (err) {
-                console.log(`error geting /gdp-growth-rates: ${err}`);
-                response.sendStatus(500);
-            } else if (dato.length === 0) {
-                for (var i = 0; i < datos_MRF.length; i++) {
-                    ddbb.insert(datos_MRF[i]);
-                }
-                response.sendStatus(201);
-                console.log("se han cargado los datos iniciales");
+        db.find({}, (err, dato) => {
+            if (dato.length > 0) {
+                res.json("Los datos ya se han cargado");
+                console.log("Los datos ya se han cargado");
+            } else if (err) {
+                res.sendStatus(500);
+                console.log("Error al cargar los datos");
             } else {
-                response.status(409).send("ya existen los datos");
-                console.log(`existen ${dato.length} datos`);
+                db.insert(datos);
+                console.log("Se han insertado los datos");
+                res.sendStatus(200);
             }
-        }
-        );
+        });
     });
+
+    // GET ruta generica
+    app.get(API_BASE + "/gdp-growth-rates", (req, res) => {
+        db.find({}, {_id: 0}, (err, filteredList) => {
+            // Comprobamos los errores que han podido surgir
+            if(err){
+                console.log(`Error getting gdp`);
+                // El estado es el 500 de Internal Server Error
+                res.sendStatus(500);
+            // Comprobamos si existen datos:
+            }else{
+                // Tenemos que inicializar los valores necesarios para filtrar: tenemos que ver el limit y offset
+                let i = -1;
+                if(!req.query.offset){ 
+                  var offset = -1;
+                }else{ 
+                  var offset = parseInt(req.query.offset);
+                }
+                // Tenemos que filtrar los datos, para ver cada posible campo y devolver true si no se pasa en la query, 
+                // y si es un parámetro en la query se comprueba la condicion
+                let campos = filteredList.filter((x) => {
+                    return (((req.query.dataflow == undefined)||(parseInt(req.query.dataflow) === x.dataflow))&&
+                    ((req.query.last_update == undefined)||(req.query.last_update) === x.last_update)&&
+                    ((req.query.frequency == undefined)||(parseInt(req.query.frequency) <= x.frequency))&&
+                    ((req.query.unit == undefined)||(parseInt(req.query.unit) >= x.unit))&&
+                    ((req.query.na_item == undefined)||(req.query.province === x.na_item))&&
+                    ((req.query.geo == undefined)||(parseFloat(req.query.geo) <= x.geo))&&
+                    ((req.query.time_period == undefined)||(parseFloat(req.query.time_period) >= x.time_period))&&
+                    ((req.query.obs_value == undefined)||(parseFloat(req.query.obs_value) <= x.obs_value))&&
+                    ((req.query.growth_rate_2030 == undefined)||(parseFloat(req.query.growth_rate_2030) >= x.growth_rate_2030))&&
+                    ((req.query.growth_rate_2040 == undefined)||(parseFloat(req.query.growth_rate_2040) <= x.growth_rate_2040)));
+
+                }).filter((x) => {
+                    // La paginación
+                    i = i+1;
+                    if(req.query.limit==undefined){ 
+                      var cond = true;
+                    }else{ 
+                      var cond = (parseInt(offset) + parseInt(req.query.limit)) >= i;
+                    }
+                    return (i > offset) && cond;
+                });
+    
+                // Comprobamos si tras el filtrado sigue habiendo datos, si no hay:
+            if(campos.length == 0){
+                console.log(`GDP not found`);
+                  // Estado 404: Not Found
+                  response.status(404).json(campos);
+    
+              // Si por el contrario encontramos datos
+            }else{
+                console.log(`Datos de gdp devueltos: ${campos.length}`);
+                // Devolvemos dichos datos, estado 200: OK
+                response.json(campos);
+    
+            }  
+        }
+    })
+        
+        console.log("GET con los datos");
+    });
+
+    function pagination(req, lista){
+      var res = [];
+      const limit = req.query.limit;
+      const offset = req.query.offset;
+      
+      if(limit < 1 || offset < 0 || offset > lista.length){
+          res.push("Hay un error en los parametros offset y limit");
+          return res;
+      }else{
+      res = lista.slice(offset,parseInt(limit)+parseInt(offset));
+      return res;
+      }     
+    };
+    
+   
 
 
 // -------------------------------------- POST -----------------------------
@@ -117,7 +337,7 @@ module.exports = (app) => {
         const idToDelete = req.query.id;
         // Verificar si el ID es válido 
         if (isNaN(parseInt(idToDelete)) || parseInt(idToDelete) < 0) {
-            return res.sendStatus(400, "BAD REQUEST");
+            return res.sendStatus(400, "BAD req");
         }
         const indexToDelete = datos_MRF.findIndex(gdp => gdp.id === parseInt(idToDelete));
     
@@ -148,7 +368,7 @@ module.exports = (app) => {
 
             if (updatedGDP.id && parseInt(updatedGDP.id) !== parseInt(idToUpdate)) {
                 // Si el ID del objeto no coincide con el ID de la URL, devolver un código de estado 400
-                return res.sendStatus(400, "BAD REQUEST");
+                return res.sendStatus(400, "BAD req");
             }
     
             // Buscar el índice del elemento con el ID proporcionado en datos_MRF
@@ -170,6 +390,7 @@ module.exports = (app) => {
             return res.sendStatus(405, "METHOD NOT ALLOWED");
         }
     });
+
 };
 
 
