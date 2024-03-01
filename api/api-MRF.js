@@ -47,7 +47,7 @@ module.exports = (app) => {
         // Si no se añade id en la URL se borrarán todas las entradas
         if (!req.query.id) {
             datos_MRF.splice(0, datos_MRF.length);
-            return res.senStatus(200, "Entradas eliminadas correctamente");
+            return res.sendStatus(200, "Entradas eliminadas correctamente");
         }
     
         // Si se añade id en la URL se borrará dicha entrada
@@ -64,7 +64,7 @@ module.exports = (app) => {
         }
         // Eliminar el elemento 
         datos_MRF.splice(indexToDelete, 1);
-        res.status(200).send({ message: `Elemento con ID ${idToDelete} eliminado correctamente.` });
+        res.sendStatus(200, `Elemento con ID ${idToDelete} eliminado correctamente.`);
     });
 
 
