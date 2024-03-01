@@ -9,11 +9,14 @@ const datos_MRF = require('./../index-MRF');
 module.exports = (app) => {
     app.get(API_BASE + "/gdp-growth-rates", (req, res) => {
         res.send(`<html><body><h1>https://data.europa.eu/data/datasets/1pdehxmf8q9yexgyf1pyhq?locale=en, https://data.europa.eu/data/datasets/jrc-luisa-lf113-b-gdp-capita-ref-2014?locale=en</h1></body></html>`);
+        res.send(JSON.stringify(datos_MRF));
+        res.sendStatus(200, "Ok")
     });
     
     app.get(API_BASE + "/gdp-growth-rates/loadInitialData", (req, res) => {
+        if(datos_MRF == null)
             res.send(JSON.stringify(datos_MRF));
-            res.sendStatus(200, "Correcto")
+            res.sendStatus(200, "Ok")
     });
 
 
@@ -36,7 +39,7 @@ module.exports = (app) => {
         }
         datos_MRF.push(newGDP);
         //Mensaje de 201 OK
-        res.status(201).send("created");
+        res.sendStatus(200, "Created");
     });
 
     
@@ -45,20 +48,20 @@ module.exports = (app) => {
         // Si no se añade id en la URL se borrarán todas las entradas
         if (!req.query.id) {
             datos_TLR.splice(0, datos_TLR.length);
-            return res.status(200).send({ message: "Entradas eliminadas correctamente" });
+            return res.senStatus(200, "Entradas eliminadas correctamente");
         }
     
         // Si se añade id en la URL se borrará dicha entrada
         const idToDelete = req.query.id;
         // Verificar si el ID es válido 
         if (isNaN(parseInt(idToDelete)) || parseInt(idToDelete) < 0) {
-            return res.sendStatus(400).send({ message: "Inserte un id válido, únicamente valores numéricos" });
+            return res.sendStatus(400, "Inserte un id válido, únicamente valores numéricos");
         }
         const indexToDelete = datos_MRF.findIndex(gdp => gdp.id === parseInt(idToDelete));
     
         //Error si no existe dicho index
         if (indexToDelete === -1) {
-            return res.sendStatus(404).send({message:"Elemento no encontrado"});
+            return res.sendStatus(404, "Elemento no encontrado");
         }
         // Eliminar el elemento 
         datos_MRF.splice(indexToDelete, 1);
@@ -102,12 +105,7 @@ module.exports = (app) => {
             return res.status(200).send({message:"Elemento modificado"}).send(updatedGDP);
         } else {
             // Si no se proporciona un ID en la URL, actualizar todas las entradas
-            datos_MRF.forEach((geo, index) => {
-                datos_MRF[index] = updatedGDP;
-            });
-    
-            // Enviar una respuesta con todas las entradas actualizadas
-            return res.status(200).send({message:"Todas las entradas han sido modificadas"});
+            return res.sendStatus(405, "Método no permitido para todos los datos");
         }
     });
 };
