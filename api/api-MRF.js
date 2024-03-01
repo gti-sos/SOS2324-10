@@ -8,7 +8,6 @@ const datos_MRF = require('./../index-MRF');
 //API Miguel
 module.exports = (app) => {
     app.get(API_BASE + "/gdp-growth-rates", (req, res) => {
-        res.send(`<html><body><h1>https://data.europa.eu/data/datasets/1pdehxmf8q9yexgyf1pyhq?locale=en, https://data.europa.eu/data/datasets/jrc-luisa-lf113-b-gdp-capita-ref-2014?locale=en</h1></body></html>`);
         res.send(JSON.stringify(datos_MRF));
         res.sendStatus(200, "Ok")
     });
