@@ -46,7 +46,7 @@ module.exports = (app) => {
     app.delete(API_BASE + "/gdp-growth-rates", (req, res) => {
         // Si no se añade id en la URL se borrarán todas las entradas
         if (!req.query.id) {
-            datos_TLR.splice(0, datos_TLR.length);
+            datos_MRF.splice(0, datos_MRF.length);
             return res.senStatus(200, "Entradas eliminadas correctamente");
         }
     
