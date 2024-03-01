@@ -7,33 +7,80 @@ const datos_MRF = require('./../index-MRF');
 
 //API Miguel
 module.exports = (app) => {
+
+// -------------------------------- GET -------------------------------------
+   
     app.get(API_BASE + "/gdp-growth-rates", (req, res) => {
-        const idToFind = req.query.id;
+        const query = request.query;
 
-        if(idToFind) {
+        if (Object.keys(query).length === 0) {
 
-            if (isNaN(parseInt(idToFind)) || parseInt(idToFind) < 0) {
-                return res.sendStatus(400, "BAD REQUEST");
+            console.log("New request to /gdp-frowth-rates");
+            datos_MRF.find({}, (err, arrayDatos) => {
+                if (err) {
+                    console.log(`Error getting /gdp-frowth-rates: ${err}`);
+                    response.status(500).send({ error: "Error interno del servidor" });
+                } else {
+                    console.log(`Returned ${arrayDatos.length}`);
+                    const datosSinId = arrayDatos.map((n) => {
+                        delete n._id;
+                        return n;
+                    });
+                    response.status(200).json(datosSinId);
+                }
+            });
+        } else if(request.query.offset || request.query.limit){
+            const { offset, limit } = request.query;
+            console.log(`New request to /gdp-frowth-rates?offset="${offset}"&limit="${limit}"`);
+            if (!offset || !limit) {
+                return response.status(400).send('faltan parametros requeridos');
+            } else {
+                const startIndex = parseInt(offset);
+                const endIndex = parseInt(offset) + parseInt(limit);
+
+                ddbb.find({}, (err, docs) => {
+                    if (err) {
+                        response.status(500).send('Error retrieving data from database');
+                    } else if(offset < 0 || offset > limit || offset > docs.length || limit < 0 || limit > docs.length){
+                        response.status(400).send('Bad request');
+                    } else {
+                        const data = docs.slice(startIndex,endIndex);
+                        data.map((n) => {
+                            delete n._id;
+                            return n;
+                        });
+                        if(data.length == 1){
+                            response.send(data[0]);
+                        }else{
+                            response.send(data);    
+                        }  
+                    }
+                });
             }
-            const gdp = datos_MRF.find(gdp => gdp.id === parseInt(idToFind));
-
-            if(!gdp){
-                return res.sendStatus(400, "NOT FOUND");
-            }
-            return res.sendStatus(200, "OK").send(gdp);
-            
-        } else {
-            return res.sendStatus(200, "OK").send(datos_MRF);
         }
     });
     
     app.get(API_BASE + "/gdp-growth-rates/loadInitialData", (req, res) => {
-        if(datos_MRF == null){
-            res.send(JSON.stringify(datos_MRF));
-            res.sendStatus(200, "OK")
+        datos_MRF.find({}, (err, dato) => {
+            if (err) {
+                console.log(`error geting /gdp-growth-rates: ${err}`);
+                response.sendStatus(500);
+            } else if (dato.length === 0) {
+                for (var i = 0; i < datos_MRF.length; i++) {
+                    ddbb.insert(datos_MRF[i]);
+                }
+                response.sendStatus(201);
+                console.log("se han cargado los datos iniciales");
+            } else {
+                response.status(409).send("ya existen los datos");
+                console.log(`existen ${dato.length} datos`);
+            }
         }
+        );
     });
 
+
+// -------------------------------------- POST -----------------------------
 
     app.post(API_BASE + "/gdp-growth-rates", (req, res) => {
         const newGDP = req.body;
