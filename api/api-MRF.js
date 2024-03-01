@@ -27,6 +27,28 @@ module.exports = (app) => {
         datos_MRF.splice(0, datos_MRF.length); 
         res.sendStatus(200,"Deleted all -> GDP Growth rates");
     });
+
+    app.post(API_BASE + "/gdp-growth-rates", (req, res) => {
+        const newGDP = req.body;
+        //Verificamos que no exista un elemento con el mismo id
+        const duplicateId = datos_MRF.some(gdp => gdp.id === newGDP.id);
+        if (duplicateId) {
+            //Si hay elemento con mismo id, devolver error
+            return res.sendStatus(409).send("Ya existe una entrada con ese id");
+        }
+        //Función para agragar id si no tiene
+        if (!newGDP.id) {
+            if (datos_MRF.length === 0) {
+                newGDP.id = 1; 
+            } else {
+                const lastId = datos_MRF[datos_MRF.length - 1].id;
+                newGDP.id = parseInt(lastId) + 1;
+            }
+        }
+        datos_MRF.push(newGDP);
+        //Mensaje de 201 OK
+        res.status(201).send("created");
+    });
     
 };
 
