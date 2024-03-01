@@ -16,17 +16,7 @@ module.exports = (app) => {
             res.send(JSON.stringify(datos_MRF));
         }
     });
-    
-    app.post(API_BASE + "/gdp-growth-rates", (req, res) => {
-        let growth = req.body;
-        datos_MRF.push(growth);
-        res.sendStatus(201, "Created");
-    });
-    
-    app.delete(API_BASE + "/gdp-growth-rates", (req, res) => {
-        datos_MRF.splice(0, datos_MRF.length); 
-        res.sendStatus(200,"Deleted all -> GDP Growth rates");
-    });
+
 
     app.post(API_BASE + "/gdp-growth-rates", (req, res) => {
         const newGDP = req.body;
@@ -49,7 +39,78 @@ module.exports = (app) => {
         //Mensaje de 201 OK
         res.status(201).send("created");
     });
+
     
+   
+    app.delete(API_BASE + "/gdp-growth-rates", (req, res) => {
+        // Si no se añade id en la URL se borrarán todas las entradas
+        if (!req.query.id) {
+            datos_TLR.splice(0, datos_TLR.length);
+            return res.status(200).send({ message: "Entradas eliminadas correctamente" });
+        }
+    
+        // Si se añade id en la URL se borrará dicha entrada
+        const idToDelete = req.query.id;
+        // Verificar si el ID es válido 
+        if (isNaN(parseInt(idToDelete)) || parseInt(idToDelete) < 0) {
+            return res.sendStatus(400).send({ message: "Inserte un id válido, únicamente valores numéricos" });
+        }
+        const indexToDelete = datos_MRF.findIndex(gdp => gdp.id === parseInt(idToDelete));
+    
+        //Error si no existe dicho index
+        if (indexToDelete === -1) {
+            return res.sendStatus(404).send({message:"Elemento no encontrado"});
+        }
+        // Eliminar el elemento 
+        datos_MRF.splice(indexToDelete, 1);
+        res.status(200).send({ message: `Elemento con ID ${idToDelete} eliminado correctamente.` });
+    });
+
+
+    app.put(API_BASE + "/gdp-growth-rates", (req, res) => {
+        // Obtener el ID del parámetro de la URL
+        const idToUpdate = req.query.id;
+    
+        // Obtener el objeto actualizado del cuerpo de la solicitud
+        const updatedGDP = req.body;
+    
+        // Si se proporciona un ID en la URL, actualizar solo esa entrada
+        if (idToUpdate) {
+            // Verificar si el ID es válido (es un número entero positivo)
+            if (isNaN(parseInt(idToUpdate)) || parseInt(idToUpdate) < 0 ) {
+                // Si el ID no es válido, devolver un código de estado 400 (solicitud incorrecta)
+                return res.sendStatus(400).send({message:"Elemento no encontrado"});
+            }
+
+            if (updatedGDP.id && parseInt(updatedGDP.id) !== parseInt(idToUpdate)) {
+                // Si el ID del objeto no coincide con el ID de la URL, devolver un código de estado 400
+                return res.sendStatus(400).send({message:"Los IDs no coinciden"});
+            }
+    
+            // Buscar el índice del elemento con el ID proporcionado en datos_MRF
+            const indexToUpdate = datos_MRF.findIndex(gdp => gdp.id === parseInt(idToUpdate));
+    
+            // Verificar si el elemento con el ID proporcionado existe en datos_MRF
+            if (indexToUpdate === -1) {
+                // Si no se encuentra el elemento, devolver un código de estado 404 (no encontrado)
+                return res.sendStatus(404).send({message:"Elemento no encontrado"});
+            }
+    
+            // Actualizar el elemento en datos_MRF
+            datos_MRF[indexToUpdate] = updatedGDP;
+    
+            // Enviar una respuesta con el vehículo actualizado
+            return res.status(200).send({message:"Elemento modificado"}).send(updatedGDP);
+        } else {
+            // Si no se proporciona un ID en la URL, actualizar todas las entradas
+            datos_MRF.forEach((geo, index) => {
+                datos_MRF[index] = updatedGDP;
+            });
+    
+            // Enviar una respuesta con todas las entradas actualizadas
+            return res.status(200).send({message:"Todas las entradas han sido modificadas"});
+        }
+    });
 };
 
 
