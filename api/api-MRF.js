@@ -13,9 +13,24 @@ module.exports = (app) => {
     });
     
     app.get(API_BASE + "/gdp-growth-rates/loadInitialData", (req, res) => {
-        if(datos_MRF == null)
-            res.send(JSON.stringify(datos_MRF));
-            res.sendStatus(200, "Ok")
+        const idToFind = req.query.id;
+
+        if(idToFind) {
+
+            if (isNaN(parseInt(idToFind)) || parseInt(idToFind) < 0) {
+                return res.sendStatus(400, "BAD REQUEST");
+            }
+            const gdp = datos_MRF.find(gdp => gdp.id === parseInt(idToFind));
+
+            if(!gdp){
+                return res.sendStatus(400, "NOT FOUND");
+            }
+            return res.sendStatus(200, "OK").send(gdp);
+            
+        } else {
+            return res.sendStatus(200, "OK").send(datos_MRF);
+        }
+       
     });
 
 
@@ -25,7 +40,7 @@ module.exports = (app) => {
         const duplicateId = datos_MRF.some(gdp => gdp.id === newGDP.id);
         if (duplicateId) {
             //Si hay elemento con mismo id, devolver error
-            return res.sendStatus(409, "Ya existe una entrada con ese id");
+            return res.sendStatus(409, "CONFLICT");
         }
         //Función para agragar id si no tiene
         if (!newGDP.id) {
@@ -54,13 +69,13 @@ module.exports = (app) => {
         const idToDelete = req.query.id;
         // Verificar si el ID es válido 
         if (isNaN(parseInt(idToDelete)) || parseInt(idToDelete) < 0) {
-            return res.sendStatus(400, "Inserte un id válido, únicamente valores numéricos");
+            return res.sendStatus(400, "BAD REQUEST");
         }
         const indexToDelete = datos_MRF.findIndex(gdp => gdp.id === parseInt(idToDelete));
     
         //Error si no existe dicho index
         if (indexToDelete === -1) {
-            return res.sendStatus(404, "Elemento no encontrado");
+            return res.sendStatus(404, "NOT FOUND");
         }
         // Eliminar el elemento 
         datos_MRF.splice(indexToDelete, 1);
@@ -80,7 +95,7 @@ module.exports = (app) => {
             // Verificar si el ID es válido (es un número entero positivo)
             if (isNaN(parseInt(idToUpdate)) || parseInt(idToUpdate) < 0 ) {
                 // Si el ID no es válido, devolver un código de estado 400 (solicitud incorrecta)
-                return res.sendStatus(404, "NOT FOUND"});
+                return res.sendStatus(404, "NOT FOUND");
             }
 
             if (updatedGDP.id && parseInt(updatedGDP.id) !== parseInt(idToUpdate)) {
@@ -104,7 +119,7 @@ module.exports = (app) => {
             return res.sendStatus(200, "OK").send(updatedGDP);
         } else {
             // Si no se proporciona un ID en la URL, actualizar todas las entradas
-            return res.sendStatus(405, "Método no permitido para todos los datos");
+            return res.sendStatus(405, "METHOD NOT ALLOWED");
         }
     });
 };
