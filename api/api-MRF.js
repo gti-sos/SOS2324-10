@@ -8,11 +8,6 @@ const datos_MRF = require('./../index-MRF');
 //API Miguel
 module.exports = (app) => {
     app.get(API_BASE + "/gdp-growth-rates", (req, res) => {
-        res.send(JSON.stringify(datos_MRF));
-        res.sendStatus(200, "Ok")
-    });
-    
-    app.get(API_BASE + "/gdp-growth-rates/loadInitialData", (req, res) => {
         const idToFind = req.query.id;
 
         if(idToFind) {
@@ -30,7 +25,12 @@ module.exports = (app) => {
         } else {
             return res.sendStatus(200, "OK").send(datos_MRF);
         }
-       
+    });
+    
+    app.get(API_BASE + "/gdp-growth-rates/loadInitialData", (req, res) => {
+        if(datos_MRF == null)
+            res.send(JSON.stringify(datos_MRF));
+            res.sendStatus(200, "Ok")
     });
 
 
