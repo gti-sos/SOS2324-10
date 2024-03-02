@@ -216,22 +216,38 @@ function API_MRF(app){
          }
     });
 
-    // GET ruta generica
+    //OBTENER TODOS LOS RECURSOS
     app.get(API_BASE + "/", (req, res) => {
         res.send(JSON.stringify(datos));
         req.sendStatus(200, "OK");
     });
 
+    //OBTENER RECURSO CONCRETO
+    app.get(API_BASE + "/:geo", (req, res) => {
+        const pais = req.params.geo;
+        const filtro = datos_MRF.filter(dato => dato.geo === pais);
+
+        if(filtro.length  > 0){
+            res.sendStatus(200, "OK").send(filtro);
+        } else {
+            res.sendStatus(404, "NOT FOUND");
+        }   
+
+    });
+
+
 // -------------------------------------- POST -----------------------------
 
+    //CREAR RECURSO CONCRETO
     app.post(API_BASE + "/", (req, res) => {
         const newGDP = req.body;
         //Verificamos que no exista un elemento con el mismo id
         const duplicateId = datos_MRF.some(gdp => gdp.id === newGDP.id);
+        
         if (duplicateId) {
             //Si hay elemento con mismo id, devolver error
             return res.sendStatus(409, "CONFLICT");
-        } else if (!newGDP.id){
+        } else if (!newGDP || Object.keys(newGDP).length === 0){
             return res.sendStatus(400, "BAD REQUEST")
         } else {
             datos_MRF.push(newGDP);
@@ -243,8 +259,6 @@ function API_MRF(app){
 
     //NO SE PUEDE HACER POST DE UN RECURSO CONCRETO
     app.post(API_BASE + "/:geo", (req, res) => {
-        const geo = req.params.geo;
-        let data = req.body;
         res.sendStatus(405, "METHOD NOT ALLOWED");
     });
 
@@ -253,67 +267,56 @@ function API_MRF(app){
    
     //ELIMINAR TODAS LAS VARIABLES
     app.delete(API_BASE + "/", (req, res) => {
-        datos_MRF.splice(0, datos_MRF.length)
-        res.sendStatus(200, "OK");
+        if(datos_MRF.length > 0){
+            datos_MRF = []
+            res.sendStatus(200, "OK");
+        } else {
+            res.sendStatus(404, "NOT FOUND");
+        }
+      
 
     });
 
     //ELIMINAR RECURSO CONCRETO
     app.delete(API_BASE + "/:geo", (req, res) => {
         
-        const geo = req.params.geo;
-        const filtro = datos_MRF.filter(dato => dato.geo === geo);
+        const pais = req.params.geo;
+        const filtro = datos_MRF.filter(dato => dato.geo !== pais);
 
         if(filtro.length < datos_MRF.length){
             datos_MRF = filtro;
             res.sendStatus(200, "OK");
         } else {
             res.sendStatus(404, "NOT FOUND");
-        }
+        }   
     });
 
 // -------------------------------------- PUT -----------------------------
 
+    // NO SE PUEDE HACER UN PUT SOBRE TODOS LOS RECURSOS
     app.put(API_BASE + "/", (req, res) => {
-        // Obtener el ID del parámetro de la URL
-        const idToUpdate = req.query.id;
-    
-        // Obtener el objeto actualizado del cuerpo de la solicitud
-        const updatedGDP = req.body;
-    
-        // Si se proporciona un ID en la URL, actualizar solo esa entrada
-        if (idToUpdate) {
-            // Verificar si el ID es válido (es un número entero positivo)
-            if (isNaN(parseInt(idToUpdate)) || parseInt(idToUpdate) < 0 ) {
-                // Si el ID no es válido, devolver un código de estado 400 (solicitud incorrecta)
-                return res.sendStatus(404, "NOT FOUND");
-            }
-
-            if (updatedGDP.id && parseInt(updatedGDP.id) !== parseInt(idToUpdate)) {
-                // Si el ID del objeto no coincide con el ID de la URL, devolver un código de estado 400
-                return res.sendStatus(400, "BAD REQUEST");
-            }
-    
-            // Buscar el índice del elemento con el ID proporcionado en datos_MRF
-            const indexToUpdate = datos_MRF.findIndex(gdp => gdp.id === parseInt(idToUpdate));
-    
-            // Verificar si el elemento con el ID proporcionado existe en datos_MRF
-            if (indexToUpdate === -1) {
-                // Si no se encuentra el elemento, devolver un código de estado 404 (no encontrado)
-                return res.sendStatus(404, "NOT FOUND");
-            }
-    
-            // Actualizar el elemento en datos_MRF
-            datos_MRF[indexToUpdate] = updatedGDP;
-    
-            // Enviar una respuesta con el vehículo actualizado
-            return res.sendStatus(200, "OK").send(updatedGDP);
-        } else {
-            // Si no se proporciona un ID en la URL, error
-            return res.sendStatus(405, "METHOD NOT ALLOWED");
-        }
+       res.sendStatus(405, "METHOD NOT ALLOWED");
     });
 
+
+    //ACTUALIZAR RECURSOS CONCRETOS
+    app.put(API_BASE + "/:geo", (req, res) => {
+        
+        const pais = req.params.geo;
+        let data = req.body;
+        const filtro = datos_MRF.findIndex(dato => dato.geo === pais);
+
+        if (filtro.length === 0){
+            res.sendStatus(404, "NOT FOUND");
+        } else {
+            for (let i= 0; i < datos_MRF.length; i++){
+                if(datos_MRF[i].geo === pais){
+                    datos_MRF[i] = data;
+                }
+            }
+            res.sendStatus(200, "OK");
+        }
+    });
 }
 
 module.exports.mrfv1 = API_MRF;
