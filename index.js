@@ -14,10 +14,10 @@ app.use(bodyParser.json());
 
 const API_BASE = "/api/v1";
 //const datos_TLR = require('./index-TLR');
-//const datos_MRF = require("./index-MRF");
+const datos_MRF = require("./index-MRF");
 
 //API_TLR(app);
-//API_MRF(app);
+API_MRF(app);
 API_ASC(app);
 API_ASB(app);
 

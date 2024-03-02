@@ -107,7 +107,7 @@ module.exports = (app) => {
             // Enviar una respuesta con el vehículo actualizado
             return res.sendStatus(200, "OK").send(updatedGDP);
         } else {
-            // Si no se proporciona un ID en la URL, actualizar todas las entradas
+            // Si no se proporciona un ID en la URL, error
             return res.sendStatus(405, "METHOD NOT ALLOWED");
         }
     });
