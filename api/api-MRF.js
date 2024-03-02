@@ -4,13 +4,15 @@ const express = require("express");
 const app = express();
 
 const bodyParser = require("body-parser");
+const datos_MRF = require("../index-MRF");
 app.use(bodyParser.json());
 
 var datos = [];
-const datos_MRF = require('./../index-MRF');
 
 //API Miguel
 function API_MRF(app){
+
+
 // -------------------------------- GET -------------------------------------
 
     // Carga inicial de datos
@@ -228,50 +230,49 @@ function API_MRF(app){
         const duplicateId = datos_MRF.some(gdp => gdp.id === newGDP.id);
         if (duplicateId) {
             //Si hay elemento con mismo id, devolver error
-            res.sendStatus(409, "CONFLICT");
-        } else if (newGDP.length === 0){
-            res.sendStatus(400, "BAD REQUEST")
+            return res.sendStatus(409, "CONFLICT");
+        } else if (!newGDP.id){
+            return res.sendStatus(400, "BAD REQUEST")
         } else {
-            datos.push(newGDP);
-            res.sendStatus(201, "CREATED");
+            datos_MRF.push(newGDP);
+            return res.sendStatus(201, "CREATED");
         }
        
 
     });
 
+    //NO SE PUEDE HACER POST DE UN RECURSO CONCRETO
     app.post(API_BASE + "/:geo", (req, res) => {
-        //No está permitido hacer un post de un recurso concreto
         const geo = req.params.geo;
         let data = req.body;
         res.sendStatus(405, "METHOD NOT ALLOWED");
     });
 
     
+// -------------------------------------- DELETE -----------------------------
    
+    //ELIMINAR TODAS LAS VARIABLES
     app.delete(API_BASE + "/", (req, res) => {
-        // Si no se añade id en la URL se borrarán todas las entradas
-        if (!req.query.id) {
-            datos_MRF.splice(0, datos_MRF.length);
-            return res.sendStatus(200, "OK");
-        }
-    
-        // Si se añade id en la URL se borrará dicha entrada
-        const idToDelete = req.query.id;
-        // Verificar si el ID es válido 
-        if (isNaN(parseInt(idToDelete)) || parseInt(idToDelete) < 0) {
-            return res.sendStatus(400, "BAD REQUEST");
-        }
-        const indexToDelete = datos_MRF.findIndex(gdp => gdp.id === parseInt(idToDelete));
-    
-        //Error si no existe dicho index
-        if (indexToDelete === -1) {
-            return res.sendStatus(404, "NOT FOUND");
-        }
-        // Eliminar el elemento 
-        datos_MRF.splice(indexToDelete, 1);
-        res.sendStatus(200, `Elemento con ID ${idToDelete} eliminado correctamente.`);
+        datos_MRF.splice(0, datos_MRF.length)
+        res.sendStatus(200, "OK");
+
     });
 
+    //ELIMINAR RECURSO CONCRETO
+    app.delete(API_BASE + "/:geo", (req, res) => {
+        
+        const geo = req.params.geo;
+        const filtro = datos_MRF.filter(dato => dato.geo === geo);
+
+        if(filtro.length < datos_MRF.length){
+            datos_MRF = filtro;
+            res.sendStatus(200, "OK");
+        } else {
+            res.sendStatus(404, "NOT FOUND");
+        }
+    });
+
+// -------------------------------------- PUT -----------------------------
 
     app.put(API_BASE + "/", (req, res) => {
         // Obtener el ID del parámetro de la URL
