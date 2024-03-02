@@ -10,14 +10,14 @@ app.use(bodyParser.json());
 var datos = [];
 
 //API Miguel
-function API_MRF(app){
+function API_MRF(app) {
 
 
-// -------------------------------- GET -------------------------------------
+    // -------------------------------- GET -------------------------------------
 
     // Carga inicial de datos ----------> CORRECTO
     app.get(API_BASE + "/loadInitialData", (req, res) => {
-         if(datos.length === 0){
+        if (datos.length === 0) {
             let data = [
                 {
                     dataflow: 'estat:teco0115(1.0)',
@@ -206,14 +206,14 @@ function API_MRF(app){
                 return { id: index + 1, ...rest };
             });
 
-            for (let i=0; i < data.length; i++){
+            for (let i = 0; i < data.length; i++) {
                 datos.push(datos_MRF[i]);
             }
             res.sendStatus(201, "CREATED");
-         } else {
+        } else {
             res.send(JSON.stringify(datos))
             res.sendStatus(200, "OK");
-         }
+        }
     });
 
     //OBTENER TODOS LOS RECURSOS   ----------> CORRECTO
@@ -222,101 +222,107 @@ function API_MRF(app){
         req.sendStatus(200, "OK");
     });
 
-    //OBTENER RECURSO CONCRETO
+    //OBTENER RECURSO CONCRETO  ---------> MEDIO (NO SALE POR PANTALLA)
     app.get(API_BASE + "/:geo", (req, res) => {
         const pais = req.params.geo;
         const filtro = datos_MRF.filter(dato => dato.geo === pais);
 
-        if(filtro.length  > 0){
+        if (filtro.length > 0) {
             res.sendStatus(200, "OK");
             return res.send(filtro);
         } else {
             res.sendStatus(404, "NOT FOUND");
-        }   
+        }
 
     });
 
 
-// -------------------------------------- POST -----------------------------
+    // -------------------------------------- POST -----------------------------
 
-    //CREAR RECURSO CONCRETO
+    //CREAR RECURSO CONCRETO     ---------> MEDIO (SALE OK PERO NO APARECE EN GET)
     app.post(API_BASE + "/", (req, res) => {
         const newGDP = req.body;
         //Verificamos que no exista un elemento con el mismo id
         const duplicateId = datos_MRF.some(gdp => gdp.id === newGDP.id);
-        
+
         if (duplicateId) {
             //Si hay elemento con mismo id, devolver error
             return res.sendStatus(409, "CONFLICT");
-        } else if (!newGDP || Object.keys(newGDP).length === 0){
+        } else if (!newGDP || Object.keys(newGDP).length === 0) {
             return res.sendStatus(400, "BAD REQUEST")
         } else {
             datos_MRF.push(newGDP);
             return res.sendStatus(201, "CREATED");
         }
-       
+
 
     });
 
-    //NO SE PUEDE HACER POST DE UN RECURSO CONCRETO
+    //NO SE PUEDE HACER POST DE UN RECURSO CONCRETO    -----------> CORRECTO
     app.post(API_BASE + "/:geo", (req, res) => {
         res.sendStatus(405, "METHOD NOT ALLOWED");
     });
 
-    
-// -------------------------------------- DELETE -----------------------------
-   
+
+    // -------------------------------------- DELETE -----------------------------
+
     //ELIMINAR TODAS LAS VARIABLES
     app.delete(API_BASE + "/", (req, res) => {
-        if(datos_MRF.length > 0){
+        if (datos_MRF.length > 0) {
             datos_MRF = []
             res.sendStatus(200, "OK");
         } else {
             res.sendStatus(404, "NOT FOUND");
         }
-      
+
 
     });
 
     //ELIMINAR RECURSO CONCRETO
     app.delete(API_BASE + "/:geo", (req, res) => {
-        
+
         const pais = req.params.geo;
         const filtro = datos_MRF.filter(dato => dato.geo !== pais);
 
-        if(filtro.length < datos_MRF.length){
+        if (filtro.length < datos_MRF.length) {
             datos_MRF = filtro;
             res.sendStatus(200, "OK");
         } else {
             res.sendStatus(404, "NOT FOUND");
-        }   
+        }
     });
 
-// -------------------------------------- PUT -----------------------------
+    // -------------------------------------- PUT -----------------------------
 
-    // NO SE PUEDE HACER UN PUT SOBRE TODOS LOS RECURSOS
+    // NO SE PUEDE HACER UN PUT SOBRE TODOS LOS RECURSOS     -----------------> CORRECTO
     app.put(API_BASE + "/", (req, res) => {
-       res.sendStatus(405, "METHOD NOT ALLOWED");
+        res.sendStatus(405, "METHOD NOT ALLOWED");
     });
 
 
-    //ACTUALIZAR RECURSOS CONCRETOS
+    //ACTUALIZAR RECURSOS CONCRETOS  ---------> MEDIO (SALE OK PERO NO APARECE EN GET)
     app.put(API_BASE + "/:geo", (req, res) => {
-        
+
         const pais = req.params.geo;
         let data = req.body;
         const filtro = datos_MRF.findIndex(dato => dato.geo === pais);
 
-        if (filtro.length === 0){
+        if (filtro.length === 0) {
             res.sendStatus(404, "NOT FOUND");
         } else {
-            for (let i= 0; i < datos_MRF.length; i++){
-                if(datos_MRF[i].geo === pais){
+            for (let i = 0; i < datos_MRF.length; i++) {
+                if (datos_MRF[i].geo === pais) {
                     datos_MRF[i] = data;
                 }
             }
             res.sendStatus(200, "OK");
         }
+    });
+
+    // Middleware para manejar errores 404
+    app.use((req, res, next) => {
+        // Si ninguna ruta coincidió con la solicitud, devolver un error 404
+        res.status(404).send("NOT FOUND");
     });
 }
 
