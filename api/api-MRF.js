@@ -222,7 +222,7 @@ function API_MRF(app) {
         req.sendStatus(200, "OK");
     });
 
-    //OBTENER RECURSO CONCRETO  ---------> MEDIO (NO SALE POR PANTALLA)
+    //OBTENER RECURSO CONCRETO  ---------> CORRECTO
     app.get(API_BASE + "/:geo", (req, res) => {
         const pais = req.params.geo;
         const filtro = datos.filter(dato => dato.geo === pais);
@@ -285,7 +285,7 @@ function API_MRF(app) {
             res.sendStatus(404, "NOT FOUND");
         }
     });**/
-    app.delete(API_BASE + "/:geo/:year", (req, res) => {
+    app.delete(API_BASE + "/:geo", + "/:year", (req, res) => {
 
         const pais = req.params.geo;
         const year = parseInt(req.params.time_period);
