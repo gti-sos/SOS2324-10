@@ -4,7 +4,7 @@ const express = require("express");
 const app = express();
 
 const bodyParser = require("body-parser");
-const datos_MRF = require("../index-MRF");
+//const datos_MRF = require("../index-MRF");
 app.use(bodyParser.json());
 
 var datos = [];
@@ -225,7 +225,7 @@ function API_MRF(app) {
     //OBTENER RECURSO CONCRETO  ---------> MEDIO (NO SALE POR PANTALLA)
     app.get(API_BASE + "/:geo", (req, res) => {
         const pais = req.params.geo;
-        const filtro = datos_MRF.filter(dato => dato.geo === pais);
+        const filtro = datos.filter(dato => dato.geo === pais);
 
         if (filtro.length > 0) {
             res.sendStatus(200, "OK");
@@ -243,7 +243,7 @@ function API_MRF(app) {
     app.post(API_BASE + "/", (req, res) => {
         const newGDP = req.body;
         //Verificamos que no exista un elemento con el mismo id
-        const duplicateId = datos_MRF.some(gdp => gdp.id === newGDP.id);
+        const duplicateId = datos.some(gdp => gdp.id === newGDP.id);
 
         if (duplicateId) {
             //Si hay elemento con mismo id, devolver error
@@ -251,7 +251,7 @@ function API_MRF(app) {
         } else if (!newGDP || Object.keys(newGDP).length === 0) {
             return res.sendStatus(400, "BAD REQUEST")
         } else {
-            datos_MRF.push(newGDP);
+            datos.push(newGDP);
             return res.sendStatus(201, "CREATED");
         }
 
@@ -268,7 +268,7 @@ function API_MRF(app) {
 
     //ELIMINAR TODAS LAS VARIABLES
     app.delete(API_BASE + "/", (req, res) => {
-        datos_MRF.splice(0, datos_MRF.length);
+        datos.splice(0, datos.length);
         res.sendStatus(200, "OK");
     });
 
@@ -276,10 +276,10 @@ function API_MRF(app) {
     app.delete(API_BASE + "/:geo", (req, res) => {
 
         const pais = req.params.geo;
-        const filtro = datos_MRF.filter(dato => dato.geo !== pais);
+        const filtro = datos.filter(dato => dato.geo !== pais);
 
-        if (filtro.length < datos_MRF.length) {
-            datos_MRF = filtro;
+        if (filtro.length < datos.length) {
+            datos = filtro;
             res.sendStatus(200, "OK");
         } else {
             res.sendStatus(404, "NOT FOUND");
@@ -299,14 +299,14 @@ function API_MRF(app) {
 
         const pais = req.params.geo;
         let data = req.body;
-        const filtro = datos_MRF.findIndex(dato => dato.geo === pais);
+        const filtro = datos.findIndex(dato => dato.geo === pais);
 
         if (filtro.length === 0) {
             res.sendStatus(404, "NOT FOUND");
         } else {
-            for (let i = 0; i < datos_MRF.length; i++) {
-                if (datos_MRF[i].geo === pais) {
-                    datos_MRF[i] = data;
+            for (let i = 0; i < datos.length; i++) {
+                if (datos[i].geo === pais) {
+                    datos[i] = data;
                 }
             }
             res.sendStatus(200, "OK");
