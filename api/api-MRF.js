@@ -273,7 +273,7 @@ function API_MRF(app) {
     });
 
     //ELIMINAR RECURSO CONCRETO     -----------> CORRECTO
-    app.delete(API_BASE + "/:geo", (req, res) => {
+    /**app.delete(API_BASE + "/:geo", (req, res) => {
 
         const pais = req.params.geo;
         const filtro = datos.filter(dato => dato.geo !== pais);
@@ -284,7 +284,22 @@ function API_MRF(app) {
         } else {
             res.sendStatus(404, "NOT FOUND");
         }
+    });**/
+    app.delete(API_BASE + "/:geo/:year", (req, res) => {
+
+        const pais = req.params.geo;
+        const year = req.params.time_period;
+
+        const filtro = datos.filter(dato => dato.geo !== pais && dato.time_period === year);
+
+        if (filtro.length < datos.length) {
+            datos = datos.filter(dato => !(dato.geo === pais && dato.time_period === year))
+            res.sendStatus(200, "OK");
+        } else {
+            res.sendStatus(404, "NOT FOUND");
+        }
     });
+
 
     // -------------------------------------- PUT -----------------------------
 
