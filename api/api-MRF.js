@@ -15,7 +15,7 @@ function API_MRF(app){
 
 // -------------------------------- GET -------------------------------------
 
-    // Carga inicial de datos
+    // Carga inicial de datos ----------> CORRECTO
     app.get(API_BASE + "/loadInitialData", (req, res) => {
          if(datos.length === 0){
             let data = [
@@ -216,7 +216,7 @@ function API_MRF(app){
          }
     });
 
-    //OBTENER TODOS LOS RECURSOS
+    //OBTENER TODOS LOS RECURSOS   ----------> CORRECTO
     app.get(API_BASE + "/", (req, res) => {
         res.send(JSON.stringify(datos));
         req.sendStatus(200, "OK");
@@ -228,7 +228,8 @@ function API_MRF(app){
         const filtro = datos_MRF.filter(dato => dato.geo === pais);
 
         if(filtro.length  > 0){
-            res.sendStatus(200, "OK").send(filtro);
+            res.sendStatus(200, "OK");
+            return res.send(filtro);
         } else {
             res.sendStatus(404, "NOT FOUND");
         }   
