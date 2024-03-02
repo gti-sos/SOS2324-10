@@ -210,10 +210,10 @@ function API_MRF(app) {
                 datos.push(datos_MRF[i]);
             }
             res.sendStatus(201, "CREATED");
-        } /**else {
-            res.send(JSON.stringify(datos))
+        } else {
+            res.send(JSON.stringify(datos));
             res.sendStatus(200, "OK");
-        }**/
+        }
     });
 
     //OBTENER TODOS LOS RECURSOS   ----------> CORRECTO
@@ -239,7 +239,7 @@ function API_MRF(app) {
 
     // -------------------------------------- POST -----------------------------
 
-    //CREAR RECURSO CONCRETO     ---------> MEDIO (SALE OK PERO NO APARECE EN GET)
+    //CREAR RECURSO CONCRETO     ---------> CORRECTO
     app.post(API_BASE + "/", (req, res) => {
         const newGDP = req.body;
         //Verificamos que no exista un elemento con el mismo id
@@ -266,13 +266,13 @@ function API_MRF(app) {
 
     // -------------------------------------- DELETE -----------------------------
 
-    //ELIMINAR TODAS LAS VARIABLES
+    //ELIMINAR TODAS LAS VARIABLES       -----------> CORRECTO
     app.delete(API_BASE + "/", (req, res) => {
         datos.splice(0, datos.length);
         res.sendStatus(200, "OK");
     });
 
-    //ELIMINAR RECURSO CONCRETO
+    //ELIMINAR RECURSO CONCRETO     -----------> CORRECTO
     app.delete(API_BASE + "/:geo", (req, res) => {
 
         const pais = req.params.geo;
