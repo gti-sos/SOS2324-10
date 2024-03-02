@@ -268,14 +268,8 @@ function API_MRF(app) {
 
     //ELIMINAR TODAS LAS VARIABLES
     app.delete(API_BASE + "/", (req, res) => {
-        if (datos_MRF.length > 0) {
-            datos_MRF = []
-            res.sendStatus(200, "OK");
-        } else {
-            res.sendStatus(404, "NOT FOUND");
-        }
-
-
+        datos_MRF.splice(0, datos_MRF.length);
+        res.sendStatus(200, "OK");
     });
 
     //ELIMINAR RECURSO CONCRETO
