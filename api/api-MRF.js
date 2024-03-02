@@ -290,9 +290,9 @@ function API_MRF(app) {
         const pais = req.params.geo;
         const year = parseInt(req.params.time_period);
 
-        const filtro = datos.filter(dato => dato.geo !== pais && dato.time_period !== year);
+        const filtro = datos.filter(dato => dato.geo === pais && dato.time_period === year);
 
-        if (filtro.length < datos.length) {
+        if (filtro.length > 0) {
             datos = filtro;
             res.sendStatus(200, "OK");
         } else {
