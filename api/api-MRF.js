@@ -198,8 +198,14 @@ function API_MRF(app){
                     growth_rate_2040: 36522
                 }
             ];
+
+            const datos_MRF = data.map((entry, index) => {
+                const { dataflow, last_update, ...rest } = entry;
+                return { id: index + 1, ...rest };
+            });
+
             for (let i=0; i < data.length; i++){
-                datos.push(data[i]);
+                datos.push(datos_MRF[i]);
             }
             res.sendStatus(201, "CREATED");
          } else {
