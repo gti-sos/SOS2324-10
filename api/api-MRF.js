@@ -210,10 +210,10 @@ function API_MRF(app) {
                 datos.push(datos_MRF[i]);
             }
             res.sendStatus(201, "CREATED");
-        } else {
+        } /**else {
             res.send(JSON.stringify(datos))
             res.sendStatus(200, "OK");
-        }
+        }**/
     });
 
     //OBTENER TODOS LOS RECURSOS   ----------> CORRECTO
