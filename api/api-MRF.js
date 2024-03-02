@@ -292,7 +292,7 @@ function API_MRF(app) {
 
         const filtro = datos.filter(dato => dato.geo !== pais && dato.time_period === year);
 
-        if (filtro.length < datos.length) {
+        if (filtro.length > 0) {
             datos = datos.filter(dato => !(dato.geo === pais && dato.time_period === year))
             res.sendStatus(200, "OK");
         } else {
