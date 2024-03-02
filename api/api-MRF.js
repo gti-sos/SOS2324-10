@@ -228,8 +228,7 @@ function API_MRF(app) {
         const filtro = datos.filter(dato => dato.geo === pais);
 
         if (filtro.length > 0) {
-            res.sendStatus(200, "OK");
-            return res.send(filtro);
+            res.sendStatus(200, "OK").send(filtro);
         } else {
             res.sendStatus(404, "NOT FOUND");
         }
