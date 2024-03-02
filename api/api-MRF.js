@@ -225,7 +225,8 @@ function API_MRF(app) {
     //OBTENER RECURSO CONCRETO  ---------> MEDIO (NO SALE POR PANTALLA)
     app.get(API_BASE + "/:geo", (req, res) => {
         const pais = req.params.geo;
-        const filtro = datos.filter(dato => dato.geo === pais);
+        const año = req.params.time_period;
+        const filtro = datos.filter(dato => dato.geo === pais && dato.time_period === año);
 
         if (filtro.length > 0) {
             res.send(JSON.stringify(filtro));
@@ -276,7 +277,8 @@ function API_MRF(app) {
     app.delete(API_BASE + "/:geo", (req, res) => {
 
         const pais = req.params.geo;
-        const filtro = datos.filter(dato => dato.geo !== pais);
+        const año = req.params.time_period;
+        const filtro = datos.filter(dato => dato.geo === pais && dato.time_period === año);
 
         if (filtro.length < datos.length) {
             datos = filtro;
@@ -299,7 +301,8 @@ function API_MRF(app) {
 
         const pais = req.params.geo;
         let data = req.body;
-        const filtro = datos.findIndex(dato => dato.geo === pais);
+        const año = req.params.time_period;
+        const filtro = datos.filter(dato => dato.geo === pais && dato.time_period === año);
 
         if (filtro.length === 0) {
             res.sendStatus(404, "NOT FOUND");
