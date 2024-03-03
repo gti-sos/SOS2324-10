@@ -70,7 +70,7 @@ module.exports = (app) => {
 
     // ---------------- PUT ------------------
 
-    app.put(API_BASE + "tourisms-per-age/:geo", (req, res) => {
+    app.put(API_BASE + "/tourisms-per-age/:geo", (req, res) => {
 
         const pais = req.params.geo;
         let data = req.body;
@@ -86,6 +86,10 @@ module.exports = (app) => {
             }
             res.sendStatus(200, "OK");
         }
+    });
+
+    app.put(API_BASE + "/tourisms-per-age", (req, res) => {
+        res.sendStatus(405, "METHOD NOT ALLOWED");
     });
 
     // -------------- DEL -----------------
