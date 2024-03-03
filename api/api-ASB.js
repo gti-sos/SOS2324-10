@@ -13,8 +13,8 @@ module.exports = (app) => {
     });
     app.get(API_BASE + "/cars-by-motor/loadInitialDatos", (req, res) => {
         if (datos.length === 0) {
-            for (let i = 0; i < backup_datos.length; i++) {
-                datos.push(backup_datos[i]);
+            for (let i = 0; i < datosBU.length; i++) {
+                datos.push(datosBU[i]);
             }
             res.sendStatus(201, "CREATED");
         } else {
@@ -39,6 +39,7 @@ module.exports = (app) => {
     
         // Verificar si el body es un JSON válido y tiene la estructura esperada
         const structure = {
+            'id':'number',
             'dataflow': 'string',
             'last_update': 'string',
             'freq': 'string',
@@ -63,55 +64,52 @@ module.exports = (app) => {
             // El recurso ya existe, devolver error 409
             res.status(409).send("Conflict: Resource already exists");
         } else {
-            // El recurso no existe, agregarlo a csv
+            // El recurso no existe, agregarlo a datos
             datos.push(datos);
             res.status(201).send("Created");
         }
     });
     //PUT
-    app.put(API_BASE + "/cars-by-motor/:id", (req, res) => {
-        const id = req.params.id;
-        const newData = req.body;
+    app.put(API_BASE + "/cars-by-motor/:geo", (req, res) => {
 
-        // Verificar si el dato tiene el mismo id del recurso en la URL
-        if (id !== newData.id) {
-            res.status(400).send("Bad Request: ID mismatch");
+        const pais = req.params.geo;
+        let data = req.body;
+        const filtro = datos.findIndex(dato => dato.geo === pais);
+
+        if (filtro.length === 0) {
+            res.sendStatus(404, "NOT FOUND");
         } else {
-            // Actualizar el recurso si existe, de lo contrario, devolver error 404
-            const index = datos.findIndex(entry => entry.id === id);
-            if (index !== -1) {
-                datos[index] = newData;
-                res.status(200).send("Updated");
-            } else {
-                res.status(404).send("Not Found");
+            for (let i = 0; i < datos.length; i++) {
+                if (datos[i].geo === pais) {
+                    datos[i] = data;
+                }
             }
+            res.sendStatus(200, "OK");
         }
+    });
+
+    app.put(API_BASE + "/cars-by-motor", (req, res) => {
+        res.sendStatus(405, "METHOD NOT ALLOWED");
     });
     //DELETE
     app.delete(API_BASE + "/cars-by-motor", (req, res) => {
         datos.splice(0, datos.length);
         res.sendStatus(200, "Deleted all -> Datos ASB");
     });
-    // app.delete(API_BASE + "/cars-by-motor/:time_period", (req, res) => {
-
-    //     const fecha = req.params.time_period;
-    //     const filtro = datos.filter(dato => dato.time_period !== fecha);
-
-    //     if (filtro.length < datos.length) {
-    //         datos = filtro;
-    //         res.sendStatus(200, "OK");
-    //     } else {
-    //         res.sendStatus(404, "NOT FOUND");
-    //     }
-    // });
-    app.delete(API_BASE + "/cars-by-date/:time_period", (req, res) => {
-        const fecha = req.params.time_period; // Obtener la fecha especificada de los parámetros de la solicitud
-        let deletedItems = datos.filter(item => item.time_period === fecha); // Filtrar los elementos con la fecha especificada
-        datos = datos.filter(item => item.time_period !== fecha); // Eliminar los elementos con la fecha especificada del array 'datos'
-        if (deletedItems.length < datos.length) {
-            res.status(200).send(`Deleted all items with date ${fecha}. Total items deleted: ${deletedItems.length}`);
-        }else{
-            res.status(404, "NOT FOUND");
+    app.delete(API_BASE + "/cars-by-motor/:geo", (req, res) => {
+        const geoToDelete = req.params.geo;
+    
+        // Filtrar los datos que coincidan con la edad especificada
+        const newData = datos.filter(entry => entry.geo !== geoToDelete);
+    
+        // Verificar si se eliminaron datos
+        if (newData.length < datos.length) {
+            // Se eliminaron datos, actualizar datos
+            datos.splice(0, datos.length, ...newData);
+            res.status(200).send("Deleted data with geo: " + geoToDelete);
+        } else {
+            // No se encontraron datos con esa edad
+            res.status(404).send("Not Found: No data found with geo " + geoToDelete);
         }
     });
     
@@ -381,4 +379,8 @@ module.exports = (app) => {
           millions_of_passenger_per_kilometres: 72061,
           road_deaths_per_million_inhabitants: 223
         }]
+        const datosBU = backup_datos.map((entry, index) => {
+            const { dataflow, last_update, ...rest } = entry;
+            return { id: index + 1, ...rest };
+      });
 };  

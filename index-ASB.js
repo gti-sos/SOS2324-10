@@ -260,8 +260,8 @@ let data = [
       road_deaths_per_million_inhabitants: 223
     }]
     const datos = data.map((entry, index) => {
-        const { dataflow, last_update, ...rest } = entry;
-        return { id: index + 1, ...rest };
+      const { dataflow, last_update, ...rest } = entry;
+      return { id: index + 1, ...rest };
 });
   
 module.exports = datos;
