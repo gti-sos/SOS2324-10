@@ -22,15 +22,15 @@ module.exports = (app) => {
     
         // Verificar si el body es un JSON válido y tiene la estructura esperada
         const expectedStructure = {
-            id: Number,
-            frequency: String,
-            unit: String,
-            age: String,
-            geo: String,
-            time_period: Number,
-            obs_value: Number,
-            gdp: Number,
-            volgdp: Number
+            'id': 'number',
+            'frequency': 'string',
+            'unit': 'string',
+            'age': 'string',
+            'geo': 'string',
+            'time_period': 'number',
+            'obs_value': 'number',
+            'gdp': 'number',
+            'volgdp': 'number'
         };
     
         const actualKeys = Object.keys(growth);
@@ -80,6 +80,9 @@ module.exports = (app) => {
     });
 
     // Manejar todos los otros accesos a rutas inexistentes
+    /**app.use((req, res, next) => {
+        res.status(404).send("Not Found");
+    });*/
     //app.use((req, res, next) => {
     //    res.status(404).send("Not Found");
     //});
