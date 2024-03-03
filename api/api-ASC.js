@@ -7,6 +7,9 @@ app.use(bodyParser.json());
 
 
 module.exports = (app) => {
+
+    // ------------ GET -------------
+
     app.get(API_BASE + "/datosasc", (req, res) => {
         res.send(JSON.stringify(csv));
     });
@@ -16,6 +19,20 @@ module.exports = (app) => {
             res.send(JSON.stringify(csv));
         }
     });
+
+    app.get(API_BASE + "datosasc/:geo", (req, res) => {
+        const lugar = req.params.geo;
+        const restr = csv.filter(n => n.geo === lugar);
+
+        if (restr.length > 0) {
+            res.send(JSON.stringify(restr));
+            res.sendStatus(200, "OK");
+        } else {
+            res.sendStatus(404, "NOT FOUND");
+        }
+
+    });
+    // ------------ POST --------------
 
     app.post(API_BASE + "/datosasc", (req, res) => {
         let growth = req.body;
@@ -50,6 +67,9 @@ module.exports = (app) => {
         }
     });
 
+
+    // ---------------- PUT ------------------
+
     app.put(API_BASE + "/datosasc/:id", (req, res) => {
         const id = req.params.id;
         const newData = req.body;
@@ -69,10 +89,14 @@ module.exports = (app) => {
         }
     });
 
+    // -------------- DEL -----------------
+
     app.delete(API_BASE + "/datosasc", (req, res) => {
         csv.splice(0, csv.length);
         res.sendStatus(200, "Deleted all -> Datos ASC");
     });
+
+
 
     // Manejar todos los otros métodos no permitidos
     app.all(API_BASE + "/datosasc", (req, res) => {
