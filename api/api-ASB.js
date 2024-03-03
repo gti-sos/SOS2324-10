@@ -8,15 +8,15 @@ const datos = require('../index-ASB');
 
 module.exports = (app) => {
     //GET
-    app.get(API_BASE + "/datosasb", (req, res) => {
+    app.get(API_BASE + "/cars-by-motor", (req, res) => {
         res.send(JSON.stringify(datos));
     });
-    app.get(API_BASE + "/datosasb/loadInitialdatos", (req, res) => {
+    app.get(API_BASE + "/cars-by-motor/loadInitialdatos", (req, res) => {
         if(datos == null){
             res.send(JSON.stringify(datos));
         }
     });
-    app.get(API_BASE + "datosasc/:geo", (req, res) => {
+    app.get(API_BASE + "/cars-by-motor/:geo", (req, res) => {
         const pais = req.params.geo;
         const restr = datos.filter(n => n.geo === pais);
 
@@ -29,14 +29,14 @@ module.exports = (app) => {
 
     });
     //POST
-    app.post(API_BASE + "/datosasb", (req, res) => {
+    app.post(API_BASE + "/cars-by-motor", (req, res) => {
         let data = req.body;
     
         // Verificar si el body es un JSON válido y tiene la estructura esperada
         const structure = {
             'id':'number',
-            'datosflow': 'string',
-            'last_update': 'isoDate',
+            'dataflow': 'string',
+            'last_update': 'string',
             'freq': 'string',
             'unit': 'string',
             'mot_nrg': 'string',
@@ -65,7 +65,7 @@ module.exports = (app) => {
         }
     });
     //PUT
-    app.put(API_BASE + "/datosasb/:id", (req, res) => {
+    app.put(API_BASE + "/cars-by-motor/:id", (req, res) => {
         const id = req.params.id;
         const newData = req.body;
 
@@ -88,6 +88,9 @@ module.exports = (app) => {
         datos.splice(0, datos.length);
         res.sendStatus(200, "Deleted all -> Datos ASB");
     });
-
+    // Manejar todos los otros métodos no permitidos
+    app.all(API_BASE + "/cars-by-motor/*", (req, res) => {
+        res.sendStatus(405);
+    });
 
 };  
