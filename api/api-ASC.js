@@ -106,10 +106,10 @@ module.exports = (app) => {
 
     app.delete(API_BASE + "/tourisms-per-age/:age", (req, res) => {
         const edad = req.params.age;
-        const restr = csv.filter(n => n.age === edad);
+        const restr = csv.filter(n => n.age !== edad);
 
-        if (restr.length > 0) {
-            res.send(JSON.stringify(restr));
+        if (restr.length < csv.length) {
+            csv=restr;
             res.sendStatus(200, "OK");
         } else {
             res.sendStatus(404, "NOT FOUND");
