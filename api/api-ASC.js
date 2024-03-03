@@ -104,18 +104,24 @@ module.exports = (app) => {
         res.sendStatus(200, "Deleted all -> Datos ASC");
     });
 
+
     app.delete(API_BASE + "/tourisms-per-age/:age", (req, res) => {
-        const edad = req.params.age;
-        const restr = csv.filter(n => n.age !== edad);
-
-        if (restr.length < csv.length) {
-            csv=restr;
-            res.sendStatus(200, "OK");
+        const ageToDelete = req.params.age;
+    
+        // Filtrar los datos que coincidan con la edad especificada
+        const newData = csv.filter(entry => entry.age !== ageToDelete);
+    
+        // Verificar si se eliminaron datos
+        if (newData.length < csv.length) {
+            // Se eliminaron datos, actualizar csv
+            csv.splice(0, csv.length, ...newData);
+            res.status(200).send("Deleted data with age: " + ageToDelete);
         } else {
-            res.sendStatus(404, "NOT FOUND");
+            // No se encontraron datos con esa edad
+            res.status(404).send("Not Found: No data found with age " + ageToDelete);
         }
-
     });
+    
 
     // Manejar todos los otros métodos no permitidos
     app.all(API_BASE + "/tourisms-per-age/*", (req, res) => {
