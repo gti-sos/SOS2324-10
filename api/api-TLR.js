@@ -4,7 +4,7 @@ const app = express();
 const API_BASE = "/api/v1";
 app.use(bodyParser.json());
 const datos_TLR = require('./../index-TLR');
-const backup_datos_TLR = require('./../index-TLR');
+
 
 // API Tomás
 
