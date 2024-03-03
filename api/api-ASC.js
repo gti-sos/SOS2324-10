@@ -17,7 +17,7 @@ module.exports = (app) => {
     app.get(API_BASE + "/tourisms-per-age/loadInitialData", (req, res) => {
         if (csv.length === 0) {
             for (let i = 0; i < backupData.length; i++) {
-                cav.push(backupData[i]);
+                csv.push(backupData[i]);
             }
             res.sendStatus(201, "CREATED");
         } else {
