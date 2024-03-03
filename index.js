@@ -1,7 +1,7 @@
 const cool = require("cool-ascii-faces");
 const express = require("express");
 const bodyParser = require("body-parser");
-let API_TLR = require("./api/api-TLR");
+//let API_TLR = require("./api/api-TLR");
 let API_MRF = require("./api/api-MRF.js");
 let API_ASC = require("./api/api-ASC");
 let API_ASB = require("./api/api-ASB");
@@ -13,13 +13,13 @@ app.listen(PORT);
 app.use(bodyParser.json());
 
 const API_BASE = "/api/v1";
-const datos_TLR = require('./index-TLR');
+//const datos_TLR = require('./index-TLR');
 const datos_MRF = require("./index-MRF");
 
 //API_TLR(app);
-//API_MRF.mrfv1(app);
+API_MRF.mrfv1(app);
 API_ASC(app);
-//API_ASB(app);
+API_ASB(app);
 
 // Establecemos subdirectorios de la web
 const path = require('path');

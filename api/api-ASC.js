@@ -80,6 +80,9 @@ module.exports = (app) => {
     });
 
     // Manejar todos los otros accesos a rutas inexistentes
+    /**app.use((req, res, next) => {
+        res.status(404).send("Not Found");
+    });*/
     //app.use((req, res, next) => {
     //    res.status(404).send("Not Found");
     //});
