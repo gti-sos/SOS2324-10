@@ -20,9 +20,9 @@ module.exports = (app) => {
         }
     });
 
-    app.get(API_BASE + "datosasc/:geo", (req, res) => {
-        const lugar = req.params.geo;
-        const restr = csv.filter(n => n.geo === lugar);
+    app.get(API_BASE + "/datosasc/:age", (req, res) => {
+        const edad = req.params.age;
+        const restr = csv.filter(n => n.age === edad);
 
         if (restr.length > 0) {
             res.send(JSON.stringify(restr));
@@ -70,22 +70,21 @@ module.exports = (app) => {
 
     // ---------------- PUT ------------------
 
-    app.put(API_BASE + "/datosasc/:id", (req, res) => {
-        const id = req.params.id;
-        const newData = req.body;
+    app.put(API_BASE + "/datosasc/:geo", (req, res) => {
 
-        // Verificar si el dato tiene el mismo id del recurso en la URL
-        if (id !== newData.id) {
-            res.status(400).send("Bad Request: ID mismatch");
+        const pais = req.params.geo;
+        let data = req.body;
+        const filtro = csv.findIndex(dato => dato.geo === pais);
+
+        if (filtro.length === 0) {
+            res.sendStatus(404, "NOT FOUND");
         } else {
-            // Actualizar el recurso si existe, de lo contrario, devolver error 404
-            const index = csv.findIndex(entry => entry.id === id);
-            if (index !== -1) {
-                csv[index] = newData;
-                res.status(200).send("Updated");
-            } else {
-                res.status(404).send("Not Found");
+            for (let i = 0; i < csv.length; i++) {
+                if (csv[i].geo === pais) {
+                    csv[i] = data;
+                }
             }
+            res.sendStatus(200, "OK");
         }
     });
 
@@ -96,10 +95,21 @@ module.exports = (app) => {
         res.sendStatus(200, "Deleted all -> Datos ASC");
     });
 
+    app.delete(API_BASE + "/datosasc/:age", (req, res) => {
+        const edad = req.params.age;
+        const restr = csv.filter(n => n.age === edad);
 
+        if (restr.length > 0) {
+            res.send(JSON.stringify(restr));
+            res.sendStatus(200, "OK");
+        } else {
+            res.sendStatus(404, "NOT FOUND");
+        }
+
+    });
 
     // Manejar todos los otros métodos no permitidos
-    app.all(API_BASE + "/datosasc", (req, res) => {
+    app.all(API_BASE + "/datosasc/*", (req, res) => {
         res.sendStatus(405);
     });
 
