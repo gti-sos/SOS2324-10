@@ -10,17 +10,17 @@ module.exports = (app) => {
 
     // ------------ GET -------------
 
-    app.get(API_BASE + "/datosasc", (req, res) => {
+    app.get(API_BASE + "/tourisms-per-age", (req, res) => {
         res.send(JSON.stringify(csv));
     });
 
-    app.get(API_BASE + "/datosasc/loadInitialData", (req, res) => {
+    app.get(API_BASE + "/tourisms-per-age/loadInitialData", (req, res) => {
         if (csv == null) {
             res.send(JSON.stringify(csv));
         }
     });
 
-    app.get(API_BASE + "/datosasc/:age", (req, res) => {
+    app.get(API_BASE + "/tourisms-per-age/:age", (req, res) => {
         const edad = req.params.age;
         const restr = csv.filter(n => n.age === edad);
 
@@ -34,7 +34,7 @@ module.exports = (app) => {
     });
     // ------------ POST --------------
 
-    app.post(API_BASE + "/datosasc", (req, res) => {
+    app.post(API_BASE + "/tourisms-per-age", (req, res) => {
         let growth = req.body;
     
         // Verificar si el body es un JSON válido y tiene la estructura esperada
@@ -70,7 +70,7 @@ module.exports = (app) => {
 
     // ---------------- PUT ------------------
 
-    app.put(API_BASE + "/datosasc/:geo", (req, res) => {
+    app.put(API_BASE + "tourisms-per-age/:geo", (req, res) => {
 
         const pais = req.params.geo;
         let data = req.body;
@@ -90,12 +90,12 @@ module.exports = (app) => {
 
     // -------------- DEL -----------------
 
-    app.delete(API_BASE + "/datosasc", (req, res) => {
+    app.delete(API_BASE + "/tourisms-per-age", (req, res) => {
         csv.splice(0, csv.length);
         res.sendStatus(200, "Deleted all -> Datos ASC");
     });
 
-    app.delete(API_BASE + "/datosasc/:age", (req, res) => {
+    app.delete(API_BASE + "/tourisms-per-age/:age", (req, res) => {
         const edad = req.params.age;
         const restr = csv.filter(n => n.age === edad);
 
@@ -109,7 +109,7 @@ module.exports = (app) => {
     });
 
     // Manejar todos los otros métodos no permitidos
-    app.all(API_BASE + "/datosasc/*", (req, res) => {
+    app.all(API_BASE + "/tourisms-per-age/*", (req, res) => {
         res.sendStatus(405);
     });
 
