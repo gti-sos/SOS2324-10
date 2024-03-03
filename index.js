@@ -17,9 +17,10 @@ const datos_TLR = require('./index-TLR');
 const datos_MRF = require("./index-MRF");
 
 API_TLR(app);
+API_TLR(app);
 //API_MRF.mrfv1(app);
 API_ASC(app);
-API_ASB(app);
+//API_ASB(app);
 
 // Establecemos subdirectorios de la web
 const path = require('path');
