@@ -328,11 +328,6 @@ function API_MRF(app) {
         }
     });
 
-    // Middleware para manejar errores 404
-    app.use((req, res, next) => {
-        // Si ninguna ruta coincidió con la solicitud, devolver un error 404
-        res.status(404).send("NOT FOUND");
-    });
 }
 
 module.exports.mrfv1 = API_MRF;

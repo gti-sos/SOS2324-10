@@ -3,8 +3,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 let API_TLR = require("./api/api-TLR");
 let API_MRF = require("./api/api-MRF.js");
-let API_ASC = require("./api/api-ASC");
-let API_ASB = require("./api/api-ASB");
+//let API_ASC = require("./api/api-ASC");
+//let API_ASB = require("./api/api-ASB");
 
 const app = express();
 const PORT = process.env.PORT || 8080;
