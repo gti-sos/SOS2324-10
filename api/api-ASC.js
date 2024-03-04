@@ -16,8 +16,8 @@ module.exports = (app) => {
 
     app.get(API_BASE + "/tourisms-per-age/loadInitialData", (req, res) => {
         if (csv.length === 0) {
-            for (let i = 0; i < backupData.length; i++) {
-                csv.push(backupData[i]);
+            for (let i = 0; i < backupDatas.length; i++) {
+                csv.push(backupDatas[i]);
             }
             res.sendStatus(201, "CREATED");
         } else {
@@ -458,5 +458,9 @@ module.exports = (app) => {
     
     ]
 
+    const backupDatas = backupData.map((entry, index) => {
+        return { id: index + 1, ...entry };
+    });
+    
 };
 
