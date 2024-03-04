@@ -5,6 +5,9 @@ let API_TLR = require("./api/api-TLR");
 let API_MRF = require("./api/api-MRF.js");
 let API_ASC = require("./api/api-ASC");
 let API_ASB = require("./api/api-ASB");
+//neDB
+let dataStore = require("nedb");
+let db_TLR = new dataStore();
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -16,7 +19,7 @@ const API_BASE = "/api/v1";
 const datos_TLR = require('./index-TLR');
 const datos_MRF = require("./index-MRF");
 
-API_TLR(app);
+API_TLR(app,db_TLR);
 API_MRF.mrfv1(app);
 API_ASC(app);
 API_ASB(app);
