@@ -16,7 +16,7 @@ module.exports = (app) => {
             }
             res.sendStatus(201, "CREATED");
         } else {
-            res.send(`<html><body><h1>Ya hay datos cargados</h1></body></html>`);
+            res.send({message:"Ya hay datos cargados"});
         }
     });
 
