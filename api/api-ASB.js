@@ -18,7 +18,7 @@ module.exports = (app) => {
             }
             res.sendStatus(201, "CREATED");
         } else {
-            res.send(`<html><body><h1>Ya hay datos cargados</h1></body></html>`);
+            res.sendStatus(405, "YA HAY DATOS CARGADOS");
         }
     });
     app.get(API_BASE + "/cars-by-motor/:geo", (req, res) => {
