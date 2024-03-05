@@ -6,18 +6,21 @@ app.use(bodyParser.json());
 const datos_TLR = require('./../index-TLR');
 
 
-// API Tomás
 
-module.exports = (app, db) => {
+
+// API Tomás
+module.exports = (app, db_TLR) => {
+
+  
   app.get(API_BASE + "/vehicles-stock/loadInitialData", (req, res) => {
     // Comprobar si la base de datos está vacía
-    db.find({}, (err, data) => {
+    db_TLR.find({}, (err, data) => {
       if (err) {
         res.sendStatus(500, "Internal Error");
       }
       if (data.length === 0) {
         // Insertar los datos iniciales solo si la base de datos está vacía
-        db.insert(initial_datos_TLR, (err, newDocs) => {
+        db_TLR.insert(initial_datos_TLR, (err, newDocs) => {
           if (err) {
             res.sendStatus(500, "Internal Error");
           }
@@ -34,7 +37,7 @@ module.exports = (app, db) => {
 
   //GET datos completo
   app.get(API_BASE + "/vehicles-stock/", (req, res) => {
-    db.find({}, (error, datos) => {
+    db_TLR.find({}, (error, datos) => {
       if (error) {
         res.sendStatus(500, "Internal Error")
       } else {
@@ -74,12 +77,6 @@ module.exports = (app, db) => {
 
   //Método POST Persistente sin ID
   app.post(API_BASE + "/vehicles-stock", (req, res) => {
-    const id = req.params.id;
-
-    // Verificar si se proporciona un ID en la ruta
-    if (id) {
-      return res.sendStatus(405, "Bad Request");
-    }
 
     const expectedFields = ["freq", "vehicle", "unit", "geo", "time_period", "obs_value", "flights_passangers", "cars_deaths"];
     const receivedFields = Object.keys(req.body);
@@ -91,14 +88,14 @@ module.exports = (app, db) => {
     }
 
     // Verificar si se recibió un objeto con ID en el cuerpo de la solicitud
-    if ('id' in req.body) {
+    /**if ('id' in req.body) {
       // Verificar si el ID recibido es válido
       const idFromBody = parseInt(req.body.id);
       if (isNaN(idFromBody) || idFromBody < 0) {
         res.sendStatus(400, "Bad Request");
       }
       // Verificar si el ID ya existe en la base de datos
-      db.findOne({ id: idFromBody }, (err, existingVehicle) => {
+      db_TLR.findOne({ id: idFromBody }, (err, existingVehicle) => {
         if (err) {
           res.sendStatus(500, "Internal Error");
         }
@@ -107,27 +104,27 @@ module.exports = (app, db) => {
         }
         // Si el ID es válido y no existe, agregar el vehículo a la base de datos
         req.body.id = idFromBody.toString(); // Convertir el ID a una cadena de texto
-        db.insert(req.body, (err, newVehicle) => {
+        db_TLR.insert(req.body, (err, newVehicle) => {
           if (err) {
             res.sendStatus(500, "Internal Error");
           }
           res.status(201, "OK").send(newVehicle);
         });
       });
-    } else {
+    } else */{
       // Si no se proporciona un ID en el cuerpo de la solicitud, generar uno nuevo
-      db.find({}).sort({ id: -1 }).limit(1).exec((err, lastVehicle) => {
+      db_TLR.find({}).sort({ id: -1 }).limit(1).exec((err, lastVehicle) => {
         if (err) {
-          return res.sendStatus(500, "Internal Error");
+          res.sendStatus(500, "Internal Error");
         }
         const lastId = lastVehicle.length > 0 ? parseInt(lastVehicle[0].id) : 0;
         req.body.id = (lastId + 1).toString(); // Asignar un nuevo ID al vehículo
         // Insertar el nuevo vehículo en la base de datos
-        db.insert(req.body, (err, newVehicle) => {
+        db_TLR.insert(req.body, (err, newVehicle) => {
           if (err) {
-            return res.sendStatus(500, "Internal Error");
+            res.sendStatus(500, "Internal Error");
           }
-          return res.status(201).send(newVehicle);
+          res.status(201).send(newVehicle);
         });
       });
     }
@@ -187,7 +184,7 @@ module.exports = (app, db) => {
     // Si no se añade id en la URL se borrarán todas las entradas
     if (!id) {
       // Eliminar todas las entradas de la base de datos
-      db.remove({}, { multi: true }, (err, numRemoved) => {
+      db_TLR.remove({}, { multi: true }, (err, numRemoved) => {
         if (err) {
           res.sendStatus(500, "Internal Error");
         }
@@ -200,7 +197,7 @@ module.exports = (app, db) => {
       }
 
       // Eliminar el vehículo por ID de la base de datos
-      db.remove({ "id": id }, {}, (err, numRemoved) => {
+      db_TLR.remove({ "id": id }, {}, (err, numRemoved) => {
         if (err) {
           res.sendStatus(500, "Internal Error");
         } else {
