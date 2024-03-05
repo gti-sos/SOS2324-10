@@ -30,33 +30,48 @@ module.exports = (app, db) => {
     });
   });
 
-  app.get(API_BASE + "/vehicles-stock", (req, res) => {
-    const idToFind = req.query.id;
+  //Método GET Persistente
 
-    if (idToFind) { // Si se recibe un id, devolver dicho elemento. Sino devolver todos.
-      // Verificar si el ID es válido
-      if (isNaN(parseInt(idToFind)) || parseInt(idToFind) < 0) {
-        return res.sendStatus(400).send({ message: "Bad Request" });
+  //GET datos completo
+  app.get(API_BASE + "/vehicles-stock/", (req, res) => {
+    db.find({}, (error, datos) => {
+      if (error) {
+        res.sendStatus(500, "Internal Error")
+      } else {
+        res.send(JSON.stringify(datos))
       }
-      const vehicle = datos_TLR.find(vehicle => vehicle.id === parseInt(idToFind));
-
-      // Verificar si el elemento existe
-      if (!vehicle) {
-        return res.sendStatus(404).send({ message: "Not Found" });
-      }
-      return res.status(200).send(vehicle);
-
-    } else { //Si no se intruce id, devolvemos todos los datos
-      //return res.status(200).send(datos_TLR);
-      db.find({}, (error, datos) => {
-        if (error) {
-          res.sendStatus(500, "Internal Error")
-        } else {
-          res.send(JSON.stringify(datos))
-        }
-      });
-    }
+    });
   });
+
+  //Función GET con filtro
+  app.get(API_BASE + "/vehicles-stock/:id/:freq/:vehicle/:unit/:geo/:time_period/:obs_value/:flights_passangers/:cars_deaths", (req, res) => {
+    const { id, freq, vehicle, unit, geo, time_period, obs_value, flights_passangers, cars_deaths } = req.params;
+
+    // Construir el objeto de búsqueda con todos los parámetros proporcionados
+    const query = {
+      id: parseInt(id),
+      freq,
+      vehicle,
+      unit,
+      geo,
+      time_period: parseInt(time_period),
+      obs_value: parseInt(obs_value),
+      flights_passangers: parseInt(flights_passangers),
+      cars_deaths: parseInt(cars_deaths)
+    };
+
+    // Buscar en la base de datos utilizando el objeto de búsqueda
+    db.find(query, (err, vehicles) => {
+      if (err) {
+        return res.sendStatus(500,"Internal Error");
+      }
+      if (!vehicles || vehicles.length === 0) {
+        return res.sendStatus(404,"Not Found");
+      }
+      return res.status(200).send(vehicles);
+    });
+  });
+
 
   /**app.post(API_BASE + "/vehicles-stock", (req, res) => {
     // Verificamos que no exista id en la URL
