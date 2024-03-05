@@ -6,26 +6,47 @@ const csv = require('../index-ASC');
 app.use(bodyParser.json());
 let dataStore = require("nedb")
 
-let db_ASC = dataStore();
+let db_ASC =new dataStore();
 
-module.exports = (app) => {
+module.exports = (app, db_ASC) => {
 
     // ------------ GET -------------
+
 
     app.get(API_BASE + "/tourisms-per-age", (req, res) => {
         res.send(JSON.stringify(csv));
     });
 
-    app.get(API_BASE + "/tourisms-per-age/loadInitialData", (req, res) => {
-        if (csv.length === 0) {
-            for (let i = 0; i < backupData.length; i++) {
-                csv.push(backupData[i]);
-            }
-            res.sendStatus(201, "CREATED");
-        } else {
-            res.sendStatus(405, "YA HAY DATOS CARGADOS");
-        }
-    });
+    // app.get(API_BASE + "/tourisms-per-age/loadInitialData", (req, res) => {
+    //     if (csv.length === 0) {
+    //         for (let i = 0; i < backupDatas.length; i++) {
+    //             csv.push(backupDatas[i]);
+    //         }
+    //         res.sendStatus(201, "CREATED");
+    //     } else {
+    //         res.sendStatus(405, "YA HAY DATOS CARGADOS");
+    //     }
+    // });
+    app.get(API_BASE + "/vehicles-stock/loadInitialData", (req, res) => {
+        // Comprobar si la base de datos está vacía
+        db_ASC.find({}, (err, data) => {
+          if (err) {
+            res.sendStatus(500, "Internal Error");
+          }
+          if (data.length === 0) {
+            // Insertar los datos iniciales solo si la base de datos está vacía
+            db_ASC.insert(backupDatas, (err, newDocs) => {
+              if (err) {
+                res.sendStatus(500, "Internal Error");
+              }
+              res.sendStatus(200, "OK");
+            });
+          } else {
+    
+            res.sendStatus(200, "OK");
+          }
+        });
+      });
 
     app.get(API_BASE + "/tourisms-per-age/:age", (req, res) => {
         const edad = req.params.age;
@@ -459,6 +480,8 @@ module.exports = (app) => {
         }
     
     ]
-
+    const backupDatas = data.map((entry, index) => {
+        return { id: index + 1, ...entry };
+    });
 };
 
