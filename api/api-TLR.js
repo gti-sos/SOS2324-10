@@ -44,88 +44,41 @@ module.exports = (app, db) => {
   });
 
   //Función GET con filtro
-  app.get(API_BASE + "/vehicles-stock/:id/:freq/:vehicle/:unit/:geo/:time_period/:obs_value/:flights_passangers/:cars_deaths", (req, res) => {
-    const { id, freq, vehicle, unit, geo, time_period, obs_value, flights_passangers, cars_deaths } = req.params;
-
-    // Construir el objeto de búsqueda con todos los parámetros proporcionados
-    const query = {
-      id: parseInt(id),
-      freq,
-      vehicle,
-      unit,
-      geo,
-      time_period: parseInt(time_period),
-      obs_value: parseInt(obs_value),
-      flights_passangers: parseInt(flights_passangers),
-      cars_deaths: parseInt(cars_deaths)
-    };
-
-    // Buscar en la base de datos utilizando el objeto de búsqueda
-    db.find(query, (err, vehicles) => {
-      if (err) {
-        return res.sendStatus(500,"Internal Error");
+  app.get(API_BASE + "/vehicles-stock/search", (req, res) => {
+    const queryParams = req.query;
+    const filteredData = datos_TLR.filter(vehicle => {
+      for (const key in queryParams) {
+        if (vehicle[key] !== queryParams[key]) {
+          return false;
+        }
       }
-      if (!vehicles || vehicles.length === 0) {
-        return res.sendStatus(404,"Not Found");
-      }
-      return res.status(200).send(vehicles);
+      return true;
     });
+
+    if (filteredData.length === 0) {
+      return res.status(404, "Not Found");
+    }
+
+    res.status(200).send(filteredData);
   });
 
 
-  /**app.post(API_BASE + "/vehicles-stock", (req, res) => {
-    // Verificamos que no exista id en la URL
-    if (req.query.id) {
-      return res.sendStatus(405);
+
+  //Método POST Persistente con ID
+  app.post(API_BASE + "/vehicles-stock/:id", (req, res) => {
+    const id = req.params.id;
+    if (id) {
+      return res.sendStatus(405, "Bad Request");
     }
+  });
 
-    const expectedFields = ["freq", "vehicle", "unit", "geo", "time_period", "obs_value", "flights_passangers", "cars_deaths"];
-    const receivedFields = Object.keys(req.body);
-    const unexpectedFields = receivedFields.filter(field => !expectedFields.includes(field));
-
-    // Verificar si se recibieron campos adicionales no esperados
-    if (unexpectedFields.length > 0) {
-      return res.sendStatus(400);
-    }
-
-    if ('id' in req.body) {//Verificamos si recibimos id y lo validamos
-      const idFromBody = parseInt(req.body.id);
-      if (!isNaN(idFromBody)) {
-        if (idFromBody < 0) {
-          return res.sendStatus(400);
-        }
-        const existingVehicle = datos_TLR.find(vehicle => vehicle.id === idFromBody);
-        if (existingVehicle) {
-          return res.sendStatus(409);
-        }
-      } else {
-        return res.sendStatus(400);
-      }
-    } else {//Si no recibimos id, añadir uno
-      const lastId = datos_TLR.length > 0 ? parseInt(datos_TLR[datos_TLR.length - 1].id) : 0;
-      req.body.id = (lastId + 1).toString();
-    }
-
-    // Construimos la nueva entrada
-    const newVehicle = {};
-    for (const field of expectedFields) {
-      if (req.body.hasOwnProperty(field)) {
-        newVehicle[field] = req.body[field];
-      } else {
-        return res.sendStatus(400);
-      }
-    }
-    datos_TLR.push(newVehicle);
-    res.status(201).send(newVehicle);
-  });*/
-
-  //Método POST Persistente
+  //Método POST Persistente sin ID
   app.post(API_BASE + "/vehicles-stock", (req, res) => {
     const id = req.params.id;
 
     // Verificar si se proporciona un ID en la ruta
     if (id) {
-      return res.sendStatus(405).send({ message: "No se debe proporcionar un ID en la ruta" });
+      return res.sendStatus(405, "Bad Request");
     }
 
     const expectedFields = ["freq", "vehicle", "unit", "geo", "time_period", "obs_value", "flights_passangers", "cars_deaths"];
@@ -134,7 +87,7 @@ module.exports = (app, db) => {
 
     // Verificar si se recibieron campos adicionales no esperados
     if (unexpectedFields.length > 0) {
-      return res.sendStatus(400).send({ message: "Campos adicionales no esperados en el cuerpo de la solicitud" });
+      res.sendStatus(400, "Bad Request");
     }
 
     // Verificar si se recibió un objeto con ID en el cuerpo de la solicitud
@@ -142,37 +95,37 @@ module.exports = (app, db) => {
       // Verificar si el ID recibido es válido
       const idFromBody = parseInt(req.body.id);
       if (isNaN(idFromBody) || idFromBody < 0) {
-        return res.sendStatus(400).send({ message: "ID no válido en el cuerpo de la solicitud" });
+        res.sendStatus(400, "Bad Request");
       }
       // Verificar si el ID ya existe en la base de datos
       db.findOne({ id: idFromBody }, (err, existingVehicle) => {
         if (err) {
-          return res.sendStatus(500).send({ message: "Error interno del servidor" });
+          res.sendStatus(500, "Internal Error");
         }
         if (existingVehicle) {
-          return res.sendStatus(409).send({ message: "Ya existe un vehículo con el mismo ID" });
+          res.sendStatus(409, "Conflict");
         }
         // Si el ID es válido y no existe, agregar el vehículo a la base de datos
         req.body.id = idFromBody.toString(); // Convertir el ID a una cadena de texto
         db.insert(req.body, (err, newVehicle) => {
           if (err) {
-            return res.sendStatus(500).send({ message: "Error interno del servidor" });
+            res.sendStatus(500, "Internal Error");
           }
-          return res.status(201).send(newVehicle);
+          res.status(201, "OK").send(newVehicle);
         });
       });
     } else {
       // Si no se proporciona un ID en el cuerpo de la solicitud, generar uno nuevo
       db.find({}).sort({ id: -1 }).limit(1).exec((err, lastVehicle) => {
         if (err) {
-          return res.sendStatus(500).send({ message: "Error interno del servidor" });
+          return res.sendStatus(500, "Internal Error");
         }
         const lastId = lastVehicle.length > 0 ? parseInt(lastVehicle[0].id) : 0;
         req.body.id = (lastId + 1).toString(); // Asignar un nuevo ID al vehículo
         // Insertar el nuevo vehículo en la base de datos
         db.insert(req.body, (err, newVehicle) => {
           if (err) {
-            return res.sendStatus(500).send({ message: "Error interno del servidor" });
+            return res.sendStatus(500, "Internal Error");
           }
           return res.status(201).send(newVehicle);
         });
