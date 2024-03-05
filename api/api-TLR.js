@@ -8,162 +8,245 @@ const datos_TLR = require('./../index-TLR');
 
 // API Tomás
 
-module.exports = (app) => {
-    app.get(API_BASE + "/vehicles-stock/loadInitialData", (req, res) => {
-        if (datos_TLR.length === 0) {
-            for (let i = 0; i < backup_datos_TLR.length; i++) {
-                datos_TLR.push(backup_datos_TLR[i]);
-            }
-            res.sendStatus(201, "CREATED");
-        } else{
-          return res.status(200).send(datos_TLR);
-        }
+module.exports = (app, db) => {
+  app.get(API_BASE + "/vehicles-stock/loadInitialData", (req, res) => {
+    // Comprobar si la base de datos está vacía
+    db.find({}, (err, data) => {
+      if (err) {
+        res.sendStatus(500, "Internal Error");
+      }
+      if (data.length === 0) {
+        // Insertar los datos iniciales solo si la base de datos está vacía
+        db.insert(initial_datos_TLR, (err, newDocs) => {
+          if (err) {
+            res.sendStatus(500, "Internal Error");
+          }
+          res.sendStatus(200, "OK");
+        });
+      } else {
+
+        res.sendStatus(200, "OK");
+      }
     });
+  });
 
-    app.get(API_BASE + "/vehicles-stock", (req, res) => {
-        const idToFind = req.query.id;
+  app.get(API_BASE + "/vehicles-stock", (req, res) => {
+    const idToFind = req.query.id;
 
-        if (idToFind) { // Si se recibe un id, devolver dicho elemento. Sino devolver todos.
-            // Verificar si el ID es válido
-            if (isNaN(parseInt(idToFind)) || parseInt(idToFind) < 0) {
-                return res.sendStatus(400).send({ message: "Bad Request" });
-            }
-            const vehicle = datos_TLR.find(vehicle => vehicle.id === parseInt(idToFind));
+    if (idToFind) { // Si se recibe un id, devolver dicho elemento. Sino devolver todos.
+      // Verificar si el ID es válido
+      if (isNaN(parseInt(idToFind)) || parseInt(idToFind) < 0) {
+        return res.sendStatus(400).send({ message: "Bad Request" });
+      }
+      const vehicle = datos_TLR.find(vehicle => vehicle.id === parseInt(idToFind));
 
-            // Verificar si el elemento existe
-            if (!vehicle) {
-                return res.sendStatus(404).send({ message: "Not Found" });
-            }
-            return res.status(200).send(vehicle);
+      // Verificar si el elemento existe
+      if (!vehicle) {
+        return res.sendStatus(404).send({ message: "Not Found" });
+      }
+      return res.status(200).send(vehicle);
 
-        } else { //Si no se intruce id, devolvemos todos los datos
-            return res.status(200).send(datos_TLR);
+    } else { //Si no se intruce id, devolvemos todos los datos
+      //return res.status(200).send(datos_TLR);
+      db.find({}, (error, datos) => {
+        if (error) {
+          res.sendStatus(500, "Internal Error")
+        } else {
+          res.send(JSON.stringify(datos))
         }
-    });
+      });
+    }
+  });
 
-    app.post(API_BASE + "/vehicles-stock", (req, res) => {
-        // Verificamos que no exista id en la URL
-        if (req.query.id) {
-            return res.sendStatus(405);
+  /**app.post(API_BASE + "/vehicles-stock", (req, res) => {
+    // Verificamos que no exista id en la URL
+    if (req.query.id) {
+      return res.sendStatus(405);
+    }
+
+    const expectedFields = ["freq", "vehicle", "unit", "geo", "time_period", "obs_value", "flights_passangers", "cars_deaths"];
+    const receivedFields = Object.keys(req.body);
+    const unexpectedFields = receivedFields.filter(field => !expectedFields.includes(field));
+
+    // Verificar si se recibieron campos adicionales no esperados
+    if (unexpectedFields.length > 0) {
+      return res.sendStatus(400);
+    }
+
+    if ('id' in req.body) {//Verificamos si recibimos id y lo validamos
+      const idFromBody = parseInt(req.body.id);
+      if (!isNaN(idFromBody)) {
+        if (idFromBody < 0) {
+          return res.sendStatus(400);
         }
-
-
-        const expectedFields = ["freq", "vehicle", "unit", "geo", "time_period", "obs_value", "flights_passangers", "cars_deaths"];
-        const receivedFields = Object.keys(req.body);
-        const unexpectedFields = receivedFields.filter(field => !expectedFields.includes(field));
-
-        // Verificar si se recibieron campos adicionales no esperados
-        if (unexpectedFields.length > 0) {
-            return res.sendStatus(400);
+        const existingVehicle = datos_TLR.find(vehicle => vehicle.id === idFromBody);
+        if (existingVehicle) {
+          return res.sendStatus(409);
         }
+      } else {
+        return res.sendStatus(400);
+      }
+    } else {//Si no recibimos id, añadir uno
+      const lastId = datos_TLR.length > 0 ? parseInt(datos_TLR[datos_TLR.length - 1].id) : 0;
+      req.body.id = (lastId + 1).toString();
+    }
 
-        if ('id' in req.body) {//Verificamos si recibimos id y lo validamos
-            const idFromBody = parseInt(req.body.id);
-            if (!isNaN(idFromBody)) {
-                if (idFromBody < 0) {
-                    return res.sendStatus(400);
-                }
-                const existingVehicle = datos_TLR.find(vehicle => vehicle.id === idFromBody);
-                if (existingVehicle) {
-                    return res.sendStatus(409);
-                }
-            } else {
-                return res.sendStatus(400);
-            }
-        } else {//Si no recibimos id, añadir uno
-            const lastId = datos_TLR.length > 0 ? parseInt(datos_TLR[datos_TLR.length - 1].id) : 0;
-            req.body.id = (lastId + 1).toString(); 
+    // Construimos la nueva entrada
+    const newVehicle = {};
+    for (const field of expectedFields) {
+      if (req.body.hasOwnProperty(field)) {
+        newVehicle[field] = req.body[field];
+      } else {
+        return res.sendStatus(400);
+      }
+    }
+    datos_TLR.push(newVehicle);
+    res.status(201).send(newVehicle);
+  });*/
+
+  //Método POST Persistente
+  app.post(API_BASE + "/vehicles-stock", (req, res) => {
+    const id = req.params.id;
+
+    // Verificar si se proporciona un ID en la ruta
+    if (id) {
+      return res.sendStatus(405).send({ message: "No se debe proporcionar un ID en la ruta" });
+    }
+
+    const expectedFields = ["freq", "vehicle", "unit", "geo", "time_period", "obs_value", "flights_passangers", "cars_deaths"];
+    const receivedFields = Object.keys(req.body);
+    const unexpectedFields = receivedFields.filter(field => !expectedFields.includes(field));
+
+    // Verificar si se recibieron campos adicionales no esperados
+    if (unexpectedFields.length > 0) {
+      return res.sendStatus(400).send({ message: "Campos adicionales no esperados en el cuerpo de la solicitud" });
+    }
+
+    // Verificar si se recibió un objeto con ID en el cuerpo de la solicitud
+    if ('id' in req.body) {
+      // Verificar si el ID recibido es válido
+      const idFromBody = parseInt(req.body.id);
+      if (isNaN(idFromBody) || idFromBody < 0) {
+        return res.sendStatus(400).send({ message: "ID no válido en el cuerpo de la solicitud" });
+      }
+      // Verificar si el ID ya existe en la base de datos
+      db.findOne({ id: idFromBody }, (err, existingVehicle) => {
+        if (err) {
+          return res.sendStatus(500).send({ message: "Error interno del servidor" });
         }
-
-        // Construimos la nueva entrada
-        const newVehicle = {};
-        for (const field of expectedFields) {
-            if (req.body.hasOwnProperty(field)) {
-                newVehicle[field] = req.body[field];
-            } else {
-                return res.sendStatus(400);
-            }
+        if (existingVehicle) {
+          return res.sendStatus(409).send({ message: "Ya existe un vehículo con el mismo ID" });
         }
-        datos_TLR.push(newVehicle);
-        res.status(201).send(newVehicle);
-    });
-
-
-
-
-
-    app.put(API_BASE + "/vehicles-stock", (req, res) => {
-        let idURL = req.query.id;
-        let idBody = req.body.id;
-        let updatedVehicle = req.body;
-        //Verificamos que exista el parámtro id en la URL
-        if (!idURL) {
-            return res.sendStatus(405).send({ message: "Introduce un ID" });
+        // Si el ID es válido y no existe, agregar el vehículo a la base de datos
+        req.body.id = idFromBody.toString(); // Convertir el ID a una cadena de texto
+        db.insert(req.body, (err, newVehicle) => {
+          if (err) {
+            return res.sendStatus(500).send({ message: "Error interno del servidor" });
+          }
+          return res.status(201).send(newVehicle);
+        });
+      });
+    } else {
+      // Si no se proporciona un ID en el cuerpo de la solicitud, generar uno nuevo
+      db.find({}).sort({ id: -1 }).limit(1).exec((err, lastVehicle) => {
+        if (err) {
+          return res.sendStatus(500).send({ message: "Error interno del servidor" });
         }
+        const lastId = lastVehicle.length > 0 ? parseInt(lastVehicle[0].id) : 0;
+        req.body.id = (lastId + 1).toString(); // Asignar un nuevo ID al vehículo
+        // Insertar el nuevo vehículo en la base de datos
+        db.insert(req.body, (err, newVehicle) => {
+          if (err) {
+            return res.sendStatus(500).send({ message: "Error interno del servidor" });
+          }
+          return res.status(201).send(newVehicle);
+        });
+      });
+    }
+  });
 
-        // Verificamos si el ID de la URL es válido
-        if (isNaN(parseInt(idURL)) || parseInt(idURL) < 0) {
-            return res.sendStatus(400);
+
+
+
+  //Método PUT
+  app.put(API_BASE + "/vehicles-stock", (req, res) => {
+    let idURL = req.query.id;
+    let idBody = req.body.id;
+    let updatedVehicle = req.body;
+    //Verificamos que exista el parámtro id en la URL
+    if (!idURL) {
+      return res.sendStatus(405).send({ message: "Introduce un ID" });
+    }
+
+    // Verificamos si el ID de la URL es válido
+    if (isNaN(parseInt(idURL)) || parseInt(idURL) < 0) {
+      return res.sendStatus(400);
+    }
+
+    // Verificamos si el ID del body es válido
+    if (isNaN(parseInt(idBody)) || parseInt(idBody) < 0) {
+      return res.sendStatus(400);
+    }
+
+    //Verificamos que coincidan ambos id
+    if (idBody && parseInt(idBody) !== parseInt(idURL)) {
+      return res.sendStatus(400).send({ message: "No modifiques el id pillín" });
+    }
+    const indexToUpdate = datos_TLR.findIndex(vehicle => vehicle.id === parseInt(idURL));
+
+    const expectedFields = ["id", "freq", "vehicle", "unit", "geo", "time_period", "obs_value", "flights_passangers", "cars_deaths"];
+    const receivedFields = Object.keys(req.body);
+    const unexpectedFields = receivedFields.filter(field => !expectedFields.includes(field));
+
+    // Verificar si se recibieron campos adicionales no esperados
+    if (unexpectedFields.length > 0) {
+      // Si se recibieron campos adicionales no esperados, devolver un código de estado 400 (solicitud incorrecta)
+      return res.sendStatus(400);
+    }
+
+    // Verificar si el elemento existe
+    if (indexToUpdate === -1) {
+      return res.sendStatus(404).send({ message: "Elemento no encontrado" });
+    }
+    datos_TLR[indexToUpdate] = updatedVehicle;
+    return res.sendStatus(200).send({ message: "Elemento modificado" });
+
+  });
+
+  //DELETE Persistente
+  app.delete(API_BASE + "/vehicles-stock/:id", (req, res) => {
+    let id = parseInt(req.params.id);
+    // Si no se añade id en la URL se borrarán todas las entradas
+    if (!id) {
+      // Eliminar todas las entradas de la base de datos
+      db.remove({}, { multi: true }, (err, numRemoved) => {
+        if (err) {
+          res.sendStatus(500, "Internal Error");
         }
+        res.sendStatus(200, "OK");
+      });
+    } else {
+      // Verificar si el ID es válido
+      if (isNaN(id) || id < 0) {
+        res.sendStatus(400, "Bad Request");
+      }
 
-        // Verificamos si el ID del body es válido
-        if (isNaN(parseInt(idBody)) || parseInt(idBody) < 0) {
-            return res.sendStatus(400);
+      // Eliminar el vehículo por ID de la base de datos
+      db.remove({ "id": id }, {}, (err, numRemoved) => {
+        if (err) {
+          res.sendStatus(500, "Internal Error");
+        } else {
+          if (numRemoved >= 1) {
+            res.sendStatus(200, "OK");
+          } else {
+            res.sendStatus(404, "Not Found");
+          }
         }
+      });
+    }
+  });
 
-        //Verificamos que coincidan ambos id
-        if (idBody && parseInt(idBody) !== parseInt(idURL)) {
-            return res.sendStatus(400).send({ message: "No modifiques el id pillín" });
-        }
-        const indexToUpdate = datos_TLR.findIndex(vehicle => vehicle.id === parseInt(idURL));
-
-        const expectedFields = ["id", "freq", "vehicle", "unit", "geo", "time_period", "obs_value", "flights_passangers", "cars_deaths"];
-        const receivedFields = Object.keys(req.body);
-        const unexpectedFields = receivedFields.filter(field => !expectedFields.includes(field));
-
-        // Verificar si se recibieron campos adicionales no esperados
-        if (unexpectedFields.length > 0) {
-            // Si se recibieron campos adicionales no esperados, devolver un código de estado 400 (solicitud incorrecta)
-            return res.sendStatus(400);
-        }
-
-        // Verificar si el elemento existe
-        if (indexToUpdate === -1) {
-            return res.sendStatus(404).send({ message: "Elemento no encontrado" });
-        }
-        datos_TLR[indexToUpdate] = updatedVehicle;
-        return res.sendStatus(200).send({ message: "Elemento modificado" });
-
-    });
-
-
-    app.delete(API_BASE + "/vehicles-stock", (req, res) => {
-        // Si no se añade id en la URL se borrarán todas las entradas
-        if (!req.query.id) {
-            datos_TLR.splice(0, datos_TLR.length);
-            return res.status(200).send({ message: "Entradas eliminadas correctamente" });
-        }
-
-        // Si se añade id en la URL se borrará dicha entrada
-        const idToDelete = req.query.id;
-        // Verificar si el ID es válido 
-        if (isNaN(parseInt(idToDelete)) || parseInt(idToDelete) < 0) {
-            return res.sendStatus(400).send({ message: "Inserte un id válido, únicamente valores numéricos" });
-        }
-        const indexToDelete = datos_TLR.findIndex(vehicle => vehicle.id === parseInt(idToDelete));
-
-        //Error si no existe dicho index
-        if (indexToDelete === -1) {
-            return res.sendStatus(404).send({ message: "Elemento no encontrado" });
-        }
-        // Eliminar el elemento 
-        datos_TLR.splice(indexToDelete, 1);
-        res.status(200).send({ message: `Elemento con ID ${idToDelete} eliminado correctamente.` });
-    });
-
-};
-
-let backup_datos_TLR = [
+  let initial_datos_TLR = [
     {
       id: 1,
       freq: 'A',
@@ -439,11 +522,11 @@ let backup_datos_TLR = [
       flights_passangers: 2532,
       cars_deaths: 1397
     }
-  
+
   ]
 
 
 
 
-
+}
 
