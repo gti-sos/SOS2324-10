@@ -4,7 +4,9 @@ const app = express();
 const API_BASE = "/api/v1";
 const csv = require('../index-ASC');
 app.use(bodyParser.json());
+let dataStore = require("nedb")
 
+let db_ASC = dataStore();
 
 module.exports = (app) => {
 
