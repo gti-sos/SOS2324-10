@@ -11,7 +11,7 @@ const datos_TLR = require('./../index-TLR');
 // API Tomás
 module.exports = (app, db_TLR) => {
 
-  
+
   app.get(API_BASE + "/vehicles-stock/loadInitialData", (req, res) => {
     // Comprobar si la base de datos está vacía
     db_TLR.find({}, (err, data) => {
