@@ -15,8 +15,8 @@ module.exports = (app) => {
                 datos_TLR.push(backup_datos_TLR[i]);
             }
             res.sendStatus(201, "CREATED");
-        } else {
-            res.send({message:"Ya hay datos cargados"});
+        } else{
+          return res.status(200).send(datos_TLR);
         }
     });
 
