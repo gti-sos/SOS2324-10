@@ -6,7 +6,6 @@ const csv = require('../index-ASC');
 app.use(bodyParser.json());
 let dataStore = require("nedb")
 
-let db_ASC =new dataStore();
 
 module.exports = (app, db_ASC) => {
 
@@ -14,8 +13,20 @@ module.exports = (app, db_ASC) => {
 
 
     app.get(API_BASE + "/tourisms-per-age", (req, res) => {
-        res.send(JSON.stringify(csv));
+        // Comprobar si la base de datos está vacía
+        db_ASC.find({}, (err, dato) => {
+            if (err) {
+                res.sendStatus(500).send("Internal Error");
+                return;
+            }
+            if (dato.length === 0) {
+                res.sendStatus(404).send("Data not found");
+            } else {
+                res.send(JSON.stringify(csv));
+            }
+        });
     });
+    
 
     // app.get(API_BASE + "/tourisms-per-age/loadInitialData", (req, res) => {
     //     if (csv.length === 0) {
@@ -27,13 +38,13 @@ module.exports = (app, db_ASC) => {
     //         res.sendStatus(405, "YA HAY DATOS CARGADOS");
     //     }
     // });
-    app.get(API_BASE + "/vehicles-stock/loadInitialData", (req, res) => {
+    app.get(API_BASE + "/tourisms-per-age/loadInitialData", (req, res) => {
         // Comprobar si la base de datos está vacía
-        db_ASC.find({}, (err, data) => {
+        db_ASC.find({}, (err, dato) => {
           if (err) {
             res.sendStatus(500, "Internal Error");
           }
-          if (data.length === 0) {
+          if (dato.length === 0) {
             // Insertar los datos iniciales solo si la base de datos está vacía
             db_ASC.insert(backupDatas, (err, newDocs) => {
               if (err) {
@@ -480,7 +491,7 @@ module.exports = (app, db_ASC) => {
         }
     
     ]
-    const backupDatas = data.map((entry, index) => {
+    const backupDatas = backupData.map((entry, index) => {
         return { id: index + 1, ...entry };
     });
 };

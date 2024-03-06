@@ -8,6 +8,7 @@ let API_ASB = require("./api/api-ASB");
 //neDB
 let dataStore = require("nedb");
 let db_TLR = new dataStore();
+let db_ASC = new dataStore();
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -21,7 +22,7 @@ const datos_MRF = require("./index-MRF");
 
 API_TLR(app,db_TLR);
 API_MRF.mrfv1(app);
-//API_ASC(app, db_ASC);
+API_ASC(app, db_ASC);
 API_ASB(app);
 
 // Establecemos subdirectorios de la web
