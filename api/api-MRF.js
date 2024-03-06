@@ -33,7 +33,7 @@ module.exports = (app, db_MRF) => {
             });
 
           } else {
-            console.log(`Campings collection already has ${data.length} documents`);
+            console.log(`db_MRF collection already has ${data.length} documents`);
             res.sendStatus(200, "OK");
           }
         });
@@ -51,12 +51,39 @@ module.exports = (app, db_MRF) => {
         res.sendStatus(405, "METHOD NOT ALLOWED");
     });
 
+    //SOBRE LA RUTA GENERAL
+    app.post(API_BASE + "/", (req, res) => {
+        const newData = req.body;
+        if (!newData.geo || !newData.time_period || !newData.id) {
 
+          return res.sendStatus(400, "JSON IS NOT COMPLETED");
 
+        }
 
+        db_MRF.findOne({ id: newData.id }, (err, doc) => {
+          if (err) {
+        
+            res.sendStatus(500, `Error finding gdp-rate with id ${newData.id}: ${err}`);
+          
+        } else if (doc) {
 
+            res.sendStatus(409, `Gdp-rate with id ${newData.id} already exists.` );
+        } else {
+            db_MRF.insert(newData, (err, newDoc) => {
+              if (err) {
 
+                console.log(`Error inserting gdp-rate with id ${newData.id}: ${err}`);
+                res.sendStatus(500);
+              } else {
+                console.log(`Inserted new gdp-rate with id ${newData.id}`);
+                res.sendStatus(201);
+              }
+            });
+        }
+        });
+    });
 
+     
 
 
 
@@ -145,7 +172,12 @@ module.exports = (app, db_MRF) => {
 
 
 
-    
+
+
+
+
+
+
     let data = [
         {
             dataflow: 'estat:teco0115(1.0)',
