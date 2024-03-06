@@ -59,7 +59,7 @@ module.exports = (app, db_MRF) => {
       
         if (id) {
 
-          datos_MRF.findOne(query, {_id: 0}, (error, result) => {
+          db_MRF.findOne(query, {_id: 0}, (error, result) => {
             if (error) {
               res.sendStatus(500, "Internal Error");
             } else if (!result) {
@@ -71,7 +71,7 @@ module.exports = (app, db_MRF) => {
 
         } else {
 
-          datos_MRF.find(query, {_id: 0})
+          db_MRF.find(query, {_id: 0})
             .skip(parseInt(offset))
             .limit(parseInt(limit))
             .exec((error, results) => {
@@ -159,7 +159,7 @@ module.exports = (app, db_MRF) => {
             return res.sendStatus(400);
         }
 
-        datos_MRF.update({ id: idURLInt }, { $set: updatedGdp }, {}, (err, numReplaced) => {
+        db_MRF.update({ id: idURLInt }, { $set: updatedGdp }, {}, (err, numReplaced) => {
             if (err) {
                 console.error(err);
                 return res.sendStatus(500, 'Internal server error');
@@ -178,7 +178,7 @@ module.exports = (app, db_MRF) => {
 
     //ELIMINAR TODAS LAS VARIABLES
     app.delete(API_BASE + "/", (req, res) => {
-        datos_MRF.remove({}, { multi: true }, (err, numRemoved) => {
+        db_MRF.remove({}, { multi: true }, (err, numRemoved) => {
             if (err) {
                 console.error(err);
                 return res.sendStatus(500, 'Internal server error');
@@ -193,7 +193,7 @@ module.exports = (app, db_MRF) => {
 
         const idGDP = Number(req.params.id);
 
-        datos_MRF.remove({ id: idGDP }, {}, (err, numRemoved) => {
+        db_MRF.remove({ id: idGDP }, {}, (err, numRemoved) => {
             if (err) {
                 console.error(err);
                 return res.status(500).send({ error: 'Internal server error' });
