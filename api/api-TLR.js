@@ -12,6 +12,14 @@ const datos_TLR = require('./../index-TLR');
 module.exports = (app, db_TLR) => {
 
 
+  app.get('/api/v1/vehicles-stock/docs', (req, res) => {
+    const documentationURL = 'https://warped-trinity-19905.postman.co/workspace/SOS2324-10~6041b4cf-1144-4aa6-8878-7c39fb610ff4/collection/19421857-1c44b0e3-ad2a-4b9a-af45-798fd5948246?action=share&creator=19421857&active-environment=19421857-89973f15-31e4-4340-9e61-c116d427406e'; // Reemplaza esto con la URL de tu documentación
+
+    // Redirigir al portal de documentación
+    res.redirect(documentationURL);
+});
+
+
   app.get(API_BASE + "/vehicles-stock/loadInitialData", (req, res) => {
     // Comprobar si la base de datos está vacía
     db_TLR.find({}, (err, data) => {
@@ -37,35 +45,77 @@ module.exports = (app, db_TLR) => {
 
   //GET datos completo
   app.get(API_BASE + "/vehicles-stock/", (req, res) => {
-    db_TLR.find({}, (error, datos) => {
-      if (error) {
-        res.sendStatus(500, "Internal Error")
-      } else {
-        res.send(JSON.stringify(datos))
-      }
-    });
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    db_TLR.find({}, { _id: 0, id: 0 })
+      .sort({ id: 1 }) // Ordenar por ID
+      .skip(skip) // Saltar los documentos anteriores según la página actual
+      .limit(limit) // Limitar el número de documentos devueltos
+      .exec((error, datos) => {
+        if (error) {
+          res.sendStatus(500).send("Internal Error");
+        } else {
+          res.send(datos);
+        }
+      });
   });
+
 
   //Función GET con filtro
   app.get(API_BASE + "/vehicles-stock/search", (req, res) => {
     const queryParams = req.query;
-    const filteredData = datos_TLR.filter(vehicle => {
-      for (const key in queryParams) {
-        if (vehicle[key] !== queryParams[key]) {
-          return false;
+
+    //Parseamos Integers
+    const numericAttributes = ["year", "obs_value", "flights_passangers", "cars_deaths"];
+    numericAttributes.forEach(attr => {
+      if (queryParams[attr]) {
+        queryParams[attr] = parseInt(queryParams[attr]);
+        if (isNaN(queryParams[attr])) {
+          return res.sendStatus(400, "Bad Request");
         }
       }
-      return true;
     });
 
-    if (filteredData.length === 0) {
-      return res.status(404, "Not Found");
+    // Establecer los parámetros de paginación predeterminados
+    const page = parseInt(queryParams.page) || 1; // Página predeterminada: 1
+    const limit = parseInt(queryParams.limit) || 10; // Límite predeterminado: 10
+
+    // Calcular el índice de inicio y el número de elementos a mostrar en la página actual
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    // Construir el filtro para la consulta a la base de datos
+    const filter = { $and: [] };
+    for (const key in queryParams) {
+      // Excluir los parámetros de paginación del filtro
+      if (key !== "page" && key !== "limit") {
+        const condition = {};
+        condition[key] = queryParams[key];
+        filter.$and.push(condition);
+      }
     }
 
-    res.status(200).send(filteredData);
+    // Consultar la base de datos con el filtro construido
+    db_TLR.find(filter, { _id: 0, id: 0 })
+      .exec((err, filteredData) => {
+        if (err) {
+          return res.sendStatus(500, "Internal Error");
+        }
+
+        // Aplicar paginación después de obtener los resultados de la consulta
+        const paginatedData = filteredData.slice(startIndex, endIndex);
+
+        if (paginatedData.length === 0) {
+          return res.sendStatus(404, "Not Found");
+        }
+
+        res.status(200).send(paginatedData);
+      });
   });
 
-
+  //Métodos POST
 
   //Método POST Persistente con ID
   app.post(API_BASE + "/vehicles-stock/:id", (req, res) => {
@@ -78,138 +128,125 @@ module.exports = (app, db_TLR) => {
   //Método POST Persistente sin ID
   app.post(API_BASE + "/vehicles-stock", (req, res) => {
 
-    const expectedFields = ["freq", "vehicle", "unit", "geo", "time_period", "obs_value", "flights_passangers", "cars_deaths"];
+    const expectedFields = ["freq", "vehicle", "unit", "geo", "year", "obs_value", "flights_passangers", "cars_deaths"];
     const receivedFields = Object.keys(req.body);
     const unexpectedFields = receivedFields.filter(field => !expectedFields.includes(field));
 
     // Verificar si se recibieron campos adicionales no esperados
-    if (unexpectedFields.length > 0) {
-      res.sendStatus(400, "Bad Request");
+    if (unexpectedFields.length > 0 || 'id' in req.body) {
+      return res.sendStatus(400, "Bad Request");
     }
 
-    // Verificar si se recibió un objeto con ID en el cuerpo de la solicitud
-    /**if ('id' in req.body) {
-      // Verificar si el ID recibido es válido
-      const idFromBody = parseInt(req.body.id);
-      if (isNaN(idFromBody) || idFromBody < 0) {
-        res.sendStatus(400, "Bad Request");
+    // Obtener el último ID utilizado
+    db_TLR.find({}).sort({ id: -1 }).limit(1).exec((err, lastVehicle) => {
+      if (err) {
+        return res.sendStatus(500, "Internal Error");
       }
-      // Verificar si el ID ya existe en la base de datos
-      db_TLR.findOne({ id: idFromBody }, (err, existingVehicle) => {
+      const lastId = lastVehicle.length > 0 ? parseInt(lastVehicle[0].id) : 0;
+      const newId = lastId + 1;
+
+      // Asignar el nuevo ID al vehículo
+      req.body.id = newId.toString();
+
+      // Insertar el nuevo vehículo en la base de datos
+      db_TLR.insert(req.body, (err, newVehicle) => {
         if (err) {
-          res.sendStatus(500, "Internal Error");
+          return res.sendStatus(500, "Internal Error");
         }
-        if (existingVehicle) {
-          res.sendStatus(409, "Conflict");
-        }
-        // Si el ID es válido y no existe, agregar el vehículo a la base de datos
-        req.body.id = idFromBody.toString(); // Convertir el ID a una cadena de texto
-        db_TLR.insert(req.body, (err, newVehicle) => {
-          if (err) {
-            res.sendStatus(500, "Internal Error");
-          }
-          res.status(201, "OK").send(newVehicle);
-        });
+        return res.sendStatus(201, "OK");
       });
-    } else */{
-      // Si no se proporciona un ID en el cuerpo de la solicitud, generar uno nuevo
-      db_TLR.find({}).sort({ id: -1 }).limit(1).exec((err, lastVehicle) => {
-        if (err) {
-          res.sendStatus(500, "Internal Error");
-        }
-        const lastId = lastVehicle.length > 0 ? parseInt(lastVehicle[0].id) : 0;
-        req.body.id = (lastId + 1).toString(); // Asignar un nuevo ID al vehículo
-        // Insertar el nuevo vehículo en la base de datos
-        db_TLR.insert(req.body, (err, newVehicle) => {
-          if (err) {
-            res.sendStatus(500, "Internal Error");
-          }
-          res.status(201).send(newVehicle);
-        });
-      });
-    }
+    });
   });
-
-
-
 
   //Método PUT
+
+  //PUT Not Allowed
   app.put(API_BASE + "/vehicles-stock", (req, res) => {
-    let idURL = req.query.id;
-    let idBody = req.body.id;
-    let updatedVehicle = req.body;
-    //Verificamos que exista el parámtro id en la URL
-    if (!idURL) {
-      return res.sendStatus(405).send({ message: "Introduce un ID" });
-    }
-
-    // Verificamos si el ID de la URL es válido
-    if (isNaN(parseInt(idURL)) || parseInt(idURL) < 0) {
-      return res.sendStatus(400);
-    }
-
-    // Verificamos si el ID del body es válido
-    if (isNaN(parseInt(idBody)) || parseInt(idBody) < 0) {
-      return res.sendStatus(400);
-    }
-
-    //Verificamos que coincidan ambos id
-    if (idBody && parseInt(idBody) !== parseInt(idURL)) {
-      return res.sendStatus(400).send({ message: "No modifiques el id pillín" });
-    }
-    const indexToUpdate = datos_TLR.findIndex(vehicle => vehicle.id === parseInt(idURL));
-
-    const expectedFields = ["id", "freq", "vehicle", "unit", "geo", "time_period", "obs_value", "flights_passangers", "cars_deaths"];
-    const receivedFields = Object.keys(req.body);
-    const unexpectedFields = receivedFields.filter(field => !expectedFields.includes(field));
-
-    // Verificar si se recibieron campos adicionales no esperados
-    if (unexpectedFields.length > 0) {
-      // Si se recibieron campos adicionales no esperados, devolver un código de estado 400 (solicitud incorrecta)
-      return res.sendStatus(400);
-    }
-
-    // Verificar si el elemento existe
-    if (indexToUpdate === -1) {
-      return res.sendStatus(404).send({ message: "Elemento no encontrado" });
-    }
-    datos_TLR[indexToUpdate] = updatedVehicle;
-    return res.sendStatus(200).send({ message: "Elemento modificado" });
-
+    return res.sendStatus(405, "Method Not Allowed")
   });
 
-  //DELETE Persistente
-  app.delete(API_BASE + "/vehicles-stock/:id", (req, res) => {
-    let id = parseInt(req.params.id);
-    // Si no se añade id en la URL se borrarán todas las entradas
-    if (!id) {
-      // Eliminar todas las entradas de la base de datos
-      db_TLR.remove({}, { multi: true }, (err, numRemoved) => {
-        if (err) {
-          res.sendStatus(500, "Internal Error");
-        }
-        res.sendStatus(200, "OK");
-      });
-    } else {
-      // Verificar si el ID es válido
-      if (isNaN(id) || id < 0) {
-        res.sendStatus(400, "Bad Request");
+  //PUT Normal
+  app.put(API_BASE + "/vehicles-stock/:id", (req, res) => {
+    const idURL = req.params.id;
+    const idBody = req.body.id;
+    const updatedVehicle = req.body;
+
+    // Verificar si el ID de la URL es válido
+    const idURLInt = parseInt(idURL);
+    if (isNaN(idURLInt) || idURLInt < 0) {
+      return res.sendStatus(400);
+    }
+
+    // Verificar si el ID del body es válido
+    const idBodyInt = parseInt(idBody);
+    if (isNaN(idBodyInt) || idBodyInt < 0) {
+      return res.sendStatus(400);
+    }
+
+    // Verificar que coincidan ambos ID
+    if (idBodyInt !== idURLInt) {
+      return res.sendStatus(400);
+    }
+
+    // Buscar el vehículo por su ID y actualizarlo
+    db_TLR.findOne({ id: idURLInt }, (err, existingVehicle) => {
+      if (err) {
+        return res.sendStatus(500);
+      }
+      if (!existingVehicle) {
+        return res.sendStatus(404);
       }
 
-      // Eliminar el vehículo por ID de la base de datos
-      db_TLR.remove({ "id": id }, {}, (err, numRemoved) => {
+      // Actualizar el vehículo en la base de datos
+      db_TLR.update({ id: idURLInt }, updatedVehicle, {}, (err, numReplaced) => {
         if (err) {
-          res.sendStatus(500, "Internal Error");
-        } else {
-          if (numRemoved >= 1) {
-            res.sendStatus(200, "OK");
-          } else {
-            res.sendStatus(404, "Not Found");
-          }
+          return res.sendStatus(500);
         }
+        if (numReplaced === 0) {
+          return res.sendStatus(500);
+        }
+        return res.sendStatus(200);
       });
-    }
+    });
   });
+
+
+  //DELETE Persistente
+
+  // DELETE Completo
+  app.delete(API_BASE + "/vehicles-stock", (req, res) => {
+    // Eliminar todas las entradas de la base de datos
+    db_TLR.remove({}, { multi: true }, (err, numRemoved) => {
+      if (err) {
+        res.sendStatus(500);
+      }
+      res.sendStatus(200);
+    });
+  });
+
+  // DELETE por ID
+  app.delete(API_BASE + "/vehicles-stock/:id", (req, res) => {
+    const id = parseInt(req.params.id);
+
+    // Verificar si el ID es válido
+    if (isNaN(id) || id < 0) {
+      return res.sendStatus(400);
+    }
+
+    // Eliminar el vehículo por ID de la base de datos
+    db_TLR.remove({ "id": id }, {}, (err, numRemoved) => {
+      if (err) {
+        return res.sendStatus(500);
+      } else {
+        if (numRemoved >= 1) {
+          return res.sendStatus(200);
+        } else {
+          return res.sendStatus(404);
+        }
+      }
+    });
+  });
+
 
   let initial_datos_TLR = [
     {
@@ -218,7 +255,7 @@ module.exports = (app, db_TLR) => {
       vehicle: 'BUS_TOT',
       unit: 'NR',
       geo: 'Albania',
-      time_period: 2017,
+      year: 2017,
       obs_value: 6583,
       flights_passangers: 18336,
       cars_deaths: 1079
@@ -229,7 +266,7 @@ module.exports = (app, db_TLR) => {
       vehicle: 'BUS_TOT',
       unit: 'NR',
       geo: 'Albania',
-      time_period: 2021,
+      year: 2021,
       obs_value: 7867,
       flights_passangers: 26258,
       cars_deaths: 976
@@ -240,7 +277,7 @@ module.exports = (app, db_TLR) => {
       vehicle: 'BUS_TOT',
       unit: 'NR',
       geo: 'Austria',
-      time_period: 1990,
+      year: 1990,
       obs_value: 9400,
       flights_passangers: 25762,
       cars_deaths: 958
@@ -251,7 +288,7 @@ module.exports = (app, db_TLR) => {
       vehicle: 'BUS_TOT',
       unit: 'NR',
       geo: 'Austria',
-      time_period: 1991,
+      year: 1991,
       obs_value: 9400,
       flights_passangers: 23582,
       cars_deaths: 956
@@ -262,7 +299,7 @@ module.exports = (app, db_TLR) => {
       vehicle: 'BUS_TOT',
       unit: 'NR',
       geo: 'Austria',
-      time_period: 1992,
+      year: 1992,
       obs_value: 9900,
       flights_passangers: 24887,
       cars_deaths: 931
@@ -273,7 +310,7 @@ module.exports = (app, db_TLR) => {
       vehicle: 'BUS_TOT',
       unit: 'NR',
       geo: 'España',
-      time_period: 2003,
+      year: 2003,
       obs_value: 56000,
       flights_passangers: 24580,
       cars_deaths: 878
@@ -284,7 +321,7 @@ module.exports = (app, db_TLR) => {
       vehicle: 'BUS_TOT',
       unit: 'NR',
       geo: 'España',
-      time_period: 2004,
+      year: 2004,
       obs_value: 57000,
       flights_passangers: 23372,
       cars_deaths: 768
@@ -295,7 +332,7 @@ module.exports = (app, db_TLR) => {
       vehicle: 'BUS_TOT',
       unit: 'NR',
       geo: 'España',
-      time_period: 2005,
+      year: 2005,
       obs_value: 58200,
       flights_passangers: 24235,
       cars_deaths: 730
@@ -306,7 +343,7 @@ module.exports = (app, db_TLR) => {
       vehicle: 'BUS_TOT',
       unit: 'NR',
       geo: 'España',
-      time_period: 2006,
+      year: 2006,
       obs_value: 60400,
       flights_passangers: 26353,
       cars_deaths: 691
@@ -317,7 +354,7 @@ module.exports = (app, db_TLR) => {
       vehicle: 'BUS_TOT',
       unit: 'NR',
       geo: 'España',
-      time_period: 2007,
+      year: 2007,
       obs_value: 61000,
       flights_passangers: 22210,
       cars_deaths: 679
@@ -328,7 +365,7 @@ module.exports = (app, db_TLR) => {
       vehicle: 'BUS_TOT',
       unit: 'NR',
       geo: 'Bélgica',
-      time_period: 2008,
+      year: 2008,
       obs_value: 16000,
       flights_passangers: 19744,
       cars_deaths: 633
@@ -339,7 +376,7 @@ module.exports = (app, db_TLR) => {
       vehicle: 'BUS_TOT',
       unit: 'NR',
       geo: 'Bélgica',
-      time_period: 2009,
+      year: 2009,
       obs_value: 16100,
       flights_passangers: 17677,
       cars_deaths: 552
@@ -350,7 +387,7 @@ module.exports = (app, db_TLR) => {
       vehicle: 'BUS_TOT',
       unit: 'NR',
       geo: 'Bélgica',
-      time_period: 2010,
+      year: 2010,
       obs_value: 16200,
       flights_passangers: 17055,
       cars_deaths: 523
@@ -361,7 +398,7 @@ module.exports = (app, db_TLR) => {
       vehicle: 'BUS_TOT',
       unit: 'NR',
       geo: 'Bélgica',
-      time_period: 2011,
+      year: 2011,
       obs_value: 16100,
       flights_passangers: 14031,
       cars_deaths: 531
@@ -372,7 +409,7 @@ module.exports = (app, db_TLR) => {
       vehicle: 'BUS_TOT',
       unit: 'NR',
       geo: 'Bélgica',
-      time_period: 2012,
+      year: 2012,
       obs_value: 16000,
       flights_passangers: 13733,
       cars_deaths: 455
@@ -383,7 +420,7 @@ module.exports = (app, db_TLR) => {
       vehicle: 'BUS_TOT',
       unit: 'NR',
       geo: 'Bélgica',
-      time_period: 2013,
+      year: 2013,
       obs_value: 15800,
       flights_passangers: 13115,
       cars_deaths: 430
@@ -394,7 +431,7 @@ module.exports = (app, db_TLR) => {
       vehicle: 'BUS_TOT',
       unit: 'NR',
       geo: 'Bulgaria',
-      time_period: 2012,
+      year: 2012,
       obs_value: 23000,
       flights_passangers: 12675,
       cars_deaths: 479
@@ -405,7 +442,7 @@ module.exports = (app, db_TLR) => {
       vehicle: 'BUS_TOT',
       unit: 'NR',
       geo: 'Bulgaria',
-      time_period: 2013,
+      year: 2013,
       obs_value: 23300,
       flights_passangers: 11562,
       cars_deaths: 432
@@ -416,7 +453,7 @@ module.exports = (app, db_TLR) => {
       vehicle: 'BUS_TOT',
       unit: 'NR',
       geo: 'Bulgaria',
-      time_period: 2014,
+      year: 2014,
       obs_value: 23603,
       flights_passangers: 10777,
       cars_deaths: 414
@@ -427,7 +464,7 @@ module.exports = (app, db_TLR) => {
       vehicle: 'BUS_TOT',
       unit: 'NR',
       geo: 'Bulgaria',
-      time_period: 2015,
+      year: 2015,
       obs_value: 24010,
       flights_passangers: 10119,
       cars_deaths: 409
@@ -438,7 +475,7 @@ module.exports = (app, db_TLR) => {
       vehicle: 'BUS_TOT',
       unit: 'NR',
       geo: 'Bulgaria',
-      time_period: 2016,
+      year: 2016,
       obs_value: 23359,
       flights_passangers: 8537,
       cars_deaths: 416
@@ -449,7 +486,7 @@ module.exports = (app, db_TLR) => {
       vehicle: 'BUS_TOT',
       unit: 'NR',
       geo: 'Bulgaria',
-      time_period: 2017,
+      year: 2017,
       obs_value: 21020,
       flights_passangers: 7837,
       cars_deaths: 344
@@ -460,7 +497,7 @@ module.exports = (app, db_TLR) => {
       vehicle: 'BUS_TOT',
       unit: 'NR',
       geo: 'Bulgaria',
-      time_period: 2018,
+      year: 2018,
       obs_value: 20818,
       flights_passangers: 9246,
       cars_deaths: 362
@@ -471,7 +508,7 @@ module.exports = (app, db_TLR) => {
       vehicle: 'BUS_TOT',
       unit: 'NR',
       geo: 'Bulgaria',
-      time_period: 2019,
+      year: 2019,
       obs_value: 20687,
       flights_passangers: 9026,
       cars_deaths: 370
@@ -482,7 +519,7 @@ module.exports = (app, db_TLR) => {
       vehicle: 'TRC',
       unit: 'NR',
       geo: 'Bélgica',
-      time_period: 2014,
+      year: 2014,
       obs_value: 44693,
       flights_passangers: 2532,
       cars_deaths: 1397
