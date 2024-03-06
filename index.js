@@ -26,13 +26,13 @@ API_ASB(app);
 
 // Establecemos subdirectorios de la web
 const path = require('path');
-/**app.get('/', (req, res) => {
+app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.use("/", express.static("./public"));
 
-app.get("/cool", (req, res) => {
+/**app.get("/cool", (req, res) => {
     res.send(`<html><body><h1>${cool()}</h1></body></html>`)
 });
 */
