@@ -1,10 +1,9 @@
 const API_BASE = "/api/v1/gdp-growth-rates"
-
 const express = require("express");
 const app = express();
-
 const bodyParser = require("body-parser");
 //const datos_MRF = require("../index-MRF");
+
 app.use(bodyParser.json());
 
 var datos = [];

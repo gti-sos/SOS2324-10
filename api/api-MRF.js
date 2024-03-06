@@ -18,30 +18,73 @@ module.exports = (app, db_MRF) => {
     app.get(API_BASE + "/loadInitialData", (req, res) => {
         // Comprobar si la base de datos está vacía
         db_MRF.find({}, (err, data) => {
-          if (err) {
-            console.log(`Error getting /gdp-growth-rates: ${err}`);
-            res.sendStatus(500, "Internal Error");
-          } else if (data.length === 0) {
-            db_MRF.insert(datos_MRF, (err, newDocs) => {
-              if (err) {
-                console.log(`Error inserting initial data into gdp-growth-rates: ${err}`);
+            if (err) {
+                console.log(`Error getting /gdp-growth-rates: ${err}`);
                 res.sendStatus(500, "Internal Error");
-              } else {
-                console.log(`Inserted ${newDocs.length} initial gdp-growth-rates`);
-                res.sendStatus(200, "OK");
-              }
-            });
+            } else if (data.length === 0) {
+                db_MRF.insert(datos_MRF, (err, newDocs) => {
+                    if (err) {
+                        console.log(`Error inserting initial data into gdp-growth-rates: ${err}`);
+                        res.sendStatus(500, "Internal Error");
+                    } else {
+                        console.log(`Inserted ${newDocs.length} initial gdp-growth-rates`);
+                        res.sendStatus(200, "OK");
+                    }
+                });
 
-          } else {
-            console.log(`db_MRF collection already has ${data.length} documents`);
-            res.sendStatus(200, "OK");
-          }
+            } else {
+                console.log(`db_MRF collection already has ${data.length} documents`);
+                res.sendStatus(200, "OK");
+            }
         });
     });
 
 
     // -------------------------------------- GET -----------------------------
 
+    app.get(API_BASE + "/", (req, res) => {
+        const { id, frequency, unit, na_item, geo, time_period, obs_value, 
+            growth_rate_2030, growth_rate_2040, limit = 10, offset = 0, from, to } = req.query;
+        
+        const query = {};
+        if (id) query.id = parseInt(id);
+        if (frequency) query.frequency = frequency;
+        if (unit) query.unit = unit;
+        if (na_item) query.na_item = na_item;
+        if (geo) query.geo = geo;
+        if (time_period) query.time_period = parseInt(time_period);
+        if (obs_value) query.obs_value = parseInt(obs_value);
+        if (growth_rate_2030) query.growth_rate_2030 = parseInt(growth_rate_2030);
+        if (growth_rate_2040) query.growth_rate_2040 = parseInt(growth_rate_2040);
+      
+        if (id) {
+
+          datos_MRF.findOne(query, {_id: 0}, (error, result) => {
+            if (error) {
+              res.sendStatus(500, "Internal Error");
+            } else if (!result) {
+              res.sendStatus(404, "Gdp-rate not found." );
+            } else {
+              res.sendStatus(200).json(result);
+            }
+          });
+
+        } else {
+
+          datos_MRF.find(query, {_id: 0})
+            .skip(parseInt(offset))
+            .limit(parseInt(limit))
+            .exec((error, results) => {
+              if (error) {
+                res.sendStatus(500, "Internal Error");
+              } else if (results.length === 0) {
+                res.sendStatus(404, "Gdp-rate not found." );
+              } else {
+                res.status(200).json(results);
+              }
+            });
+        }
+      });
 
 
     // -------------------------------------- POST -----------------------------
@@ -56,51 +99,112 @@ module.exports = (app, db_MRF) => {
         const newData = req.body;
         if (!newData.geo || !newData.time_period || !newData.id) {
 
-          return res.sendStatus(400, "JSON IS NOT COMPLETED");
+            return res.sendStatus(400, "JSON IS NOT COMPLETED");
 
         }
 
         db_MRF.findOne({ id: newData.id }, (err, doc) => {
-          if (err) {
-        
-            res.sendStatus(500, `Error finding gdp-rate with id ${newData.id}: ${err}`);
-          
-        } else if (doc) {
+            if (err) {
 
-            res.sendStatus(409, `Gdp-rate with id ${newData.id} already exists.` );
-        } else {
-            db_MRF.insert(newData, (err, newDoc) => {
-              if (err) {
+                res.sendStatus(500, `Error finding gdp-rate with id ${newData.id}: ${err}`);
 
-                console.log(`Error inserting gdp-rate with id ${newData.id}: ${err}`);
-                res.sendStatus(500);
-              } else {
-                console.log(`Inserted new gdp-rate with id ${newData.id}`);
-                res.sendStatus(201);
-              }
-            });
-        }
+            } else if (doc) {
+
+                res.sendStatus(409, `Gdp-rate with id ${newData.id} already exists.`);
+            } else {
+                db_MRF.insert(newData, (err, newDoc) => {
+                    if (err) {
+
+                        console.log(`Error inserting gdp-rate with id ${newData.id}: ${err}`);
+                        res.sendStatus(500);
+                    } else {
+                        console.log(`Inserted new gdp-rate with id ${newData.id}`);
+                        res.sendStatus(201);
+                    }
+                });
+            }
         });
     });
 
-     
 
+    // -------------------------------------- PUT -----------------------------
 
+    // NO SE PUEDE HACER UN PUT SOBRE TODOS LOS RECURSOS    
+    app.put(API_BASE + "/", (req, res) => {
+        res.sendStatus(405, "METHOD NOT ALLOWED");
+    });
 
 
+    //ACTUALIZAR RECURSOS CONCRETOS  
+    app.put(API_BASE + "/:id", (req, res) => {
 
+        const idURL = req.params.id;
+        const idBody = req.body.id;
+        const updatedGdp = req.body;
 
+        // Verificar si el ID de la URL es válido
+        const idURLInt = parseInt(idURL);
+        if (isNaN(idURLInt) || idURLInt < 0) {
+            return res.sendStatus(400);
+        }
 
+        // Verificar si el ID del body es válido
+        const idBodyInt = parseInt(idBody);
+        if (isNaN(idBodyInt) || idBodyInt < 0) {
+            return res.sendStatus(400);
+        }
 
+        // Verificar que coincidan ambos ID
+        if (idBodyInt !== idURLInt) {
+            return res.sendStatus(400);
+        }
 
+        datos_MRF.update({ id: idURLInt }, { $set: updatedGdp }, {}, (err, numReplaced) => {
+            if (err) {
+                console.error(err);
+                return res.sendStatus(500, 'Internal server error');
+            }
+            if (numReplaced === 0) {
+                return res.sendStatus(400, 'Bad request: gdp-rate ID not found');
+            }
+            return res.sendStatus(200, 'Gdp-rate updated successfully');
+        });
 
+    });
 
+    
+    // -------------------------------------- DELETE -----------------------------
 
 
+    //ELIMINAR TODAS LAS VARIABLES
+    app.delete(API_BASE + "/", (req, res) => {
+        datos_MRF.remove({}, { multi: true }, (err, numRemoved) => {
+            if (err) {
+                console.error(err);
+                return res.sendStatus(500, 'Internal server error');
+            }
+            return res.sendStatus(200, `Deleted ${numRemoved} gdp-rates`);
+        });
+    });
 
 
+    //ELIMINAR RECURSO CONCRETO 
+    app.delete(API_BASE + "/:id", (req, res) => {
 
+        const idGDP = Number(req.params.id);
 
+        datos_MRF.remove({ id: idGDP }, {}, (err, numRemoved) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).send({ error: 'Internal server error' });
+            }
+            if (numRemoved === 0) {
+                return res.status(400).send({ error: 'Bad request: gdp-growth-rate ID not found' });
+            }
+            return res.status(200).send({ message: 'Gdp-growth-rate deleted successfully' });
+        });
+      
+    });
 
 
 
@@ -111,71 +215,7 @@ module.exports = (app, db_MRF) => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    // ------------------------- INITIAL DATA -----------------------------
 
 
     let data = [
