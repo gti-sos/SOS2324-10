@@ -26,7 +26,7 @@ API_ASB(app);
 
 // Establecemos subdirectorios de la web
 const path = require('path');
-app.get('/', (req, res) => {
+/**app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
@@ -35,13 +35,13 @@ app.use("/", express.static("./public"));
 app.get("/cool", (req, res) => {
     res.send(`<html><body><h1>${cool()}</h1></body></html>`)
 });
-
+*/
 console.log(`Server listening on port ${PORT}`);
 
 
 //Función index-TLR.js
 
-function calcularMediasMuertesPorPais(datos_TLR) {
+/**function calcularMediasMuertesPorPais(datos_TLR) {
     const muertesPorPais = {};
     datos_TLR.forEach((dato) => {
         const pais = dato.geo;
@@ -67,7 +67,7 @@ app.get("/samples/TLR", (req, res) => {
     const mediaMuertesPorPais = calcularMediasMuertesPorPais(datos_TLR);
     const mediaMuertesJSON = JSON.stringify(mediaMuertesPorPais);
     res.send(`<html> <body> ${mediaMuertesJSON} </body> </html>`)
-});
+});*/
 
 //Función index-ASC.js
 const csv = require('./index-ASC');
