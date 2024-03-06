@@ -2,13 +2,14 @@ const cool = require("cool-ascii-faces");
 const express = require("express");
 const bodyParser = require("body-parser");
 let API_TLR = require("./api/api-TLR");
-let API_MRF = require("./api/api-MRF.js");
+let API_MRF = require("./api/api-MRF");
 let API_ASC = require("./api/api-ASC");
 let API_ASB = require("./api/api-ASB");
 //neDB
 let dataStore = require("nedb");
 let db_TLR = new dataStore();
 let db_ASC = new dataStore();
+let db_MRF = new dataStore();
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -21,7 +22,7 @@ const datos_TLR = require('./index-TLR');
 const datos_MRF = require("./index-MRF");
 
 API_TLR(app,db_TLR);
-API_MRF.mrfv1(app);
+API_MRF(app, db_MRF);
 API_ASC(app, db_ASC);
 API_ASB(app);
 
