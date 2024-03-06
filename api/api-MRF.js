@@ -9,34 +9,143 @@ app.use(bodyParser.json());
 module.exports = (app, db_MRF) => {
 
     //REDIRECCIÓN A DOCUMENTACIÓN API
-
     app.get(API_BASE + "/docs", (req, res) => {
         res.redirect("https://documenter.getpostman.com/view/32965505/2sA2xe5uSg");
     });
 
+
+    //CARGA INICIAL DE DATOS
     app.get(API_BASE + "/loadInitialData", (req, res) => {
         // Comprobar si la base de datos está vacía
         db_MRF.find({}, (err, data) => {
           if (err) {
+            console.log(`Error getting /gdp-growth-rates: ${err}`);
             res.sendStatus(500, "Internal Error");
-          }
-          if (data.length === 0) {
+          } else if (data.length === 0) {
             db_MRF.insert(datos_MRF, (err, newDocs) => {
               if (err) {
+                console.log(`Error inserting initial data into gdp-growth-rates: ${err}`);
                 res.sendStatus(500, "Internal Error");
+              } else {
+                console.log(`Inserted ${newDocs.length} initial gdp-growth-rates`);
+                res.sendStatus(200, "OK");
               }
-              res.sendStatus(200, "OK");
             });
 
           } else {
-    
+            console.log(`Campings collection already has ${data.length} documents`);
             res.sendStatus(200, "OK");
           }
         });
-      });
+    });
+
+
+    // -------------------------------------- GET -----------------------------
 
 
 
+    // -------------------------------------- POST -----------------------------
+
+    //NO SE PUEDE HACER POST DE UN RECURSO CONCRETO 
+    app.post(API_BASE + "/*", (req, res) => {
+        res.sendStatus(405, "METHOD NOT ALLOWED");
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     let data = [
         {
             dataflow: 'estat:teco0115(1.0)',
