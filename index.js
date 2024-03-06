@@ -72,40 +72,40 @@ app.get("/samples/TLR", (req, res) => {
 
 //Función index-ASC.js
 const csv = require('./index-ASC');
-function calcularMediaObsValuePorPais(csv) {
-    let mediasPais = {};
-    csv.forEach((n) => {
-        let pais = n.get('geo');
-        let obsValue = parseInt(n.get('obs_value'));
-        if (!mediasPais[pais]) {
-            mediasPais[pais] = {
-                totalObsValue: 0,
-                cont: 0
-            };
-        }
-        mediasPais[pais].totalObsValue += obsValue;
-        mediasPais[pais].cont++;
-    });
-    for (let pais in mediasPais) {
-        let media = mediasPais[pais].totalObsValue / mediasPais[pais].cont;
-        mediasPais[pais].media = media;
-        mediasPais[pais].mensaje = "La media de coches vendidos en " + pais + " es: " + media.toFixed(1) + " coches";
-    }
-    return mediasPais;
-}
+// function calcularMediaObsValuePorPais(csv) {
+//     let mediasPais = {};
+//     csv.forEach((n) => {
+//         let pais = n.get('geo');
+//         let obsValue = parseInt(n.get('obs_value'));
+//         if (!mediasPais[pais]) {
+//             mediasPais[pais] = {
+//                 totalObsValue: 0,
+//                 cont: 0
+//             };
+//         }
+//         mediasPais[pais].totalObsValue += obsValue;
+//         mediasPais[pais].cont++;
+//     });
+//     for (let pais in mediasPais) {
+//         let media = mediasPais[pais].totalObsValue / mediasPais[pais].cont;
+//         mediasPais[pais].media = media;
+//         mediasPais[pais].mensaje = "La media de coches vendidos en " + pais + " es: " + media.toFixed(1) + " coches";
+//     }
+//     return mediasPais;
+// }
 
-app.get("/samples/ASC", (req, res) => {
-    let mediasObsValuePorPais = calcularMediaObsValuePorPais(csv);
-    let htmlResponse = "<html><body><ul>";
+// app.get("/samples/ASC", (req, res) => {
+//     let mediasObsValuePorPais = calcularMediaObsValuePorPais(csv);
+//     let htmlResponse = "<html><body><ul>";
 
-    for (let pais in mediasObsValuePorPais) {
-        htmlResponse += `<li>${mediasObsValuePorPais[pais].mensaje}</li>`;
-    }
+//     for (let pais in mediasObsValuePorPais) {
+//         htmlResponse += `<li>${mediasObsValuePorPais[pais].mensaje}</li>`;
+//     }
 
-    htmlResponse += "</ul></body></html>";
+//     htmlResponse += "</ul></body></html>";
 
-    res.send(htmlResponse);
-})
+//     res.send(htmlResponse);
+// })
 //Funcion ASB
 const datos = require('./index-ASB');
 function calcularPorcentajeMuertosPorKilometro(datos) {
