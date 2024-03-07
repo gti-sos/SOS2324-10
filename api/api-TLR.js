@@ -134,35 +134,36 @@ module.exports = (app, db_TLR) => {
 
     // Verificar si se recibieron campos adicionales no esperados
     if (unexpectedFields.length > 0 || 'id' in req.body) {
-      return res.sendStatus(400, "Bad Request");
+      return res.sendStatus(400);
     }
 
     //Verificamos que no exista dicha entrada
     db_TLR.findOne({ year: req.body.year, geo: req.body.geo }, (err, existingVehicle) => {
       if (err) {
-        res.sendStatus(500);
+        return res.sendStatus(500);
       }
       if (existingVehicle) {
-        res.sendStatus(409);
+        return res.sendStatus(409);
       }
-    });
 
-    // Si no se proporciona un ID en el cuerpo de la solicitud, generar uno nuevo
-    db_TLR.find({}).sort({ id: -1 }).limit(1).exec((err, lastVehicle) => {
-      if (err) {
-        res.sendStatus(500);
-      }
-      const lastId = lastVehicle.length > 0 ? parseInt(lastVehicle[0].id) : 0;
-      req.body.id = (lastId + 1).toString(); // Asignar un nuevo ID al vehículo
-      // Insertar el nuevo vehículo en la base de datos
-      db_TLR.insert(req.body, (err, newVehicle) => {
+      // Si no existe un vehículo con el mismo year y geo, continuar con la inserción del nuevo vehículo
+      db_TLR.find({}).sort({ id: -1 }).limit(1).exec((err, lastVehicle) => {
         if (err) {
-          res.sendStatus(500);
+          return res.sendStatus(500);
         }
-        res.sendStatus(201);
+        const lastId = lastVehicle.length > 0 ? parseInt(lastVehicle[0].id) : 0;
+        req.body.id = (lastId + 1).toString(); // Asignar un nuevo ID al vehículo
+        // Insertar el nuevo vehículo en la base de datos
+        db_TLR.insert(req.body, (err, newVehicle) => {
+          if (err) {
+            return res.sendStatus(500);
+          }
+          res.sendStatus(201);
+        });
       });
     });
-  });
+});
+
 
   //Método PUT
 
