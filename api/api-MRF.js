@@ -97,8 +97,9 @@ module.exports = (app, db_MRF) => {
     //SOBRE LA RUTA GENERAL
     app.post(API_BASE + "/", (req, res) => {
         const newData = req.body;
-        if (!newData.geo || !newData.time_period || !newData.id) {
-            return res.sendStatus(400);
+        if (!newData.geo || !newData.time_period || !newData.id || newData.frequency || newData.unit 
+            || newData.na_item || newData.obs_value || newData.growth_rate_2030 || newData.growth_rate_2040) {
+              return res.sendStatus(400);
         }
 
         db_MRF.findOne({ id: newData.id }, (err, doc) => {
