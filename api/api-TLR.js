@@ -17,7 +17,7 @@ module.exports = (app, db_TLR) => {
 
     // Redirigir al portal de documentación
     res.redirect(documentationURL);
-});
+  });
 
 
   app.get(API_BASE + "/vehicles-stock/loadInitialData", (req, res) => {
@@ -137,43 +137,31 @@ module.exports = (app, db_TLR) => {
       return res.sendStatus(400, "Bad Request");
     }
 
-    // Verificar si se recibió un objeto con ID en el cuerpo de la solicitud
-    if ('id' in req.body) {
-      // Verificar si el ID recibido es válido
-      const idFromBody = parseInt(req.body.id);
-      if (isNaN(idFromBody) || idFromBody < 0) {
-        res.sendStatus(400, "Bad Request");
+    //Verificamos que no exista dicha entrada
+    db_TLR.findOne({ year: req.body.year, geo: req.body.geo }, (err, existingVehicle) => {
+      if (err) {
+        res.sendStatus(500);
+      }
+      if (existingVehicle) {
+        res.sendStatus(409);
+      }
+    });
+
+    // Si no se proporciona un ID en el cuerpo de la solicitud, generar uno nuevo
+    db_TLR.find({}).sort({ id: -1 }).limit(1).exec((err, lastVehicle) => {
+      if (err) {
+        res.sendStatus(500);
       }
       const lastId = lastVehicle.length > 0 ? parseInt(lastVehicle[0].id) : 0;
-      const newId = lastId + 1;
-
-      // Asignar el nuevo ID al vehículo
-      req.body.id = newId.toString();
-
+      req.body.id = (lastId + 1).toString(); // Asignar un nuevo ID al vehículo
       // Insertar el nuevo vehículo en la base de datos
       db_TLR.insert(req.body, (err, newVehicle) => {
         if (err) {
-          return res.sendStatus(500, "Internal Error");
+          res.sendStatus(500);
         }
-        return res.sendStatus(201, "OK");
+        res.sendStatus(201);
       });
-    } else {
-      // Si no se proporciona un ID en el cuerpo de la solicitud, generar uno nuevo
-      db_TLR.find({}).sort({ id: -1 }).limit(1).exec((err, lastVehicle) => {
-        if (err) {
-          res.sendStatus(500, "Internal Error");
-        }
-        const lastId = lastVehicle.length > 0 ? parseInt(lastVehicle[0].id) : 0;
-        req.body.id = (lastId + 1).toString(); // Asignar un nuevo ID al vehículo
-        // Insertar el nuevo vehículo en la base de datos
-        db_TLR.insert(req.body, (err, newVehicle) => {
-          if (err) {
-            res.sendStatus(500, "Internal Error");
-          }
-          res.status(201).send(newVehicle);
-        });
-      });
-    }
+    });
   });
 
   //Método PUT
