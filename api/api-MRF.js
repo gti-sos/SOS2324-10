@@ -91,7 +91,7 @@ module.exports = (app, db_MRF) => {
 
     //NO SE PUEDE HACER POST DE UN RECURSO CONCRETO 
     app.post(API_BASE + "/*", (req, res) => {
-        res.sendStatus(405, "METHOD NOT ALLOWED");
+        res.sendStatus(405);
     });
 
     //SOBRE LA RUTA GENERAL
