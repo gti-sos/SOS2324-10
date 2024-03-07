@@ -22,7 +22,7 @@ module.exports = (app, db_ASC) => {
     app.get(API_BASE + "/tourisms-per-age", (req, res) => {
         const queryParams = req.query; // Obtener los parámetros de consulta de la solicitud
 
-        //Parseamos Integers
+        //Parseo
         const numericAttributes = ["page", "limit", "skip"]; // Añadir cualquier parámetro numérico adicional aquí
         numericAttributes.forEach(attr => {
             if (queryParams[attr]) {
@@ -33,7 +33,7 @@ module.exports = (app, db_ASC) => {
             }
         });
 
-        // Establecer los parámetros de paginación predeterminados
+        // Paginación
         const page = queryParams.page || 1; // Página predeterminada: 1
         const limit = queryParams.limit || 10; // Límite predeterminado: 10
         const skip = (page - 1) * limit; // Calcular el número de documentos a saltar
