@@ -4,11 +4,16 @@ const app = express();
 const API_BASE = "/api/v1"
 app.use(bodyParser.json());
 const datos = require('../index-ASB');
+//
+let dataStore = require("nedb");
+let db_ASB = new dataStore();
 
 
-module.exports = (app) => {
+
+module.exports = (app,db_ASB) => {
     //GET
     app.get(API_BASE + "/cars-by-motor", (req, res) => {
+        db_ASB.insert
         res.send(JSON.stringify(datos));
     });
     app.get(API_BASE + "/cars-by-motor/loadInitialDatos", (req, res) => {
