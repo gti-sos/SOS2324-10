@@ -88,7 +88,7 @@ module.exports = (app, db_TLR) => {
     }
 
     // Verificar si se recibió un objeto con ID en el cuerpo de la solicitud
-    /**if ('id' in req.body) {
+    if ('id' in req.body) {
       // Verificar si el ID recibido es válido
       const idFromBody = parseInt(req.body.id);
       if (isNaN(idFromBody) || idFromBody < 0) {
@@ -111,7 +111,7 @@ module.exports = (app, db_TLR) => {
           res.status(201, "OK").send(newVehicle);
         });
       });
-    } else */{
+    } else {
       // Si no se proporciona un ID en el cuerpo de la solicitud, generar uno nuevo
       db_TLR.find({}).sort({ id: -1 }).limit(1).exec((err, lastVehicle) => {
         if (err) {

@@ -21,7 +21,7 @@ const datos_MRF = require("./index-MRF");
 
 API_TLR(app,db_TLR);
 API_MRF.mrfv1(app);
-API_ASC(app, db_ASC);
+//API_ASC(app, db_ASC);
 API_ASB(app);
 
 // Establecemos subdirectorios de la web
