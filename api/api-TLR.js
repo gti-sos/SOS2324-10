@@ -3,7 +3,6 @@ const express = require("express");
 const app = express();
 const API_BASE = "/api/v1";
 app.use(bodyParser.json());
-const datos_TLR = require('./../index-TLR');
 
 
 
@@ -28,7 +27,7 @@ module.exports = (app, db_TLR) => {
       }
       if (data.length === 0) {
         // Insertar los datos iniciales solo si la base de datos está vacía
-        db_TLR.insert(initial_datos_TLR, (err, newDocs) => {
+        db_TLR.insert(datos_TLR, (err, newDocs) => {
           if (err) {
             res.sendStatus(500, "Internal Error");
           }
@@ -255,7 +254,7 @@ module.exports = (app, db_TLR) => {
   });
 
 
-  let initial_datos_TLR = [
+  let datos_TLR = [
     {
       id: 1,
       freq: 'A',

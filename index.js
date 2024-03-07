@@ -18,8 +18,7 @@ app.listen(PORT);
 app.use(bodyParser.json());
 
 const API_BASE = "/api/v1";
-const datos_TLR = require('./index-TLR');
-const datos_MRF = require("./index-MRF");
+
 
 API_TLR(app,db_TLR);
 API_MRF(app, db_MRF);
@@ -33,43 +32,8 @@ app.get('/', (req, res) => {
 });
 
 app.use("/", express.static("./public"));
-
-/**app.get("/cool", (req, res) => {
-    res.send(`<html><body><h1>${cool()}</h1></body></html>`)
-});
-*/
 console.log(`Server listening on port ${PORT}`);
 
-
-//Función index-TLR.js
-
-/**function calcularMediasMuertesPorPais(datos_TLR) {
-    const muertesPorPais = {};
-    datos_TLR.forEach((dato) => {
-        const pais = dato.geo;
-        const muertes = dato.cars_deaths;
-        if (!muertesPorPais[pais]) {
-            muertesPorPais[pais] = { totalMuertes: 0, conteo: 0 };
-        }
-        muertesPorPais[pais].totalMuertes += muertes;
-        muertesPorPais[pais].conteo++;
-    });
-
-    const mediaMuertesPorPais = {};
-    for (const pais in muertesPorPais) {
-        const totalMuertes = muertesPorPais[pais].totalMuertes;
-        const conteo = muertesPorPais[pais].conteo;
-        mediaMuertesPorPais[pais] = totalMuertes / conteo;
-    }
-
-    return mediaMuertesPorPais;
-}
-
-app.get("/samples/TLR", (req, res) => {
-    const mediaMuertesPorPais = calcularMediasMuertesPorPais(datos_TLR);
-    const mediaMuertesJSON = JSON.stringify(mediaMuertesPorPais);
-    res.send(`<html> <body> ${mediaMuertesJSON} </body> </html>`)
-});*/
 
 //Función index-ASC.js
 const csv = require('./index-ASC');
