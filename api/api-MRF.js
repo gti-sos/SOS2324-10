@@ -61,9 +61,9 @@ module.exports = (app, db_MRF) => {
 
           db_MRF.findOne(query, {_id: 0}, (error, result) => {
             if (error) {
-              res.sendStatus(500, "Internal Error");
+              res.sendStatus(500);
             } else if (!result) {
-              res.sendStatus(404, "Gdp-rate not found." );
+              res.sendStatus(404);
             } else {
               res.sendStatus(200).json(result);
             }
@@ -71,14 +71,14 @@ module.exports = (app, db_MRF) => {
 
         } else {
 
-          db_MRF.find(query, {_id: 0})
+          db_MRF.find(query, {_id: 0, id : 0})
             .skip(parseInt(offset))
             .limit(parseInt(limit))
             .exec((error, results) => {
               if (error) {
-                res.sendStatus(500, "Internal Error");
+                res.sendStatus(500);
               } else if (results.length === 0) {
-                res.sendStatus(404, "Gdp-rate not found." );
+                res.sendStatus(404 );
               } else {
                 res.status(200).json(results);
               }
@@ -91,34 +91,26 @@ module.exports = (app, db_MRF) => {
 
     //NO SE PUEDE HACER POST DE UN RECURSO CONCRETO 
     app.post(API_BASE + "/*", (req, res) => {
-        res.sendStatus(405, "METHOD NOT ALLOWED");
+        res.sendStatus(405);
     });
 
     //SOBRE LA RUTA GENERAL
     app.post(API_BASE + "/", (req, res) => {
         const newData = req.body;
         if (!newData.geo || !newData.time_period || !newData.id) {
-
-            return res.sendStatus(400, "JSON IS NOT COMPLETED");
-
+            res.sendStatus(400);
         }
 
         db_MRF.findOne({ id: newData.id }, (err, doc) => {
             if (err) {
-
-                res.sendStatus(500, `Error finding gdp-rate with id ${newData.id}: ${err}`);
-
+                res.sendStatus(500);
             } else if (doc) {
-
-                res.sendStatus(409, `Gdp-rate with id ${newData.id} already exists.`);
+                res.sendStatus(409);
             } else {
                 db_MRF.insert(newData, (err, newDoc) => {
                     if (err) {
-
-                        console.log(`Error inserting gdp-rate with id ${newData.id}: ${err}`);
                         res.sendStatus(500);
                     } else {
-                        console.log(`Inserted new gdp-rate with id ${newData.id}`);
                         res.sendStatus(201);
                     }
                 });
