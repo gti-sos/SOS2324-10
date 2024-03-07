@@ -11,9 +11,17 @@ module.exports = (app, db_ASC) => {
 
     // ------------ GET -------------
     // ----------- CUALQUIER CONSULTA GET --------------
+
+    app.get(API_BASE + "/tourisms-per-age/docs", (req, res) => {
+        const documentationURL = 'https://warped-trinity-19905.postman.co/workspace/SOS2324-10~6041b4cf-1144-4aa6-8878-7c39fb610ff4/folder/32965505-0e08d23e-7848-4726-bd9b-1278f66045a2'; // Reemplaza esto con la URL de tu documentación
+
+        // Redirigir al portal de documentación
+        res.redirect(documentationURL);
+    });
+
     app.get(API_BASE + "/tourisms-per-age", (req, res) => {
         const queryParams = req.query; // Obtener los parámetros de consulta de la solicitud
-    
+
         //Parseamos Integers
         const numericAttributes = ["page", "limit", "skip"]; // Añadir cualquier parámetro numérico adicional aquí
         numericAttributes.forEach(attr => {
@@ -24,15 +32,15 @@ module.exports = (app, db_ASC) => {
                 }
             }
         });
-    
+
         // Establecer los parámetros de paginación predeterminados
         const page = queryParams.page || 1; // Página predeterminada: 1
         const limit = queryParams.limit || 10; // Límite predeterminado: 10
         const skip = (page - 1) * limit; // Calcular el número de documentos a saltar
-    
+
         // Objeto para almacenar parámetros de consulta parseados
         const parsedQueryParams = {};
-    
+
         // Especificación de tipos de datos
         const dataTypes = {
             'id': 'number',
@@ -45,24 +53,24 @@ module.exports = (app, db_ASC) => {
             'gdp': 'number',
             'volgdp': 'number'
         };
-    
+
         // Eliminar parámetros de paginación de queryParams
         delete queryParams.page;
         delete queryParams.limit;
         delete queryParams.skip;
-    
+
         // Parsear los valores de los parámetros de consulta según el tipo de dato especificado
         for (const key in queryParams) {
             const value = queryParams[key];
             const dataType = dataTypes[key];
-    
+
             if (dataType === 'number') {
                 parsedQueryParams[key] = parseFloat(value);
             } else {
                 parsedQueryParams[key] = value;
             }
         }
-    
+
         // Realizar la búsqueda en la base de datos con los parámetros de consulta parseados y ordenados por ID, con paginación
         db_ASC.find(parsedQueryParams).sort({ id: 1 }).skip(skip).limit(limit).exec((err, data) => {
             if (err) {
@@ -73,19 +81,19 @@ module.exports = (app, db_ASC) => {
                 // Si no se encontraron datos, enviar error 404 Not Found
                 return res.status(404).send("Data not found");
             }
-    
+
             // Eliminar el campo 'id' de cada objeto en el array 'data'
             const responseData = data.map(item => {
                 const { _id, ...rest } = item;
                 return rest;
             });
-    
+
             // Si se encontraron datos, enviar los resultados en formato JSON sin el campo 'id'
             res.json(responseData);
         });
     });
-    
-    
+
+
     // ------------- LOAD INITIAL DATA ------------------
     app.get(API_BASE + "/tourisms-per-age/loadInitialData", (req, res) => {
         // Comprobar si la base de datos está vacía
@@ -112,27 +120,27 @@ module.exports = (app, db_ASC) => {
 
     app.post(API_BASE + "/tourisms-per-age", (req, res) => {
         const growth = req.body;
-    
+
         // Validar el JSON recibido
         const expectedKeys = ['frequency', 'unit', 'age', 'geo', 'time_period', 'obs_value', 'gdp', 'volgdp'];
         const actualKeys = Object.keys(growth);
         const isValidJson = expectedKeys.every(key => actualKeys.includes(key));
-    
+
         if (!isValidJson || actualKeys.length !== expectedKeys.length) {
             // El JSON no tiene la estructura esperada
             return res.status(400).send("Bad Request: JSON has invalid structure");
         }
-    
+
         // Obtener el último ID y calcular el nuevo ID
         db_ASC.find({}).sort({ id: -1 }).limit(1).exec((err, lastEntry) => {
             if (err) {
                 // Si hay un error en la base de datos, enviar error 500 Internal Server Error
                 return res.status(500).send("Internal Error");
             }
-    
+
             const newId = lastEntry.length === 0 ? 1 : lastEntry[0].id + 1;
             growth.id = newId;
-    
+
             // Insertar el nuevo dato en la base de datos
             db_ASC.insert(growth, (err, newDoc) => {
                 if (err) {
@@ -144,7 +152,7 @@ module.exports = (app, db_ASC) => {
             });
         });
     });
-    
+
 
 
     // -------------- PUT --------------
@@ -184,7 +192,7 @@ module.exports = (app, db_ASC) => {
         });
 
     });
-    
+
     app.put(API_BASE + "/tourisms-per-age", (req, res) => {
         res.sendStatus(405, "METHOD NOT ALLOWED");
     });
@@ -311,7 +319,7 @@ module.exports = (app, db_ASC) => {
     // });
 
 
-    
+
 
     // Manejar todos los otros accesos a rutas inexistentes
     /**app.use((req, res, next) => {
