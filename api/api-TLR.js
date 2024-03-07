@@ -137,10 +137,12 @@ module.exports = (app, db_TLR) => {
       return res.sendStatus(400, "Bad Request");
     }
 
-    // Obtener el último ID utilizado
-    db_TLR.find({}).sort({ id: -1 }).limit(1).exec((err, lastVehicle) => {
-      if (err) {
-        return res.sendStatus(500, "Internal Error");
+    // Verificar si se recibió un objeto con ID en el cuerpo de la solicitud
+    if ('id' in req.body) {
+      // Verificar si el ID recibido es válido
+      const idFromBody = parseInt(req.body.id);
+      if (isNaN(idFromBody) || idFromBody < 0) {
+        res.sendStatus(400, "Bad Request");
       }
       const lastId = lastVehicle.length > 0 ? parseInt(lastVehicle[0].id) : 0;
       const newId = lastId + 1;
@@ -155,7 +157,23 @@ module.exports = (app, db_TLR) => {
         }
         return res.sendStatus(201, "OK");
       });
-    });
+    } else {
+      // Si no se proporciona un ID en el cuerpo de la solicitud, generar uno nuevo
+      db_TLR.find({}).sort({ id: -1 }).limit(1).exec((err, lastVehicle) => {
+        if (err) {
+          res.sendStatus(500, "Internal Error");
+        }
+        const lastId = lastVehicle.length > 0 ? parseInt(lastVehicle[0].id) : 0;
+        req.body.id = (lastId + 1).toString(); // Asignar un nuevo ID al vehículo
+        // Insertar el nuevo vehículo en la base de datos
+        db_TLR.insert(req.body, (err, newVehicle) => {
+          if (err) {
+            res.sendStatus(500, "Internal Error");
+          }
+          res.status(201).send(newVehicle);
+        });
+      });
+    }
   });
 
   //Método PUT
