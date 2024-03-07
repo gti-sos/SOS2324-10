@@ -98,7 +98,7 @@ module.exports = (app, db_MRF) => {
     app.post(API_BASE + "/", (req, res) => {
         const newData = req.body;
         if (!newData.geo || !newData.time_period || !newData.id) {
-            res.sendStatus(400);
+            return res.sendStatus(400);
         }
 
         db_MRF.findOne({ id: newData.id }, (err, doc) => {
@@ -154,12 +154,12 @@ module.exports = (app, db_MRF) => {
         db_MRF.update({ id: idURLInt }, { $set: updatedGdp }, {}, (err, numReplaced) => {
             if (err) {
                 console.error(err);
-                return res.sendStatus(500, 'Internal server error');
+                return res.sendStatus(500);
             }
             if (numReplaced === 0) {
-                return res.sendStatus(400, 'Bad request: gdp-rate ID not found');
+                return res.sendStatus(400);
             }
-            return res.sendStatus(200, 'Gdp-rate updated successfully');
+            return res.sendStatus(200);
         });
 
     });
@@ -173,9 +173,9 @@ module.exports = (app, db_MRF) => {
         db_MRF.remove({}, { multi: true }, (err, numRemoved) => {
             if (err) {
                 console.error(err);
-                return res.sendStatus(500, 'Internal server error');
+                return res.sendStatus(500);
             }
-            return res.sendStatus(200, `Deleted ${numRemoved} gdp-rates`);
+            return res.sendStatus(200);
         });
     });
 
@@ -188,12 +188,12 @@ module.exports = (app, db_MRF) => {
         db_MRF.remove({ id: idGDP }, {}, (err, numRemoved) => {
             if (err) {
                 console.error(err);
-                return res.status(500).send({ error: 'Internal server error' });
+                return res.sendStatus(500);
             }
             if (numRemoved === 0) {
-                return res.status(400).send({ error: 'Bad request: gdp-growth-rate ID not found' });
+                return res.sendStatus(400)
             }
-            return res.status(200).send({ message: 'Gdp-growth-rate deleted successfully' });
+            return res.sendStatus(200);
         });
       
     });
