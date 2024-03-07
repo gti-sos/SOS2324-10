@@ -13,7 +13,7 @@
 - **URL**: [SOS2324-10](http://sos2324-10.appspot.com)
 
 -  **APIs**:
-    - ASC:
+    - ASC: 
     - ASB:
-    - MRF:
-    - TLR: 
+    - MRF: [API-MIGUEL](http://sos2324-10.appspot.com/api/v1/gdp-growth-rates/docs)
+    - TLR: [API-TOMAS](https://sos2324-10.appspot.com/api/v1/vehicles-stock/docs)
