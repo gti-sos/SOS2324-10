@@ -12,8 +12,6 @@ let db_ASB = new dataStore();
 
 module.exports = (app,db_ASB) => {
     //GET
-    // ------------ GET -------------
-    // ----------- CUALQUIER CONSULTA GET --------------
 
     app.get(API_BASE + "/cars-by-motor/docs", (req, res) => {
       const documentationURL = 'https://warped-trinity-19905.postman.co/workspace/SOS2324-10~6041b4cf-1144-4aa6-8878-7c39fb610ff4/folder/32965505-46664ca4-4cec-4dba-8c99-a2814156222d';
