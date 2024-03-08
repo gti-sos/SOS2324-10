@@ -12,10 +12,95 @@ let db_ASB = new dataStore();
 
 module.exports = (app,db_ASB) => {
     //GET
-    app.get(API_BASE + "/cars-by-motor", (req, res) => {
-        db_ASB.insert
-        res.send(JSON.stringify(datos));
-    });
+    // ------------ GET -------------
+    // ----------- CUALQUIER CONSULTA GET --------------
+
+    app.get(API_BASE + "/cars-by-motor/docs", (req, res) => {
+      const documentationURL = 'https://warped-trinity-19905.postman.co/workspace/SOS2324-10~6041b4cf-1144-4aa6-8878-7c39fb610ff4/folder/32965505-0e08d23e-7848-4726-bd9b-1278f66045a2'; // Reemplaza esto con la URL de tu documentación
+
+      // Redirigir al portal de documentación
+      res.redirect(documentationURL);
+  });
+
+  app.get(API_BASE + "/cars-by-motor", (req, res) => {
+      const queryParams = req.query; // Obtener los parámetros de consulta de la solicitud
+
+      //Parseo
+      const numericAttributes = ["page", "limit", "skip"]; // Añadir cualquier parámetro numérico adicional aquí
+      numericAttributes.forEach(attr => {
+          if (queryParams[attr]) {
+              queryParams[attr] = parseInt(queryParams[attr]);
+              if (isNaN(queryParams[attr])) {
+                  return res.status(400).send("Bad Request");
+              }
+          }
+      });
+
+      // Paginación
+      const page = queryParams.page || 1; // Página predeterminada: 1
+      const limit = queryParams.limit || 10; // Límite predeterminado: 10
+      const skip = (page - 1) * limit; // Calcular el número de documentos a saltar
+
+      // Objeto para almacenar parámetros de consulta parseados
+      const parsedQueryParams = {};
+
+      // Especificación de tipos de datos
+      const dataTypes = {
+        'id':'number',
+        'dataflow': 'string',
+        'last_update': 'string',
+        'freq': 'string',
+        'unit': 'string',
+        'mot_nrg': 'string',
+        'geo': 'string',
+        'time_period': 'number',
+        'obs_value': 'number',
+        'obs_flag': 'string',
+        'millions_of_passenger_per_kilometres': 'number',
+        'road_deaths_per_million_inhabitants': 'number'
+      };
+
+      // Eliminar parámetros de paginación de queryParams
+      delete queryParams.page;
+      delete queryParams.limit;
+      delete queryParams.skip;
+
+      // Parsear los valores de los parámetros de consulta según el tipo de dato especificado
+      for (const key in queryParams) {
+          const value = queryParams[key];
+          const dataType = dataTypes[key];
+
+          if (dataType === 'number') {
+              parsedQueryParams[key] = parseFloat(value);
+          } else {
+              parsedQueryParams[key] = value;
+          }
+      }
+
+      // Realizar la búsqueda en la base de datos con los parámetros de consulta parseados y ordenados por ID, con paginación
+      db_ASB.find(parsedQueryParams).sort({ id: 1 }).skip(skip).limit(limit).exec((err, data) => {
+          if (err) {
+              // Si hay un error en la base de datos, enviar error 500 Internal Server Error
+              return res.status(500).send("Internal Error");
+          }
+          if (data.length === 0) {
+              // Si no se encontraron datos, enviar error 404 Not Found
+              return res.status(404).send("Data not found");
+          }
+
+          // Eliminar el campo 'id' de cada objeto en el array 'data'
+          const responseData = data.map(item => {
+              const { _id, ...rest } = item;
+              return rest;
+          });
+
+          // Si se encontraron datos, enviar los resultados en formato JSON sin el campo 'id'
+          res.json(responseData);
+      });
+  });
+
+
+  
     app.get(API_BASE + "/cars-by-motor/loadInitialDatos", (req, res) => {
         if (datos.length === 0) {
             for (let i = 0; i < datosBU.length; i++) {
