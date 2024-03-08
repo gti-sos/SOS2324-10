@@ -54,7 +54,7 @@ module.exports = (app, db_TLR) => {
       .limit(limit) // Limitar el número de documentos devueltos
       .exec((error, datos) => {
         if (error) {
-          res.sendStatus(500).send("Internal Error");
+          res.sendStatus(500);
         } else {
           res.send(datos);
         }
