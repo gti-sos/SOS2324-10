@@ -16,7 +16,7 @@ module.exports = (app,db_ASB) => {
     // ----------- CUALQUIER CONSULTA GET --------------
 
     app.get(API_BASE + "/cars-by-motor/docs", (req, res) => {
-      const documentationURL = 'https://warped-trinity-19905.postman.co/workspace/SOS2324-10~6041b4cf-1144-4aa6-8878-7c39fb610ff4/folder/32965505-0e08d23e-7848-4726-bd9b-1278f66045a2'; // Reemplaza esto con la URL de tu documentación
+      const documentationURL = 'https://warped-trinity-19905.postman.co/workspace/SOS2324-10~6041b4cf-1144-4aa6-8878-7c39fb610ff4/folder/32965505-46664ca4-4cec-4dba-8c99-a2814156222d';
 
       // Redirigir al portal de documentación
       res.redirect(documentationURL);
