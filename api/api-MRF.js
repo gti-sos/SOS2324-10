@@ -10,7 +10,7 @@ module.exports = (app, db_MRF) => {
 
     //REDIRECCIÓN A DOCUMENTACIÓN API
     app.get(API_BASE + "/docs", (req, res) => {
-        res.redirect("https://documenter.getpostman.com/view/32965505/2sA2xe5uSg");
+        res.redirect("https://warped-trinity-19905.postman.co/workspace/SOS2324-10~6041b4cf-1144-4aa6-8878-7c39fb610ff4/collection/32965505-08264891-59e1-4c6b-841b-9171a4e87934?action=share&creator=32965505&active-environment=19421857-89973f15-31e4-4340-9e61-c116d427406e.getpostman.com/view/32965505/2sA2xe5uSg");
     });
 
 
@@ -61,9 +61,9 @@ module.exports = (app, db_MRF) => {
 
           db_MRF.findOne(query, {_id: 0}, (error, result) => {
             if (error) {
-              res.sendStatus(500, "Internal Error");
+              res.sendStatus(500);
             } else if (!result) {
-              res.sendStatus(404, "Gdp-rate not found." );
+              res.sendStatus(404);
             } else {
               res.sendStatus(200).json(result);
             }
@@ -71,14 +71,14 @@ module.exports = (app, db_MRF) => {
 
         } else {
 
-          db_MRF.find(query, {_id: 0})
+          db_MRF.find(query, {_id: 0, id : 0})
             .skip(parseInt(offset))
             .limit(parseInt(limit))
             .exec((error, results) => {
               if (error) {
-                res.sendStatus(500, "Internal Error");
+                res.sendStatus(500);
               } else if (results.length === 0) {
-                res.sendStatus(404, "Gdp-rate not found." );
+                res.sendStatus(404 );
               } else {
                 res.status(200).json(results);
               }
@@ -91,32 +91,27 @@ module.exports = (app, db_MRF) => {
 
     //NO SE PUEDE HACER POST DE UN RECURSO CONCRETO 
     app.post(API_BASE + "/*", (req, res) => {
-        res.sendStatus(405, "METHOD NOT ALLOWED");
+        res.sendStatus(405);
     });
 
     //SOBRE LA RUTA GENERAL
     app.post(API_BASE + "/", (req, res) => {
         const newData = req.body;
-        if (!newData.geo || !newData.time_period || !newData.id) {
-
-            return res.sendStatus(400, "JSON IS NOT COMPLETED");
-
+        if (!newData.geo || !newData.time_period || !newData.id || newData.frequency || newData.unit 
+            || newData.na_item || newData.obs_value || newData.growth_rate_2030 || newData.growth_rate_2040) {
+              return res.sendStatus(400);
         }
 
         db_MRF.findOne({ id: newData.id }, (err, doc) => {
             if (err) {
-                console.log(`Error finding gdp-rate with id ${newData.id}: ${err}`);
                 res.sendStatus(500);
             } else if (doc) {
-                res.status(409).json({ error: `gdp-rate with id ${newData.id} already exists.` });
+                res.sendStatus(409);
             } else {
                 db_MRF.insert(newData, (err, newDoc) => {
                     if (err) {
-
-                        console.log(`Error inserting gdp-rate with id ${newData.id}: ${err}`);
                         res.sendStatus(500);
                     } else {
-                        console.log(`Inserted new gdp-rate with id ${newData.id}`);
                         res.sendStatus(201);
                     }
                 });
@@ -160,12 +155,12 @@ module.exports = (app, db_MRF) => {
         db_MRF.update({ id: idURLInt }, { $set: updatedGdp }, {}, (err, numReplaced) => {
             if (err) {
                 console.error(err);
-                return res.sendStatus(500, 'Internal server error');
+                return res.sendStatus(500);
             }
             if (numReplaced === 0) {
-                return res.sendStatus(400, 'Bad request: gdp-rate ID not found');
+                return res.sendStatus(400);
             }
-            return res.sendStatus(200, 'Gdp-rate updated successfully');
+            return res.sendStatus(200);
         });
 
     });
@@ -179,9 +174,9 @@ module.exports = (app, db_MRF) => {
         db_MRF.remove({}, { multi: true }, (err, numRemoved) => {
             if (err) {
                 console.error(err);
-                return res.sendStatus(500, 'Internal server error');
+                return res.sendStatus(500);
             }
-            return res.sendStatus(200, `Deleted ${numRemoved} gdp-rates`);
+            return res.sendStatus(200);
         });
     });
 
@@ -194,12 +189,12 @@ module.exports = (app, db_MRF) => {
         db_MRF.remove({ id: idGDP }, {}, (err, numRemoved) => {
             if (err) {
                 console.error(err);
-                return res.status(500).send({ error: 'Internal server error' });
+                return res.sendStatus(500);
             }
             if (numRemoved === 0) {
-                return res.status(400).send({ error: 'Bad request: gdp-growth-rate ID not found' });
+                return res.sendStatus(400)
             }
-            return res.status(200).send({ message: 'Gdp-growth-rate deleted successfully' });
+            return res.sendStatus(200);
         });
       
     });

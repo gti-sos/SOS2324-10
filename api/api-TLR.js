@@ -3,7 +3,6 @@ const express = require("express");
 const app = express();
 const API_BASE = "/api/v1";
 app.use(bodyParser.json());
-const datos_TLR = require('./../index-TLR');
 
 
 
@@ -17,7 +16,7 @@ module.exports = (app, db_TLR) => {
 
     // Redirigir al portal de documentación
     res.redirect(documentationURL);
-});
+  });
 
 
   app.get(API_BASE + "/vehicles-stock/loadInitialData", (req, res) => {
@@ -28,7 +27,7 @@ module.exports = (app, db_TLR) => {
       }
       if (data.length === 0) {
         // Insertar los datos iniciales solo si la base de datos está vacía
-        db_TLR.insert(initial_datos_TLR, (err, newDocs) => {
+        db_TLR.insert(datos_TLR, (err, newDocs) => {
           if (err) {
             res.sendStatus(500, "Internal Error");
           }
@@ -55,7 +54,7 @@ module.exports = (app, db_TLR) => {
       .limit(limit) // Limitar el número de documentos devueltos
       .exec((error, datos) => {
         if (error) {
-          res.sendStatus(500).send("Internal Error");
+          res.sendStatus(500);
         } else {
           res.send(datos);
         }
@@ -134,29 +133,36 @@ module.exports = (app, db_TLR) => {
 
     // Verificar si se recibieron campos adicionales no esperados
     if (unexpectedFields.length > 0 || 'id' in req.body) {
-      return res.sendStatus(400, "Bad Request");
+      return res.sendStatus(400);
     }
 
-    // Obtener el último ID utilizado
-    db_TLR.find({}).sort({ id: -1 }).limit(1).exec((err, lastVehicle) => {
+    //Verificamos que no exista dicha entrada
+    db_TLR.findOne({ year: req.body.year, geo: req.body.geo }, (err, existingVehicle) => {
       if (err) {
-        return res.sendStatus(500, "Internal Error");
+        return res.sendStatus(500);
       }
-      const lastId = lastVehicle.length > 0 ? parseInt(lastVehicle[0].id) : 0;
-      const newId = lastId + 1;
+      if (existingVehicle) {
+        return res.sendStatus(409);
+      }
 
-      // Asignar el nuevo ID al vehículo
-      req.body.id = newId.toString();
-
-      // Insertar el nuevo vehículo en la base de datos
-      db_TLR.insert(req.body, (err, newVehicle) => {
+      // Si no existe un vehículo con el mismo year y geo, continuar con la inserción del nuevo vehículo
+      db_TLR.find({}).sort({ id: -1 }).limit(1).exec((err, lastVehicle) => {
         if (err) {
-          return res.sendStatus(500, "Internal Error");
+          return res.sendStatus(500);
         }
-        return res.sendStatus(201, "OK");
+        const lastId = lastVehicle.length > 0 ? parseInt(lastVehicle[0].id) : 0;
+        req.body.id = (lastId + 1).toString(); // Asignar un nuevo ID al vehículo
+        // Insertar el nuevo vehículo en la base de datos
+        db_TLR.insert(req.body, (err, newVehicle) => {
+          if (err) {
+            return res.sendStatus(500);
+          }
+          res.sendStatus(201);
+        });
       });
     });
-  });
+});
+
 
   //Método PUT
 
@@ -248,7 +254,7 @@ module.exports = (app, db_TLR) => {
   });
 
 
-  let initial_datos_TLR = [
+  let datos_TLR = [
     {
       id: 1,
       freq: 'A',

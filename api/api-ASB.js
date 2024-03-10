@@ -12,113 +12,224 @@ let db_ASB = new dataStore();
 
 module.exports = (app,db_ASB) => {
     //GET
-    app.get(API_BASE + "/cars-by-motor", (req, res) => {
-        db_ASB.insert
-        res.send(JSON.stringify(datos));
-    });
-    app.get(API_BASE + "/cars-by-motor/loadInitialDatos", (req, res) => {
-        if (datos.length === 0) {
-            for (let i = 0; i < datosBU.length; i++) {
-                datos.push(datosBU[i]);
-            }
-            res.sendStatus(201, "CREATED");
-        } else {
-            res.sendStatus(405, "YA HAY DATOS CARGADOS");
+    // ------------ GET -------------
+    // ----------- CUALQUIER CONSULTA GET --------------
+
+    app.get(API_BASE + "/cars-by-motor/docs", (req, res) => {
+      const documentationURL = 'https://warped-trinity-19905.postman.co/workspace/SOS2324-10~6041b4cf-1144-4aa6-8878-7c39fb610ff4/folder/32965505-46664ca4-4cec-4dba-8c99-a2814156222d';
+
+      // Redirigir al portal de documentación
+      res.redirect(documentationURL);
+  });
+
+  app.get(API_BASE + "/cars-by-motor", (req, res) => {
+      const queryParams = req.query; // Obtener los parámetros de consulta de la solicitud
+
+      //Parseo
+      const numericAttributes = ["pgeo", "limit", "skip"]; // Añadir cualquier parámetro numérico adicional aquí
+      numericAttributes.forEach(attr => {
+          if (queryParams[attr]) {
+              queryParams[attr] = parseInt(queryParams[attr]);
+              if (isNaN(queryParams[attr])) {
+                  return res.status(400).send("Bad Request");
+              }
+          }
+      });
+
+      // Paginación
+      const pgeo = queryParams.pgeo || 1; // Página predeterminada: 1
+      const limit = queryParams.limit || 10; // Límite predeterminado: 10
+      const skip = (pgeo - 1) * limit; // Calcular el número de documentos a saltar
+
+      // Objeto para almacenar parámetros de consulta parseados
+      const parsedQueryParams = {};
+
+      // Especificación de tipos de datos
+      const dataTypes = {
+        'id':'number',
+        'dataflow': 'string',
+        'last_update': 'string',
+        'freq': 'string',
+        'unit': 'string',
+        'mot_nrg': 'string',
+        'geo': 'string',
+        'time_period': 'number',
+        'obs_value': 'number',
+        'obs_flag': 'string',
+        'millions_of_passenger_per_kilometres': 'number',
+        'road_deaths_per_million_inhabitants': 'number'
+      };
+
+      // Eliminar parámetros de paginación de queryParams
+      delete queryParams.pgeo;
+      delete queryParams.limit;
+      delete queryParams.skip;
+
+      // Parsear los valores de los parámetros de consulta según el tipo de dato especificado
+      for (const key in queryParams) {
+          const value = queryParams[key];
+          const dataType = dataTypes[key];
+
+          if (dataType === 'number') {
+              parsedQueryParams[key] = parseFloat(value);
+          } else {
+              parsedQueryParams[key] = value;
+          }
+      }
+
+      // Realizar la búsqueda en la base de datos con los parámetros de consulta parseados y ordenados por ID, con paginación
+      db_ASB.find(parsedQueryParams).sort({ id: 1 }).skip(skip).limit(limit).exec((err, data) => {
+          if (err) {
+              // Si hay un error en la base de datos, enviar error 500 Internal Server Error
+              return res.status(500).send("Internal Error");
+          }
+          if (data.length === 0) {
+              // Si no se encontraron datos, enviar error 404 Not Found
+              return res.status(404).send("Data not found");
+          }
+
+          // Eliminar el campo 'id' de cada objeto en el array 'data'
+          const responseData = data.map(item => {
+              const { _id, ...rest } = item;
+              return rest;
+          });
+
+          // Si se encontraron datos, enviar los resultados en formato JSON sin el campo 'id'
+          res.json(responseData);
+      });
+  });
+
+
+  
+  app.get(API_BASE + "/cars-by-motor/loadInitialData", (req, res) => {
+    // Comprobar si la base de datos está vacía
+    db_ASB.find({}, (err, dato) => {
+        if (err) {
+            res.sendStatus(500, "Internal Error");
         }
-    });
-    app.get(API_BASE + "/cars-by-motor/:geo", (req, res) => {
-        const pais = req.params.geo;
-        const restr = datos.filter(n => n.geo === pais);
-
-        if (restr.length > 0) {
-            res.send(JSON.stringify(restr));
-            res.sendStatus(200, "OK");
-        } else {
-            res.sendStatus(404, "NOT FOUND");
-        }
-
-    });
-    //POST
-    app.post(API_BASE + "/cars-by-motor", (req, res) => {
-        let data = req.body;
-    
-        // Verificar si el body es un JSON válido y tiene la estructura esperada
-        const structure = {
-            'id':'number',
-            'dataflow': 'string',
-            'last_update': 'string',
-            'freq': 'string',
-            'unit': 'string',
-            'mot_nrg': 'string',
-            'geo': 'string',
-            'time_period': 'number',
-            'obs_value': 'number',
-            'obs_flag': 'string',
-            'millions_of_passenger_per_kilometres': 'number',
-            'road_deaths_per_million_inhabitants': 'number'
-        };
-    
-        const actualKeys = Object.keys(data);
-        const expectedKeys = Object.keys(structure);
-        const isValidJson = expectedKeys.every(key => actualKeys.includes(key) && typeof data[key] === structure[key]);
-    
-        if (!isValidJson || actualKeys.length !== expectedKeys.length) {
-            // El JSON no tiene la estructura esperada
-            res.status(400).send("Bad Request: JSON has invalid structure");
-        } else if (datos.some(entry => entry.id === data.id)) {
-            // El recurso ya existe, devolver error 409
-            res.status(409).send("Conflict: Resource already exists");
-        } else {
-            // El recurso no existe, agregarlo a datos
-            datos.push(datos);
-            res.status(201).send("Created");
-        }
-    });
-    //PUT
-    app.put(API_BASE + "/cars-by-motor/:geo", (req, res) => {
-
-        const pais = req.params.geo;
-        let data = req.body;
-        const filtro = datos.findIndex(dato => dato.geo === pais);
-
-        if (filtro.length === 0) {
-            res.sendStatus(404, "NOT FOUND");
-        } else {
-            for (let i = 0; i < datos.length; i++) {
-                if (datos[i].geo === pais) {
-                    datos[i] = data;
+        if (dato.length === 0) {
+            // Insertar los datos iniciales solo si la base de datos está vacía
+            db_ASB.insert(datosBU, (err, newDocs) => {
+                if (err) {
+                    res.sendStatus(500, "Internal Error");
                 }
-            }
+                res.sendStatus(200, "OK");
+            });
+        } else {
+
             res.sendStatus(200, "OK");
         }
     });
+});
+    //POST
 
-    app.put(API_BASE + "/cars-by-motor", (req, res) => {
-        res.sendStatus(405, "METHOD NOT ALLOWED");
-    });
-    //DELETE
-    app.delete(API_BASE + "/cars-by-motor", (req, res) => {
-        datos.splice(0, datos.length);
-        res.sendStatus(200, "Deleted all -> Datos ASB");
-    });
-    app.delete(API_BASE + "/cars-by-motor/:geo", (req, res) => {
-        const geoToDelete = req.params.geo;
-    
-        // Filtrar los datos que coincidan con la edad especificada
-        const newData = datos.filter(entry => entry.geo !== geoToDelete);
-    
-        // Verificar si se eliminaron datos
-        if (newData.length < datos.length) {
-            // Se eliminaron datos, actualizar datos
-            datos.splice(0, datos.length, ...newData);
-            res.status(200).send("Deleted data with geo: " + geoToDelete);
-        } else {
-            // No se encontraron datos con esa edad
-            res.status(404).send("Not Found: No data found with geo " + geoToDelete);
+    app.post(API_BASE + "/cars-by-motor", (req, res) => {
+      const nuevosDatos = req.body;
+
+      // Validar el JSON recibido
+      const expectedKeys = ['dataflow', 'last_update', 'freq', 'unit', 'motor_nrg', 'geo', 'time_period', 
+        'obs_value', 'obs_flag', 'millions_of_passenger_per_kilometres', 'road_deaths_per_million_inhabitants'];
+      const actualKeys = Object.keys(nuevosDatos);
+      const isValidJson = expectedKeys.every(key => actualKeys.includes(key));
+
+      if (!isValidJson || actualKeys.length !== expectedKeys.length) {
+          // El JSON no tiene la estructura esperada
+          return res.status(400).send("Bad Request: JSON has invalid structure");
+      }
+
+      // Obtener el último ID y calcular el nuevo ID
+      db_ASB.find({}).sort({ id: -1 }).limit(1).exec((err, lastEntry) => {
+          if (err) {
+              // Si hay un error en la base de datos, enviar error 500 Internal Server Error
+              return res.status(500).send("Internal Error");
+          }
+
+          const newId = lastEntry.length === 0 ? 1 : lastEntry[0].id + 1;
+          nuevosDatos.id = newId;
+
+          // Insertar el nuevo dato en la base de datos
+          db_ASB.insert(nuevosDatos, (err, newDoc) => {
+              if (err) {
+                  // Si hay un error en la base de datos, enviar error 500 Internal Server Error
+                  return res.status(500).send("Internal Error");
+              }
+              // Enviar respuesta con código 201 Created
+              res.status(201).send("Created");
+          });
+      });
+  });
+  //DELETE
+  app.delete(API_BASE + "/tourisms-per-geo", (req, res) => {
+    db_ASB.remove({}, { multi: true }, (err, numRemoved) => {
+        if (err) {
+            // Si hay un error en la base de datos, enviar error 500 Internal Server Error
+            return res.status(500).send("Internal Error");
         }
+        // Enviar respuesta con código 200 OK
+        res.status(200).send("Deleted all -> Datos ASC");
     });
-    
-    // Manejar todos los otros métodos no permitidos
+});
+
+app.delete(API_BASE + "/cars-by-motor/:geo", (req, res) => {
+    const geoToDelete = req.params.geo;
+
+    // Eliminar datos que coincidan con la edad especificada
+    db_ASB.remove({ geo: geoToDelete }, { multi: true }, (err, numRemoved) => {
+        if (err) {
+            // Si hay un error en la base de datos, enviar error 500 Internal Server Error
+            return res.status(500).send("Internal Error");
+        }
+        if (numRemoved === 0) {
+            // Si no se encontraron datos para eliminar, enviar error 404 Not Found
+            return res.status(404).send("Not Found: No data found with geo " + geoToDelete);
+        }
+        // Enviar respuesta con código 200 OK
+        res.status(200).send("Deleted data with geo: " + geoToDelete);
+    });
+});
+
+    //PUT
+    app.put(API_BASE + "/cars-by-motor/:id", (req, res) => {
+
+      const idURL = req.params.id;
+      const idBody = req.body.id;
+      const updateData = req.body;
+
+      // Verificar si el ID de la URL es válido
+      const idURLInt = parseInt(idURL);
+      if (isNaN(idURLInt) || idURLInt < 0) {
+          return res.sendStatus(400);
+      }
+
+      // Verificar si el ID del body es válido
+      const idBodyInt = parseInt(idBody);
+      if (isNaN(idBodyInt) || idBodyInt < 0) {
+          return res.sendStatus(400);
+      }
+
+      // Verificar que coincidan ambos ID
+      if (idBodyInt !== idURLInt) {
+          return res.sendStatus(400);
+      }
+
+      db_ASB.update({ id: idURLInt }, { $set: updateData }, {}, (err, numReplaced) => {
+          if (err) {
+              console.error(err);
+              return res.sendStatus(500, 'Internal server error');
+          }
+          if (numReplaced === 0) {
+              return res.sendStatus(400, 'Bad request: gdp-rate ID not found');
+          }
+          return res.sendStatus(200, 'Gdp-rate updated successfully');
+      });
+
+  });
+
+  app.put(API_BASE + "/cars-by-motor", (req, res) => {
+      res.sendStatus(405, "METHOD NOT ALLOWED");
+  });
+
+  // Manejar todos los otros métodos no permitidos
     app.all(API_BASE + "/cars-by-motor/*", (req, res) => {
         res.sendStatus(405);
     });
