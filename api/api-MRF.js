@@ -104,13 +104,13 @@ module.exports = (app, db_MRF) => {
 
         db_MRF.findOne({ id: newData.id }, (err, doc) => {
             if (err) {
-                res.sendStatus(500);
+                return res.sendStatus(500);
             } else if (doc) {
                 res.sendStatus(409);
             } else {
                 db_MRF.insert(newData, (err, newDoc) => {
                     if (err) {
-                        res.sendStatus(500);
+                        return res.sendStatus(500);
                     } else {
                         res.sendStatus(201);
                     }
