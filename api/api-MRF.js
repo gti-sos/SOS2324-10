@@ -105,12 +105,10 @@ module.exports = (app, db_MRF) => {
 
         db_MRF.findOne({ id: newData.id }, (err, doc) => {
             if (err) {
-
-                res.sendStatus(500, `Error finding gdp-rate with id ${newData.id}: ${err}`);
-
+                console.log(`Error finding gdp-rate with id ${newData.id}: ${err}`);
+                res.sendStatus(500);
             } else if (doc) {
-
-                res.sendStatus(409, `Gdp-rate with id ${newData.id} already exists.`);
+                res.status(409).json({ error: `gdp-rate with id ${newData.id} already exists.` });
             } else {
                 db_MRF.insert(newData, (err, newDoc) => {
                     if (err) {
