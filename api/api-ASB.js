@@ -6,7 +6,6 @@ app.use(bodyParser.json());
 const datos = require('../index-ASB');
 //
 let dataStore = require("nedb");
-let db_ASB = new dataStore();
 
 
 
