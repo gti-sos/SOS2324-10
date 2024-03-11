@@ -135,25 +135,38 @@ module.exports = (app,db_ASB) => {
       }
 
       // Obtener el último ID y calcular el nuevo ID
-      db_ASB.find({}).sort({ id: -1 }).limit(1).exec((err, lastEntry) => {
-          if (err) {
-              // Si hay un error en la base de datos, enviar error 500 Internal Server Error
-              return res.status(500).send("Internal Error");
-          }
+      db_ASB.findOne({ geo: nuevosDatos.geo, time_period: nuevosDatos.time_period }, (err, existingEntry) => {
+        if (err) {
+            // Si hay un error en la base de datos, enviar error 500 Internal Server Error
+            return res.status(500).send("Internal Error");
+        }
 
-          const newId = lastEntry.length === 0 ? 1 : lastEntry[0].id + 1;
-          nuevosDatos.id = newId;
+        if (existingEntry) {
+            // Si ya existe un elemento con los mismos valores para 'geo' y 'time_period', devolver error 409 Conflict
+            return res.status(409).send("Conflict: Element with same 'geo' and 'time_period' already exists");
+        }
 
-          // Insertar el nuevo dato en la base de datos
-          db_ASB.insert(nuevosDatos, (err, newDoc) => {
-              if (err) {
-                  // Si hay un error en la base de datos, enviar error 500 Internal Server Error
-                  return res.status(500).send("Internal Error");
-              }
-              // Enviar respuesta con código 201 Created
-              res.status(201).send("Created");
-          });
-      });
+        // Obtener el último ID y calcular el nuevo ID
+        db_ASB.find({}).sort({ id: -1 }).limit(1).exec((err, lastEntry) => {
+            if (err) {
+                // Si hay un error en la base de datos, enviar error 500 Internal Server Error
+                return res.status(500).send("Internal Error");
+            }
+
+            const newId = lastEntry.length === 0 ? 1 : lastEntry[0].id + 1;
+            nuevosDatos.id = newId;
+
+            // Insertar el nuevo dato en la base de datos
+            db_ASB.insert(nuevosDatos, (err, newDoc) => {
+                if (err) {
+                    // Si hay un error en la base de datos, enviar error 500 Internal Server Error
+                    return res.status(500).send("Internal Error");
+                }
+                // Enviar respuesta con código 201 Created
+                res.status(201).send("Created");
+            });
+        });
+    });
   });
   //DELETE
   app.delete(API_BASE + "/cars-by-motor", (req, res) => {
