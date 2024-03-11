@@ -163,7 +163,7 @@ module.exports = (app,db_ASB) => {
             return res.status(500).send("Internal Error");
         }
         // Enviar respuesta con código 200 OK
-        res.status(200).send("Deleted all -> Datos ASC");
+        res.status(200).send("Deleted all -> Datos ASB");
     });
 });
 
