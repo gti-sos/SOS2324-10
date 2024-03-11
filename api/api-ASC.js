@@ -13,7 +13,7 @@ module.exports = (app, db_ASC) => {
     // ----------- CUALQUIER CONSULTA GET --------------
 
     app.get(API_BASE + "/tourisms-per-age/docs", (req, res) => {
-        const documentationURL = 'https://warped-trinity-19905.postman.co/workspace/SOS2324-10~6041b4cf-1144-4aa6-8878-7c39fb610ff4/folder/32965505-0e08d23e-7848-4726-bd9b-1278f66045a2'; // Reemplaza esto con la URL de tu documentación
+        const documentationURL = 'https://documenter.getpostman.com/view/32965505/2sA2xiVrYz';
 
         // Redirigir al portal de documentación
         res.redirect(documentationURL);
@@ -120,38 +120,52 @@ module.exports = (app, db_ASC) => {
 
     app.post(API_BASE + "/tourisms-per-age", (req, res) => {
         const growth = req.body;
-
+    
         // Validar el JSON recibido
         const expectedKeys = ['frequency', 'unit', 'age', 'geo', 'time_period', 'obs_value', 'gdp', 'volgdp'];
         const actualKeys = Object.keys(growth);
         const isValidJson = expectedKeys.every(key => actualKeys.includes(key));
-
+    
         if (!isValidJson || actualKeys.length !== expectedKeys.length) {
             // El JSON no tiene la estructura esperada
             return res.status(400).send("Bad Request: JSON has invalid structure");
         }
-
-        // Obtener el último ID y calcular el nuevo ID
-        db_ASC.find({}).sort({ id: -1 }).limit(1).exec((err, lastEntry) => {
+    
+        // Verificar si ya existe un elemento con los mismos valores para los campos 'geo' y 'time_period'
+        db_ASC.findOne({ geo: growth.geo, time_period: growth.time_period }, (err, existingEntry) => {
             if (err) {
                 // Si hay un error en la base de datos, enviar error 500 Internal Server Error
                 return res.status(500).send("Internal Error");
             }
-
-            const newId = lastEntry.length === 0 ? 1 : lastEntry[0].id + 1;
-            growth.id = newId;
-
-            // Insertar el nuevo dato en la base de datos
-            db_ASC.insert(growth, (err, newDoc) => {
+    
+            if (existingEntry) {
+                // Si ya existe un elemento con los mismos valores para 'geo' y 'time_period', devolver error 409 Conflict
+                return res.status(409).send("Conflict: Element with same 'geo' and 'time_period' already exists");
+            }
+    
+            // Obtener el último ID y calcular el nuevo ID
+            db_ASC.find({}).sort({ id: -1 }).limit(1).exec((err, lastEntry) => {
                 if (err) {
                     // Si hay un error en la base de datos, enviar error 500 Internal Server Error
                     return res.status(500).send("Internal Error");
                 }
-                // Enviar respuesta con código 201 Created
-                res.status(201).send("Created");
+    
+                const newId = lastEntry.length === 0 ? 1 : lastEntry[0].id + 1;
+                growth.id = newId;
+    
+                // Insertar el nuevo dato en la base de datos
+                db_ASC.insert(growth, (err, newDoc) => {
+                    if (err) {
+                        // Si hay un error en la base de datos, enviar error 500 Internal Server Error
+                        return res.status(500).send("Internal Error");
+                    }
+                    // Enviar respuesta con código 201 Created
+                    res.status(201).send("Created");
+                });
             });
         });
     });
+    
 
 
 
