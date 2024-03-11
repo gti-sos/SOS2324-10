@@ -23,7 +23,7 @@ module.exports = (app,db_ASB) => {
       const queryParams = req.query; // Obtener los parámetros de consulta de la solicitud
 
       //Parseo
-      const numericAttributes = ["pgeo", "limit", "skip"]; // Añadir cualquier parámetro numérico adicional aquí
+      const numericAttributes = ["pgeo", "limit", "offset"]; // Añadir cualquier parámetro numérico adicional aquí
       numericAttributes.forEach(attr => {
           if (queryParams[attr]) {
               queryParams[attr] = parseInt(queryParams[attr]);
@@ -36,7 +36,7 @@ module.exports = (app,db_ASB) => {
       // Paginación
       const pgeo = queryParams.pgeo || 1; // Página predeterminada: 1
       const limit = queryParams.limit || 10; // Límite predeterminado: 10
-      const skip = (pgeo - 1) * limit; // Calcular el número de documentos a saltar
+      const offset = (pgeo - 1) * limit; // Calcular el número de documentos a saltar
 
       // Objeto para almacenar parámetros de consulta parseados
       const parsedQueryParams = {};
@@ -60,7 +60,7 @@ module.exports = (app,db_ASB) => {
       // Eliminar parámetros de paginación de queryParams
       delete queryParams.pgeo;
       delete queryParams.limit;
-      delete queryParams.skip;
+      delete queryParams.offset;
 
       // Parsear los valores de los parámetros de consulta según el tipo de dato especificado
       for (const key in queryParams) {
@@ -75,7 +75,7 @@ module.exports = (app,db_ASB) => {
       }
 
       // Realizar la búsqueda en la base de datos con los parámetros de consulta parseados y ordenados por ID, con paginación
-      db_ASB.find(parsedQueryParams).sort({ id: 1 }).skip(skip).limit(limit).exec((err, data) => {
+      db_ASB.find(parsedQueryParams).sort({ id: 1 }).skip(offset).limit(limit).exec((err, data) => {
           if (err) {
               // Si hay un error en la base de datos, enviar error 500 Internal Server Error
               return res.status(500).send("Internal Error");
@@ -156,7 +156,7 @@ module.exports = (app,db_ASB) => {
       });
   });
   //DELETE
-  app.delete(API_BASE + "/tourisms-per-geo", (req, res) => {
+  app.delete(API_BASE + "/cars-by-motor", (req, res) => {
     db_ASB.remove({}, { multi: true }, (err, numRemoved) => {
         if (err) {
             // Si hay un error en la base de datos, enviar error 500 Internal Server Error
@@ -215,9 +215,9 @@ app.delete(API_BASE + "/cars-by-motor/:geo", (req, res) => {
               return res.sendStatus(500, 'Internal server error');
           }
           if (numReplaced === 0) {
-              return res.sendStatus(400, 'Bad request: gdp-rate ID not found');
+              return res.sendStatus(400, 'Bad request');
           }
-          return res.sendStatus(200, 'Gdp-rate updated successfully');
+          return res.sendStatus(200, 'Updated successfully');
       });
 
   });
