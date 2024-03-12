@@ -14,7 +14,7 @@
     "start": "node index",
     "test-TLR": "newman run ./api-test/test-TLR.json",
     "test-MRF": "newman run ./api-test/test-MRF.json",
-    "test": "npm run test-TLR && npm run test-MRF"    
+    "test": "npx newman run ./api-test/test-TLR.json && npx newman run ./api-test/test-MRF.json"    
   },
   "author": "Tomas",
   "license": "GPL-3.0",
