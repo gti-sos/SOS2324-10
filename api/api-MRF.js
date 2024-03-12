@@ -10,7 +10,7 @@ module.exports = (app, db_MRF) => {
 
     //REDIRECCIÓN A DOCUMENTACIÓN API
     app.get(API_BASE + "/docs", (req, res) => {
-        res.redirect("https://warped-trinity-19905.postman.co/workspace/SOS2324-10~6041b4cf-1144-4aa6-8878-7c39fb610ff4/collection/32965505-7bb2cee8-54b8-414b-a752-bfc79c9b57eb?action=share&creator=32965505&active-environment=19421857-89973f15-31e4-4340-9e61-c116d427406e");
+        res.redirect("https://documenter.getpostman.com/view/32965505/2sA2xiYCme");
     });
 
 
