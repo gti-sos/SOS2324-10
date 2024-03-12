@@ -16,25 +16,21 @@ module.exports = (app, db_MRF) => {
 
     //CARGA INICIAL DE DATOS
     app.get(API_BASE + "/loadInitialData", (req, res) => {
-        // Comprobar si la base de datos está vacía
+
         db_MRF.find({}, (err, data) => {
             if (err) {
-                console.log(`Error getting /gdp-growth-rates: ${err}`);
-                res.sendStatus(500, "Internal Error");
+                res.sendStatus(500);
             } else if (data.length === 0) {
                 db_MRF.insert(datos_MRF, (err, newDocs) => {
                     if (err) {
-                        console.log(`Error inserting initial data into gdp-growth-rates: ${err}`);
-                        res.sendStatus(500, "Internal Error");
+                        res.sendStatus(500);
                     } else {
-                        console.log(`Inserted ${newDocs.length} initial gdp-growth-rates`);
-                        res.sendStatus(200, "OK");
+                        res.sendStatus(200);
                     }
                 });
 
             } else {
-                console.log(`db_MRF collection already has ${data.length} documents`);
-                res.sendStatus(200, "OK");
+                res.sendStatus(200);
             }
         });
     });
@@ -43,9 +39,9 @@ module.exports = (app, db_MRF) => {
     // -------------------------------------- GET -----------------------------
 
     app.get(API_BASE + "/", (req, res) => {
-        const { id, frequency, unit, na_item, geo, time_period, obs_value, 
+        const { id, frequency, unit, na_item, geo, time_period, obs_value,
             growth_rate_2030, growth_rate_2040, limit = 10, offset = 0, from, to } = req.query;
-        
+
         const query = {};
         if (id) query.id = parseInt(id);
         if (frequency) query.frequency = frequency;
@@ -56,35 +52,62 @@ module.exports = (app, db_MRF) => {
         if (obs_value) query.obs_value = parseInt(obs_value);
         if (growth_rate_2030) query.growth_rate_2030 = parseInt(growth_rate_2030);
         if (growth_rate_2040) query.growth_rate_2040 = parseInt(growth_rate_2040);
-      
+
         if (id) {
 
-          db_MRF.findOne(query, {_id: 0}, (error, result) => {
-            if (error) {
-              res.sendStatus(500);
-            } else if (!result) {
-              res.sendStatus(404);
-            } else {
-              res.sendStatus(200).json(result);
-            }
-          });
+            db_MRF.findOne(query, { _id: 0 }, (error, result) => {
+                if (error) {
+                    res.sendStatus(500);
+                } else if (!result) {
+                    res.sendStatus(404);
+                } else {
+                    res.sendStatus(200).json(result);
+                }
+            });
 
         } else {
 
-          db_MRF.find(query, {_id: 0, id : 0})
-            .skip(parseInt(offset))
-            .limit(parseInt(limit))
-            .exec((error, results) => {
-              if (error) {
-                res.sendStatus(500);
-              } else if (results.length === 0) {
-                res.sendStatus(404 );
-              } else {
-                res.status(200).json(results);
-              }
-            });
+            db_MRF.find(query, { _id: 0, id: 0 })
+                .skip(parseInt(offset))
+                .limit(parseInt(limit))
+                .exec((error, results) => {
+                    if (error) {
+                        res.sendStatus(500);
+                    } else if (results.length === 0) {
+                        res.sendStatus(404);
+                    } else {
+                        res.status(200).json(results);
+                    }
+                });
         }
-      });
+    });
+
+
+    app.get(API_BASE + "/:geo/:time_period", (req, res) => {
+        const geo = req.params.geo;
+        const time_period = parseInt(req.params.time_period);
+
+        // Verificar si el año es un número válido
+        if (isNaN(time_period)) {
+            return res.sendStatus(400, "Bad Request");
+        }
+
+        // Consultar la base de datos con el filtro de geo y time_period
+        db_MRF.find({ geo: geo, time_period: time_period }, { _id: 0, id: 0 })
+            .exec((err, filteredData) => {
+                if (err) {
+                    return res.sendStatus(500, "Internal Error");
+                }
+
+                if (filteredData.length === 0) {
+                    return res.sendStatus(404, "Not Found");
+                }
+
+                res.status(200).send(filteredData);
+            });
+    });
+
+
 
 
     // -------------------------------------- POST -----------------------------
@@ -97,9 +120,9 @@ module.exports = (app, db_MRF) => {
     //SOBRE LA RUTA GENERAL
     app.post(API_BASE + "/", (req, res) => {
         const newData = req.body;
-        if (!newData.geo || !newData.time_period || !newData.id || !newData.frequency || !newData.unit 
+        if (!newData.geo || !newData.time_period || !newData.id || !newData.frequency || !newData.unit
             || !newData.na_item || !newData.obs_value || !newData.growth_rate_2030 || !newData.growth_rate_2040) {
-              return res.sendStatus(400);
+            return res.sendStatus(400);
         }
 
         db_MRF.findOne({ id: newData.id }, (err, doc) => {
@@ -128,44 +151,50 @@ module.exports = (app, db_MRF) => {
     });
 
 
-    //ACTUALIZAR RECURSOS CONCRETOS  
-    app.put(API_BASE + "/:id", (req, res) => {
-
-        const idURL = req.params.id;
-        const idBody = req.body.id;
+    app.put(API_BASE + "/:geo/:time_period", (req, res) => {
+        const geoURL = req.params.geo;
+        const time_periodURL = parseInt(req.params.time_period);
         const updatedGdp = req.body;
 
-        // Verificar si el ID de la URL es válido
-        const idURLInt = parseInt(idURL);
-        if (isNaN(idURLInt) || idURLInt < 0) {
+
+        if (isNaN(time_periodURL)) {
             return res.sendStatus(400);
         }
 
-        // Verificar si el ID del body es válido
-        const idBodyInt = parseInt(idBody);
-        if (isNaN(idBodyInt) || idBodyInt < 0) {
+        const expectedFields = ["frequency", "unit", "na_item", "geo", "time_period", "obs_value", "growth_rate_2030", "growth_rate_2040"];
+        const parametersBody = Object.keys(updatedGdp);
+        const missingFields = expectedFields.filter(field => !parametersBody.includes(field));
+        if (missingFields.length > 0) {
             return res.sendStatus(400);
         }
 
-        // Verificar que coincidan ambos ID
-        if (idBodyInt !== idURLInt) {
+        if (geoURL !== updatedGdp.geo || time_periodURL !== updatedGdp.time_period) {
             return res.sendStatus(400);
         }
 
-        db_MRF.update({ id: idURLInt }, { $set: updatedGdp }, {}, (err, numReplaced) => {
+        db_MRF.findOne({ geo: geoURL, time_period: time_periodURL }, (err, existingGdp) => {
             if (err) {
-                console.error(err);
                 return res.sendStatus(500);
             }
-            if (numReplaced === 0) {
-                return res.sendStatus(400);
+            if (!existingGdp) {
+                return res.sendStatus(404);
             }
-            return res.sendStatus(200);
-        });
 
+            db_MRF.update({ geo: geoURL, time_period: time_periodURL }, updatedGdp, {}, (err, numReplaced) => {
+                if (err) {
+                    return res.sendStatus(500);
+                }
+                if (numReplaced === 0) {
+                    return res.sendStatus(500);
+                }
+                return res.sendStatus(200);
+            });
+        });
     });
 
-    
+
+
+
     // -------------------------------------- DELETE -----------------------------
 
 
@@ -182,29 +211,28 @@ module.exports = (app, db_MRF) => {
 
 
     //ELIMINAR RECURSO CONCRETO 
-    app.delete(API_BASE + "/:id", (req, res) => {
+    app.delete(API_BASE + "/:geo/:time_period", (req, res) => {
+        const geoURL = req.params.geo;
+        const time_periodURL = parseInt(req.params.time_period);
 
-        const idGDP = Number(req.params.id);
+        // Verificar si el año es un número válido
+        if (isNaN(time_periodURL)) {
+            return res.sendStatus(400);
+        }
 
-        db_MRF.remove({ id: idGDP }, {}, (err, numRemoved) => {
+        // Eliminar el vehículo por geo y time_period de la base de datos
+        db_MRF.remove({ geo: geoURL, time_period: time_periodURL }, {}, (err, numRemoved) => {
             if (err) {
-                console.error(err);
                 return res.sendStatus(500);
+            } else {
+                if (numRemoved >= 1) {
+                    return res.sendStatus(200);
+                } else {
+                    return res.sendStatus(404);
+                }
             }
-            if (numRemoved === 0) {
-                return res.sendStatus(400)
-            }
-            return res.sendStatus(200);
         });
-      
     });
-
-
-
-
-
-
-
 
 
 
