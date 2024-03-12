@@ -285,7 +285,7 @@ module.exports = (app, db_MRF) => {
             geo: 'belgium',
             time_period: 2020,
             obs_value: -5.3,
-            growth_rate_2030: 71573,
+            growth_rate_2030: 71574,
             growth_rate_2040: 81533
         },
         {
