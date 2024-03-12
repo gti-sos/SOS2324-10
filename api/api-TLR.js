@@ -12,7 +12,7 @@ module.exports = (app, db_TLR) => {
 
 
   app.get('/api/v1/vehicles-stock/docs', (req, res) => {
-    const documentationURL = 'https://warped-trinity-19905.postman.co/workspace/SOS2324-10~6041b4cf-1144-4aa6-8878-7c39fb610ff4/collection/19421857-1c44b0e3-ad2a-4b9a-af45-798fd5948246?action=share&creator=19421857&active-environment=19421857-89973f15-31e4-4340-9e61-c116d427406e'; // Reemplaza esto con la URL de tu documentación
+    const documentationURL = 'https://documenter.getpostman.com/view/19421857/2sA2xiYCmf';
 
     // Redirigir al portal de documentación
     res.redirect(documentationURL);
