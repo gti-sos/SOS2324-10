@@ -3,8 +3,8 @@
 		"_postman_id": "08264891-59e1-4c6b-841b-9171a4e87934",
 		"name": "MRF WEB",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "19421857",
-		"_collection_link": "https://warped-trinity-19905.postman.co/workspace/SOS2324-10~6041b4cf-1144-4aa6-8878-7c39fb610ff4/collection/32965505-08264891-59e1-4c6b-841b-9171a4e87934?action=share&source=collection_link&creator=19421857"
+		"_exporter_id": "32965505",
+		"_collection_link": "https://warped-trinity-19905.postman.co/workspace/SOS2324-10~6041b4cf-1144-4aa6-8878-7c39fb610ff4/collection/32965505-08264891-59e1-4c6b-841b-9171a4e87934?action=share&source=collection_link&creator=32965505"
 	},
 	"item": [
 		{
@@ -14,8 +14,11 @@
 				"header": [],
 				"url": {
 					"raw": "https://sos2324-10.appspot.com/api/v1/gdp-growth-rates/loadInitialData",
+					"protocol": "https",
 					"host": [
-						"https://sos2324-10.appspot.com"
+						"sos2324-10",
+						"appspot",
+						"com"
 					],
 					"path": [
 						"api",
@@ -33,9 +36,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{web}}/api/v1/gdp-growth-rates",
+					"raw": "https://sos2324-10.appspot.com/api/v1/gdp-growth-rates",
+					"protocol": "https",
 					"host": [
-						"{{web}}"
+						"sos2324-10",
+						"appspot",
+						"com"
 					],
 					"path": [
 						"api",
@@ -52,9 +58,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{web}}/api/v1/gdp-growth-rates?geo=belgium&limit=1&offset=1",
+					"raw": "https://sos2324-10.appspot.com/api/v1/gdp-growth-rates?geo=belgium&limit=1&offset=1",
+					"protocol": "https",
 					"host": [
-						"{{web}}"
+						"sos2324-10",
+						"appspot",
+						"com"
 					],
 					"path": [
 						"api",
@@ -85,9 +94,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{web}}/api/v1/gdp-growth-rates?geo=letonia",
+					"raw": "https://sos2324-10.appspot.com/api/v1/gdp-growth-rates?geo=letonia",
+					"protocol": "https",
 					"host": [
-						"{{web}}"
+						"sos2324-10",
+						"appspot",
+						"com"
 					],
 					"path": [
 						"api",
@@ -119,9 +131,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{web}}/api/v1/gdp-growth-rates",
+					"raw": "https://sos2324-10.appspot.com/api/v1/gdp-growth-rates",
+					"protocol": "https",
 					"host": [
-						"{{web}}"
+						"sos2324-10",
+						"appspot",
+						"com"
 					],
 					"path": [
 						"api",
@@ -147,9 +162,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{web}}/api/v1/gdp-growth-rates",
+					"raw": "https://sos2324-10.appspot.com/api/v1/gdp-growth-rates",
+					"protocol": "https",
 					"host": [
-						"{{web}}"
+						"sos2324-10",
+						"appspot",
+						"com"
 					],
 					"path": [
 						"api",
@@ -166,9 +184,12 @@
 				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": "{{web}}/api/v1/gdp-growth-rates/austria",
+					"raw": "https://sos2324-10.appspot.com/api/v1/gdp-growth-rates/austria",
+					"protocol": "https",
 					"host": [
-						"{{web}}"
+						"sos2324-10",
+						"appspot",
+						"com"
 					],
 					"path": [
 						"api",
@@ -195,9 +216,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{web}}/api/v1/gdp-growth-rates",
+					"raw": "https://sos2324-10.appspot.com/api/v1/gdp-growth-rates",
+					"protocol": "https",
 					"host": [
-						"{{web}}"
+						"sos2324-10",
+						"appspot",
+						"com"
 					],
 					"path": [
 						"api",
@@ -223,9 +247,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{web}}/api/v1/gdp-growth-rates/3",
+					"raw": "https://sos2324-10.appspot.com/api/v1/gdp-growth-rates/3",
+					"protocol": "https",
 					"host": [
-						"{{web}}"
+						"sos2324-10",
+						"appspot",
+						"com"
 					],
 					"path": [
 						"api",
@@ -252,9 +279,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{web}}/api/v1/gdp-growth-rates/3",
+					"raw": "https://sos2324-10.appspot.com/api/v1/gdp-growth-rates/3",
+					"protocol": "https",
 					"host": [
-						"{{web}}"
+						"sos2324-10",
+						"appspot",
+						"com"
 					],
 					"path": [
 						"api",
@@ -281,9 +311,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{web}}/api/v1/gdp-growth-rates",
+					"raw": "https://sos2324-10.appspot.com/api/v1/gdp-growth-rates",
+					"protocol": "https",
 					"host": [
-						"{{web}}"
+						"sos2324-10",
+						"appspot",
+						"com"
 					],
 					"path": [
 						"api",
@@ -300,9 +333,12 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{web}}/api/v1/gdp-growth-rates?time_period=2021",
+					"raw": "https://sos2324-10.appspot.com/api/v1/gdp-growth-rates?time_period=2021",
+					"protocol": "https",
 					"host": [
-						"{{web}}"
+						"sos2324-10",
+						"appspot",
+						"com"
 					],
 					"path": [
 						"api",
@@ -325,9 +361,12 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{web}}/api/v1/gdp-growth-rates",
+					"raw": "https://sos2324-10.appspot.com/api/v1/gdp-growth-rates",
+					"protocol": "https",
 					"host": [
-						"{{web}}"
+						"sos2324-10",
+						"appspot",
+						"com"
 					],
 					"path": [
 						"api",
