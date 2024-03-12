@@ -13,9 +13,9 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{web}}/api/v1/gdp-growth-rates/loadInitialData",
+					"raw": "https://sos2324-10.appspot.com/api/v1/gdp-growth-rates/loadInitialData",
 					"host": [
-						"{{web}}"
+						"https://sos2324-10.appspot.com"
 					],
 					"path": [
 						"api",
