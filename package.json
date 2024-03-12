@@ -14,7 +14,8 @@
     "start": "node index",
     "test": "echo \"Error: no test specified\" && exit 1",
     "test-TLR": "newman run ./api-test/test-TLR.json",
-    "test-MRF": "newman run ./api-test/test-MRF.json"
+    "test-MRF": "newman run ./api-test/test-MRF.json",
+    "git push": "npm run test-TLR && npm run test-MRF"
   },
   "author": "Tomas",
   "license": "GPL-3.0",
