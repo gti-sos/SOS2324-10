@@ -149,12 +149,12 @@ module.exports = (app, db_TLR) => {
     const geoURL = req.params.geo;
     const yearURL = parseInt(req.params.year);
     const updatedVehicle = req.body;
-  
+
     // Verificar si el año es un número válido
     if (isNaN(yearURL)) {
       return res.sendStatus(400);
     }
-  
+
     // Verificar que todos los parámetros deseados estén presentes
     const expectedFields = ["freq", "vehicle", "unit", "geo", "year", "obs_value", "flights_passangers", "cars_deaths"];
     const receivedFields = Object.keys(updatedVehicle);
@@ -162,12 +162,12 @@ module.exports = (app, db_TLR) => {
     if (missingFields.length > 0) {
       return res.sendStatus(400);
     }
-  
+
     // Verificar que el geo y year de la URL coincidan con los del cuerpo de la solicitud
     if (geoURL !== updatedVehicle.geo || yearURL !== updatedVehicle.year) {
       return res.sendStatus(400);
     }
-  
+
     // Buscar el vehículo por geo y year y actualizarlo
     db_TLR.findOne({ geo: geoURL, year: yearURL }, (err, existingVehicle) => {
       if (err) {
@@ -176,7 +176,7 @@ module.exports = (app, db_TLR) => {
       if (!existingVehicle) {
         return res.sendStatus(404);
       }
-  
+
       // Actualizar el vehículo en la base de datos
       db_TLR.update({ geo: geoURL, year: yearURL }, updatedVehicle, {}, (err, numReplaced) => {
         if (err) {
@@ -189,7 +189,7 @@ module.exports = (app, db_TLR) => {
       });
     });
   });
-  
+
 
 
   //DELETE Persistente
@@ -209,12 +209,12 @@ module.exports = (app, db_TLR) => {
   app.delete(API_BASE + "/vehicles-stock/:geo/:year", (req, res) => {
     const geoURL = req.params.geo;
     const yearURL = parseInt(req.params.year);
-  
+
     // Verificar si el año es un número válido
     if (isNaN(yearURL)) {
       return res.sendStatus(400);
     }
-  
+
     // Eliminar el vehículo por geo y year de la base de datos
     db_TLR.remove({ geo: geoURL, year: yearURL }, {}, (err, numRemoved) => {
       if (err) {
@@ -228,7 +228,7 @@ module.exports = (app, db_TLR) => {
       }
     });
   });
-  
+
 
 
   let datos_TLR = [

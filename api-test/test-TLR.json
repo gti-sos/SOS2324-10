@@ -79,7 +79,7 @@
 			"response": []
 		},
 		{
-			"name": "GET filtros y paginación",
+			"name": "GET filtros",
 			"event": [
 				{
 					"listen": "test",
@@ -127,7 +127,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/vehicles-stock/search?page=1&limit=5&geo=España",
+					"raw": "https://sos2324-10.appspot.com/api/v1/vehicles-stock/Bulgaria/2018",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -138,21 +138,75 @@
 						"api",
 						"v1",
 						"vehicles-stock",
-						"search"
+						"Bulgaria",
+						"2018"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET paginación",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response status code is 200\", function () {",
+							"  pm.expect(pm.response.code).to.equal(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Verify that the response is an array with at least one element\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('array').and.to.have.lengthOf.at.least(1);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Verify that the year is a non-zero integer\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('array');",
+							"    ",
+							"    responseData.forEach(function(data) {",
+							"        pm.expect(data.year).to.exist.and.to.be.a('number');",
+							"        pm.expect(data.year).to.not.equal(0, \"Year should be a non-zero integer\");",
+							"    });",
+							"});",
+							"",
+							"",
+							"pm.test(\"Verify that obs_value, flights_passangers, and cars_deaths are non-negative integers\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    responseData.forEach(function(data) {",
+							"        pm.expect(data.obs_value).to.be.a('number').and.to.be.at.least(0);",
+							"        pm.expect(data.flights_passangers).to.be.a('number').and.to.be.at.least(0);",
+							"        pm.expect(data.cars_deaths).to.be.a('number').and.to.be.at.least(0);",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://sos2324-10.appspot.com/api/v1/vehicles-stock/Albania/2021",
+					"protocol": "https",
+					"host": [
+						"sos2324-10",
+						"appspot",
+						"com"
 					],
-					"query": [
-						{
-							"key": "page",
-							"value": "1"
-						},
-						{
-							"key": "limit",
-							"value": "5"
-						},
-						{
-							"key": "geo",
-							"value": "España"
-						}
+					"path": [
+						"api",
+						"v1",
+						"vehicles-stock",
+						"Albania",
+						"2021"
 					]
 				}
 			},
@@ -194,7 +248,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n        \"freq\": \"A\",\r\n        \"vehicle\": \"BUS_TOT\",\r\n        \"unit\": \"NR\",\r\n        \"geo\": \"Albania\",\r\n        \"year\": 2017,\r\n        \"obs_value\": 6583,\r\n        \"flights_passangers\": 18336,\r\n        \"cars_deaths\": 1079\r\n}",
+					"raw": "{\r\n        \"freq\": \"A\",\r\n        \"vehicle\": \"BUS_TOT\",\r\n        \"unit\": \"NR\",\r\n        \"geo\": \"Marruecos\",\r\n        \"year\": 2017,\r\n        \"obs_value\": 6583,\r\n        \"flights_passangers\": 18336,\r\n        \"cars_deaths\": 1079\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -290,7 +344,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n        \"freq\": \"AAAAA\",\r\n        \"vehicle\": \"BUS_TOT\",\r\n        \"unit\": \"NR\",\r\n        \"geo\": \"España\",\r\n        \"time_period\": 2011,\r\n        \"obs_value\": 16100,\r\n        \"flights_passangers\": 14031,\r\n        \"cars_deaths\": 531\r\n    }",
+					"raw": "{\r\n        \"freq\": \"A\",\r\n        \"vehicle\": \"BUS_TOT\",\r\n        \"unit\": \"NR\",\r\n        \"geo\": \"Marruecos\",\r\n        \"year\": 2017,\r\n        \"obs_value\": 6583,\r\n        \"flights_passangers\": 18336,\r\n        \"cars_deaths\": 1079\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -329,7 +383,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/vehicles-stock/1",
+					"raw": "https://sos2324-10.appspot.com/api/v1/vehicles-stock/España/2011",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -340,7 +394,8 @@
 						"api",
 						"v1",
 						"vehicles-stock",
-						"1"
+						"España",
+						"2011"
 					]
 				}
 			},
@@ -361,7 +416,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/vehicles-stock/500",
+					"raw": "https://sos2324-10.appspot.com/api/v1/vehicles-stock/España/2050",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -372,7 +427,8 @@
 						"api",
 						"v1",
 						"vehicles-stock",
-						"500"
+						"España",
+						"2050"
 					]
 				}
 			},
@@ -457,7 +513,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/vehicles-stock/1",
+					"raw": "https://sos2324-10.appspot.com/api/v1/vehicles-stock/España/2011",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -468,7 +524,8 @@
 						"api",
 						"v1",
 						"vehicles-stock",
-						"1"
+						"España",
+						"2011"
 					]
 				}
 			},
