@@ -13,7 +13,8 @@
   "scripts": {
     "start": "node index",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "test-TLR": "newman run ./api-test/test-TLR.json"
+    "test-TLR": "newman run ./api-test/test-TLR.json",
+    "test-MRF": "newman run ./api-test/test-MRF.json"
   },
   "author": "Tomas",
   "license": "GPL-3.0",

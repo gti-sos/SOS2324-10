@@ -1,0 +1,342 @@
+{
+	"info": {
+		"_postman_id": "08264891-59e1-4c6b-841b-9171a4e87934",
+		"name": "MRF WEB",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19421857",
+		"_collection_link": "https://warped-trinity-19905.postman.co/workspace/SOS2324-10~6041b4cf-1144-4aa6-8878-7c39fb610ff4/collection/32965505-08264891-59e1-4c6b-841b-9171a4e87934?action=share&source=collection_link&creator=19421857"
+	},
+	"item": [
+		{
+			"name": "200 - OK",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{web}}/api/v1/gdp-growth-rates/loadInitialData",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"gdp-growth-rates",
+						"loadInitialData"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "TODOS DATOS",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{web}}/api/v1/gdp-growth-rates",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"gdp-growth-rates"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "FILTRO/PAG",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{web}}/api/v1/gdp-growth-rates?geo=belgium&limit=1&offset=1",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"gdp-growth-rates"
+					],
+					"query": [
+						{
+							"key": "geo",
+							"value": "belgium"
+						},
+						{
+							"key": "limit",
+							"value": "1"
+						},
+						{
+							"key": "offset",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "404 - NOT FOUND",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{web}}/api/v1/gdp-growth-rates?geo=letonia",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"gdp-growth-rates"
+					],
+					"query": [
+						{
+							"key": "geo",
+							"value": "letonia"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "201 - CREATED",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": 30,\r\n    \"frequency\": \"a\",\r\n    \"unit\": \"clv_pch_pre\",\r\n    \"na_item\": \"b1gq\",\r\n    \"geo\": \"belgium\",\r\n    \"time_period\": 2020,\r\n    \"obs_value\": -5.3,\r\n    \"growth_rate_2030\": 71573,\r\n    \"growth_rate_2040\": 81533\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{web}}/api/v1/gdp-growth-rates",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"gdp-growth-rates"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "400 - BAD REQUEST",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": 44,\r\n    //\"frequency\": \"a\",\r\n    //\"unit\": \"clv_pch_pre\",\r\n    //\"na_item\": \"b1gq\",\r\n    //\"geo\": \"belgium\",\r\n    //\"time_period\": 2020,\r\n    \"obs_value\": -5.3,\r\n    \"growth_rate_2030\": 71573,\r\n    \"growth_rate_2040\": 81533\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{web}}/api/v1/gdp-growth-rates",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"gdp-growth-rates"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "405 - NOT ALLOWED",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{web}}/api/v1/gdp-growth-rates/austria",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"gdp-growth-rates",
+						"austria"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "409 - CONFLICT",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": 30,\r\n    \"frequency\": \"a\",\r\n    \"unit\": \"clv_pch_pre\",\r\n    \"na_item\": \"b1gq\",\r\n    \"geo\": \"belgium\",\r\n    \"time_period\": 2020,\r\n    \"obs_value\": -5.3,\r\n    \"growth_rate_2030\": 71573,\r\n    \"growth_rate_2040\": 81533\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{web}}/api/v1/gdp-growth-rates",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"gdp-growth-rates"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "200 - OK",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": 3,\r\n    \"frequency\": \"a\",\r\n    \"unit\": \"clv_pch_pre\",\r\n    \"na_item\": \"b1gq\",\r\n    \"geo\": \"belgium\",\r\n    \"time_period\": 2020,\r\n    \"obs_value\": -5.3,\r\n    \"growth_rate_2030\": 11111,\r\n    \"growth_rate_2040\": 11111\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{web}}/api/v1/gdp-growth-rates/3",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"gdp-growth-rates",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "400 - BAD REQUEST",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": 4,\r\n    \"frequency\": \"a\",\r\n    \"unit\": \"clv_pch_pre\",\r\n    \"na_item\": \"b1gq\",\r\n    \"geo\": \"belgium\",\r\n    \"time_period\": 2020,\r\n    \"obs_value\": -5.3,\r\n    \"growth_rate_2030\": 11111,\r\n    \"growth_rate_2040\": 11111\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{web}}/api/v1/gdp-growth-rates/3",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"gdp-growth-rates",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "405 - NOT ALLOWED",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": 5,\r\n    \"frequency\": \"a\",\r\n    \"unit\": \"clv_pch_pre\",\r\n    \"na_item\": \"b1gq\",\r\n    \"geo\": \"belgium\",\r\n    \"time_period\": 2020,\r\n    \"obs_value\": -5.3,\r\n    \"growth_rate_2030\": 71573,\r\n    \"growth_rate_2040\": 81533\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{web}}/api/v1/gdp-growth-rates",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"gdp-growth-rates"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "200 - OK",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{web}}/api/v1/gdp-growth-rates?time_period=2021",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"gdp-growth-rates"
+					],
+					"query": [
+						{
+							"key": "time_period",
+							"value": "2021"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "200 - OK",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{web}}/api/v1/gdp-growth-rates",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"gdp-growth-rates"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
