@@ -63,54 +63,27 @@ module.exports = (app, db_TLR) => {
 
 
   //Función GET con filtro
-  app.get(API_BASE + "/vehicles-stock/search", (req, res) => {
-    const queryParams = req.query;
+  app.get(API_BASE + "/vehicles-stock/:geo/:year", (req, res) => {
+    const geo = req.params.geo;
+    const year = parseInt(req.params.year);
 
-    //Parseamos Integers
-    const numericAttributes = ["year", "obs_value", "flights_passangers", "cars_deaths"];
-    numericAttributes.forEach(attr => {
-      if (queryParams[attr]) {
-        queryParams[attr] = parseInt(queryParams[attr]);
-        if (isNaN(queryParams[attr])) {
-          return res.sendStatus(400, "Bad Request");
-        }
-      }
-    });
-
-    // Establecer los parámetros de paginación predeterminados
-    const page = parseInt(queryParams.page) || 1; // Página predeterminada: 1
-    const limit = parseInt(queryParams.limit) || 10; // Límite predeterminado: 10
-
-    // Calcular el índice de inicio y el número de elementos a mostrar en la página actual
-    const startIndex = (page - 1) * limit;
-    const endIndex = page * limit;
-
-    // Construir el filtro para la consulta a la base de datos
-    const filter = { $and: [] };
-    for (const key in queryParams) {
-      // Excluir los parámetros de paginación del filtro
-      if (key !== "page" && key !== "limit") {
-        const condition = {};
-        condition[key] = queryParams[key];
-        filter.$and.push(condition);
-      }
+    // Verificar si el año es un número válido
+    if (isNaN(year)) {
+      return res.sendStatus(400, "Bad Request");
     }
 
-    // Consultar la base de datos con el filtro construido
-    db_TLR.find(filter, { _id: 0, id: 0 })
+    // Consultar la base de datos con el filtro de geo y year
+    db_TLR.find({ geo: geo, year: year }, { _id: 0, id: 0 })
       .exec((err, filteredData) => {
         if (err) {
           return res.sendStatus(500, "Internal Error");
         }
 
-        // Aplicar paginación después de obtener los resultados de la consulta
-        const paginatedData = filteredData.slice(startIndex, endIndex);
-
-        if (paginatedData.length === 0) {
+        if (filteredData.length === 0) {
           return res.sendStatus(404, "Not Found");
         }
 
-        res.status(200).send(paginatedData);
+        res.status(200).send(filteredData);
       });
   });
 
@@ -161,7 +134,7 @@ module.exports = (app, db_TLR) => {
         });
       });
     });
-});
+  });
 
 
   //Método PUT
@@ -172,39 +145,40 @@ module.exports = (app, db_TLR) => {
   });
 
   //PUT Normal
-  app.put(API_BASE + "/vehicles-stock/:id", (req, res) => {
-    const idURL = req.params.id;
-    const idBody = req.body.id;
+  app.put(API_BASE + "/vehicles-stock/:geo/:year", (req, res) => {
+    const geoURL = req.params.geo;
+    const yearURL = parseInt(req.params.year);
     const updatedVehicle = req.body;
-
-    // Verificar si el ID de la URL es válido
-    const idURLInt = parseInt(idURL);
-    if (isNaN(idURLInt) || idURLInt < 0) {
+  
+    // Verificar si el año es un número válido
+    if (isNaN(yearURL)) {
       return res.sendStatus(400);
     }
-
-    // Verificar si el ID del body es válido
-    const idBodyInt = parseInt(idBody);
-    if (isNaN(idBodyInt) || idBodyInt < 0) {
+  
+    // Verificar que todos los parámetros deseados estén presentes
+    const expectedFields = ["freq", "vehicle", "unit", "geo", "year", "obs_value", "flights_passangers", "cars_deaths"];
+    const receivedFields = Object.keys(updatedVehicle);
+    const missingFields = expectedFields.filter(field => !receivedFields.includes(field));
+    if (missingFields.length > 0) {
       return res.sendStatus(400);
     }
-
-    // Verificar que coincidan ambos ID
-    if (idBodyInt !== idURLInt) {
+  
+    // Verificar que el geo y year de la URL coincidan con los del cuerpo de la solicitud
+    if (geoURL !== updatedVehicle.geo || yearURL !== updatedVehicle.year) {
       return res.sendStatus(400);
     }
-
-    // Buscar el vehículo por su ID y actualizarlo
-    db_TLR.findOne({ id: idURLInt }, (err, existingVehicle) => {
+  
+    // Buscar el vehículo por geo y year y actualizarlo
+    db_TLR.findOne({ geo: geoURL, year: yearURL }, (err, existingVehicle) => {
       if (err) {
         return res.sendStatus(500);
       }
       if (!existingVehicle) {
         return res.sendStatus(404);
       }
-
+  
       // Actualizar el vehículo en la base de datos
-      db_TLR.update({ id: idURLInt }, updatedVehicle, {}, (err, numReplaced) => {
+      db_TLR.update({ geo: geoURL, year: yearURL }, updatedVehicle, {}, (err, numReplaced) => {
         if (err) {
           return res.sendStatus(500);
         }
@@ -215,6 +189,7 @@ module.exports = (app, db_TLR) => {
       });
     });
   });
+  
 
 
   //DELETE Persistente
@@ -231,16 +206,17 @@ module.exports = (app, db_TLR) => {
   });
 
   // DELETE por ID
-  app.delete(API_BASE + "/vehicles-stock/:id", (req, res) => {
-    const id = parseInt(req.params.id);
-
-    // Verificar si el ID es válido
-    if (isNaN(id) || id < 0) {
+  app.delete(API_BASE + "/vehicles-stock/:geo/:year", (req, res) => {
+    const geoURL = req.params.geo;
+    const yearURL = parseInt(req.params.year);
+  
+    // Verificar si el año es un número válido
+    if (isNaN(yearURL)) {
       return res.sendStatus(400);
     }
-
-    // Eliminar el vehículo por ID de la base de datos
-    db_TLR.remove({ "id": id }, {}, (err, numRemoved) => {
+  
+    // Eliminar el vehículo por geo y year de la base de datos
+    db_TLR.remove({ geo: geoURL, year: yearURL }, {}, (err, numRemoved) => {
       if (err) {
         return res.sendStatus(500);
       } else {
@@ -252,6 +228,7 @@ module.exports = (app, db_TLR) => {
       }
     });
   });
+  
 
 
   let datos_TLR = [
