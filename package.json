@@ -13,9 +13,10 @@
   "main": "index.js",
   "scripts": {
     "start": "node index",
-    "test": "npx newman run ./api-test/test-TLR.json && npx newman run ./api-test/test-MRF.json ",
+    "test": "npx newman run ./api-test/test-TLR.json && npx newman run ./api-test/test-MRF.json && npx newman run ./api-test/test-ASC.json -e ./api-test/environment.json ",
     "test-TLR": "newman run ./api-test/test-TLR.json",
-    "test-MRF": "newman run ./api-test/test-MRF.json"
+    "test-MRF": "newman run ./api-test/test-MRF.json",
+    "test-ASC": "newman run ./api-test/test-ASC.json -e ./api-test/environment.json"
   },
   "author": "Tomas",
   "license": "GPL-3.0",
