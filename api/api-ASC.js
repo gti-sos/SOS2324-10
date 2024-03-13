@@ -92,6 +92,31 @@ module.exports = (app, db_ASC) => {
             res.json(responseData);
         });
     });
+    //-------------- GET CON FILTROS --------------------
+
+    app.get(API_BASE + "/tourisms-per-age/:geo/:time_period", (req, res) => {
+        const geo = req.params.geo;
+        const time_period = parseInt(req.params.time_period);
+
+        // Verificar time_period válido
+        if (isNaN(time_period)) {
+            return res.sendStatus(400).send("Bad Request");
+        }
+
+        // Aplica el filtro de geo y time_period
+        db_ASC.find({ geo: geo, time_period: time_period }, { _id: 0, id: 0 })
+            .exec((err, data) => {
+                if (err) {
+                    return res.sendStatus(500).send("Internal Error");
+                }
+
+                if (data.length === 0) {
+                    return res.sendStatus(404).send("Not Found");
+                }
+
+                res.status(200).json(data);
+            });
+    });
 
 
     // ------------- LOAD INITIAL DATA ------------------
@@ -120,39 +145,39 @@ module.exports = (app, db_ASC) => {
 
     app.post(API_BASE + "/tourisms-per-age", (req, res) => {
         const growth = req.body;
-    
+
         // Validar el JSON recibido
         const expectedKeys = ['frequency', 'unit', 'age', 'geo', 'time_period', 'obs_value', 'gdp', 'volgdp'];
         const actualKeys = Object.keys(growth);
         const isValidJson = expectedKeys.every(key => actualKeys.includes(key));
-    
+
         if (!isValidJson || actualKeys.length !== expectedKeys.length) {
             // El JSON no tiene la estructura esperada
             return res.status(400).send("Bad Request: JSON has invalid structure");
         }
-    
+
         // Verificar si ya existe un elemento con los mismos valores para los campos 'geo' y 'time_period'
         db_ASC.findOne({ geo: growth.geo, time_period: growth.time_period }, (err, existingEntry) => {
             if (err) {
                 // Si hay un error en la base de datos, enviar error 500 Internal Server Error
                 return res.status(500).send("Internal Error");
             }
-    
+
             if (existingEntry) {
                 // Si ya existe un elemento con los mismos valores para 'geo' y 'time_period', devolver error 409 Conflict
                 return res.status(409).send("Conflict: Element with same 'geo' and 'time_period' already exists");
             }
-    
+
             // Obtener el último ID y calcular el nuevo ID
             db_ASC.find({}).sort({ id: -1 }).limit(1).exec((err, lastEntry) => {
                 if (err) {
                     // Si hay un error en la base de datos, enviar error 500 Internal Server Error
                     return res.status(500).send("Internal Error");
                 }
-    
+
                 const newId = lastEntry.length === 0 ? 1 : lastEntry[0].id + 1;
                 growth.id = newId;
-    
+
                 // Insertar el nuevo dato en la base de datos
                 db_ASC.insert(growth, (err, newDoc) => {
                     if (err) {
@@ -165,47 +190,57 @@ module.exports = (app, db_ASC) => {
             });
         });
     });
-    
+
 
 
 
     // -------------- PUT --------------
 
-    app.put(API_BASE + "/tourisms-per-age/:id", (req, res) => {
+    app.put(API_BASE + "/tourisms-per-age/:geo/:time_period", (req, res) => {
+        const geo = req.params.geo;
+        const time_periodN = parseInt(req.params.time_period);
+        const updatedTourism = req.body;
 
-        const idURL = req.params.id;
-        const idBody = req.body.id;
-        const updatedGdp = req.body;
-
-        // Verificar si el ID de la URL es válido
-        const idURLInt = parseInt(idURL);
-        if (isNaN(idURLInt) || idURLInt < 0) {
+        // Verificar time_period 
+        if (isNaN(time_periodN)) {
             return res.sendStatus(400);
         }
 
-        // Verificar si el ID del body es válido
-        const idBodyInt = parseInt(idBody);
-        if (isNaN(idBodyInt) || idBodyInt < 0) {
+        // Verificar todos los parámetros 
+        const expectedKeys = ['frequency', 'unit', 'age', 'geo', 'time_period', 'obs_value', 'gdp', 'volgdp'];
+        const receivedKeys = Object.keys(updatedTourism);
+        const missingKeys = expectedKeys.filter(key => !receivedKeys.includes(key));
+        if (missingKeys.length > 0) {
             return res.sendStatus(400);
         }
 
-        // Verificar que coincidan ambos ID
-        if (idBodyInt !== idURLInt) {
+        // Verificar geo y time_period
+        if (geo !== updatedTourism.geo || time_periodN !== updatedTourism.time_period) {
             return res.sendStatus(400);
         }
 
-        db_ASC.update({ id: idURLInt }, { $set: updatedGdp }, {}, (err, numReplaced) => {
+        // Buscar el registro de turismo por geo y time_period y actualizarlo
+        db_ASC.findOne({ geo: geo, time_period: time_periodN }, (err, existingTourism) => {
             if (err) {
-                console.error(err);
-                return res.sendStatus(500, 'Internal server error');
+                return res.sendStatus(500);
             }
-            if (numReplaced === 0) {
-                return res.sendStatus(400, 'Bad request: gdp-rate ID not found');
+            if (!existingTourism) {
+                return res.sendStatus(404);
             }
-            return res.sendStatus(200, 'Gdp-rate updated successfully');
-        });
 
+            // Actualizar el turismo en la base de datos
+            db_ASC.update({ geo: geo, time_period: time_periodN }, updatedTourism, {}, (err, numReplaced) => {
+                if (err) {
+                    return res.sendStatus(500);
+                }
+                if (numReplaced === 0) {
+                    return res.sendStatus(500);
+                }
+                return res.sendStatus(200);
+            });
+        });
     });
+
 
     app.put(API_BASE + "/tourisms-per-age", (req, res) => {
         res.sendStatus(405, "METHOD NOT ALLOWED");
@@ -224,23 +259,31 @@ module.exports = (app, db_ASC) => {
         });
     });
 
-    app.delete(API_BASE + "/tourisms-per-age/:age", (req, res) => {
-        const ageToDelete = req.params.age;
-
-        // Eliminar datos que coincidan con la edad especificada
-        db_ASC.remove({ age: ageToDelete }, { multi: true }, (err, numRemoved) => {
+    // ------------- DELETE CON FILTRO -------------------------
+    app.delete(API_BASE + "/tourisms-per-age/:geo/:time_period", (req, res) => {
+        const geoToDelete = req.params.geo;
+        const timePeriodToDelete = parseInt(req.params.time_period);
+    
+        // Verificar si time_period es un número válido
+        if (isNaN(timePeriodToDelete)) {
+            return res.sendStatus(400, );
+        }
+    
+        // Eliminar datos que coincidan con el geo y time_period especificados
+        db_ASC.remove({ geo: geoToDelete, time_period: timePeriodToDelete }, { multi: true }, (err, numRemoved) => {
             if (err) {
                 // Si hay un error en la base de datos, enviar error 500 Internal Server Error
                 return res.status(500).send("Internal Error");
             }
             if (numRemoved === 0) {
                 // Si no se encontraron datos para eliminar, enviar error 404 Not Found
-                return res.status(404).send("Not Found: No data found with age " + ageToDelete);
+                return res.status(404).send("Not Found: No data found with geo " + geoToDelete + " and time_period " + timePeriodToDelete);
             }
             // Enviar respuesta con código 200 OK
-            res.status(200).send("Deleted data with age: " + ageToDelete);
+            res.status(200).send("Deleted data with geo: " + geoToDelete + " and time_period: " + timePeriodToDelete);
         });
     });
+    
 
     // Manejar todos los otros métodos no permitidos
     app.all(API_BASE + "/tourisms-per-age/*", (req, res) => {
