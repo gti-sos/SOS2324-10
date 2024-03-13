@@ -1,0 +1,324 @@
+{
+	"info": {
+		"_postman_id": "273cc496-f56f-4a8f-ac69-742d68388478",
+		"name": "ASC WEB",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32972243",
+		"_collection_link": "https://warped-trinity-19905.postman.co/workspace/SOS2324-10~6041b4cf-1144-4aa6-8878-7c39fb610ff4/collection/32972243-273cc496-f56f-4a8f-ac69-742d68388478?action=share&source=collection_link&creator=32972243"
+	},
+	"item": [
+		{
+			"name": "INITIAL DATA Copy 2",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{web}}/api/v1/tourisms-per-age/loadInitialData",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"tourisms-per-age",
+						"loadInitialData"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET TODOS Copy 2",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{web}}/api/v1/tourisms-per-age",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"tourisms-per-age"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET UNO Copy 2",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{web}}/api/v1/tourisms-per-age/ES/2017",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"tourisms-per-age",
+						"ES",
+						"2017"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST TODOS Copy 2",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"frequency\": \"A\",\r\n    \"unit\": \"NR\",\r\n    \"age\": \"TOTAL\",\r\n    \"geo\": \"BG\",\r\n    \"time_period\": 2021,\r\n    \"obs_value\": 2830464,\r\n    \"gdp\": 7.7,\r\n    \"volgdp\": 72.3\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{web}}/api/v1/tourisms-per-age",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"tourisms-per-age"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST ERROR 400 Copy 2",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": 33,\r\n    \"frequency\": \"A\",\r\n    \"unit\": \"NR\",\r\n    \"age\": \"TOTAL\",\r\n    \"geo\": \"BG\",\r\n    \"time_period\": 2021,\r\n    \"obs_value\": 2830464,\r\n    \"gdp\": 7.7,\r\n    \"volgdp\": 72.3\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{web}}/api/v1/tourisms-per-age",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"tourisms-per-age"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST 405 Copy 2",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": 33,\r\n    \"frequency\": \"A\",\r\n    \"unit\": \"NR\",\r\n    \"age\": \"TOTAL\",\r\n    \"geo\": \"BG\",\r\n    \"time_period\": 2021,\r\n    \"obs_value\": 2830464,\r\n    \"gdp\": 7.7,\r\n    \"volgdp\": 72.3\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{web}}/api/v1/tourisms-per-age/BG",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"tourisms-per-age",
+						"BG"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST 409 Copy 2",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"frequency\": \"A\",\r\n    \"unit\": \"NR\",\r\n    \"age\": \"TOTAL\",\r\n    \"geo\": \"ES\",\r\n    \"time_period\": 2017,\r\n    \"obs_value\": 23500401,\r\n    \"gdp\": 3,\r\n    \"volgdp\": 94.4\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{web}}/api/v1/tourisms-per-age",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"tourisms-per-age"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT Copy 2",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"frequency\": \"B\",\r\n    \"unit\": \"NR\",\r\n    \"age\": \"TOTAL\",\r\n    \"geo\": \"ES\",\r\n    \"time_period\": 2017,\r\n    \"obs_value\": 23500401,\r\n    \"gdp\": 3,\r\n    \"volgdp\": 90\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{web}}/api/v1/tourisms-per-age/ES/2017",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"tourisms-per-age",
+						"ES",
+						"2017"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT ERROR 400 Copy 2",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"frequency\": \"B\",\r\n    \"unit\": \"NR\",\r\n    \"age\": \"TOTAL\",\r\n    \"geo\": \"ES\",\r\n    \"time_period\": 2017,\r\n    \"obs_value\": 23500401,\r\n    \"gdp\": 3,\r\n    \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{web}}/api/v1/tourisms-per-age/ES/2017",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"tourisms-per-age",
+						"ES",
+						"2017"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT ERROR 405 Copy 2",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "{{web}}/api/v1/tourisms-per-age",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"tourisms-per-age"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DEL 404 Copy 2",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{web}}/api/v1/tourisms-per-age/ES/2024",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"tourisms-per-age",
+						"ES",
+						"2024"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DEL UNO Copy 2",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{web}}/api/v1/tourisms-per-age/ES/2017",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"tourisms-per-age",
+						"ES",
+						"2017"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DEL TODOS Copy 2",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{web}}/api/v1/tourisms-per-age",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"tourisms-per-age"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
