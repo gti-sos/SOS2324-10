@@ -96,6 +96,30 @@ module.exports = (app,db_ASB) => {
       });
   });
 
+  app.get(API_BASE + "/cars_by_motor/:geo/:time_period", (req, res) => {
+    const geo = req.params.geo;
+    const time_period = parseInt(req.params.time_period);
+
+    // Verificar time_period válido
+    if (isNaN(time_period)) {
+        return res.sendStatus(400).send("Bad Request");
+    }
+
+    // Aplica el filtro de geo y time_period
+    db_ASB.find({ geo: geo, time_period: time_period }, { _id: 0, id: 0 })
+        .exec((err, data) => {
+            if (err) {
+                return res.sendStatus(500).send("Internal Error");
+            }
+
+            if (data.length === 0) {
+                return res.sendStatus(404).send("Not Found");
+            }
+
+            res.status(200).json(data);
+        });
+});
+
 
   
   app.get(API_BASE + "/cars-by-motor/loadInitialData", (req, res) => {
@@ -198,46 +222,81 @@ app.delete(API_BASE + "/cars-by-motor/:geo", (req, res) => {
     });
 });
 
+app.delete(API_BASE + "/cars_by_motor/:geo/:time_period", (req, res) => {
+  const geoToDelete = req.params.geo;
+  const timePeriodToDelete = parseInt(req.params.time_period);
+
+  // Verificar si time_period es un número válido
+  if (isNaN(timePeriodToDelete)) {
+      return res.sendStatus(400, );
+  }
+
+  // Eliminar datos que coincidan con el geo y time_period especificados
+  db_ASB.remove({ geo: geoToDelete, time_period: timePeriodToDelete }, { multi: true }, (err, numRemoved) => {
+      if (err) {
+          // Si hay un error en la base de datos, enviar error 500 Internal Server Error
+          return res.status(500).send("Internal Error");
+      }
+      if (numRemoved === 0) {
+          // Si no se encontraron datos para eliminar, enviar error 404 Not Found
+          return res.status(404).send("Not Found: No data found with geo " + geoToDelete + " and time_period " + timePeriodToDelete);
+      }
+      // Enviar respuesta con código 200 OK
+      res.status(200).send("Deleted data with geo: " + geoToDelete + " and time_period: " + timePeriodToDelete);
+  });
+});
+
     //PUT
-    app.put(API_BASE + "/cars-by-motor/:id", (req, res) => {
+  app.put(API_BASE + "/cars_by_motor/:geo/:time_period", (req, res) => {
+    const geo = req.params.geo;
+    const time_periodN = parseInt(req.params.time_period);
+    const updatedTourism = req.body;
 
-      const idURL = req.params.id;
-      const idBody = req.body.id;
-      const updateData = req.body;
+    // Verificar time_period 
+    if (isNaN(time_periodN)) {
+        return res.sendStatus(400);
+    }
 
-      // Verificar si el ID de la URL es válido
-      const idURLInt = parseInt(idURL);
-      if (isNaN(idURLInt) || idURLInt < 0) {
-          return res.sendStatus(400);
-      }
+    // Verificar todos los parámetros 
+    const expectedKeys = ['dataflow', 'last_update', 'freq', 'unit', 'motor_nrg', 'geo', 'time_period', 
+    'obs_value', 'obs_flag', 'millions_of_passenger_per_kilometres', 'road_deaths_per_million_inhabitants'];
+    const receivedKeys = Object.keys(updatedTourism);
+    const missingKeys = expectedKeys.filter(key => !receivedKeys.includes(key));
+    if (missingKeys.length > 0) {
+        return res.sendStatus(400);
+    }
 
-      // Verificar si el ID del body es válido
-      const idBodyInt = parseInt(idBody);
-      if (isNaN(idBodyInt) || idBodyInt < 0) {
-          return res.sendStatus(400);
-      }
+    // Verificar geo y time_period
+    if (geo !== updatedTourism.geo || time_periodN !== updatedTourism.time_period) {
+        return res.sendStatus(400);
+    }
 
-      // Verificar que coincidan ambos ID
-      if (idBodyInt !== idURLInt) {
-          return res.sendStatus(400);
-      }
+    // Buscar el registro de turismo por geo y time_period y actualizarlo
+    db_ASB.findOne({ geo: geo, time_period: time_periodN }, (err, existingTourism) => {
+        if (err) {
+            return res.sendStatus(500);
+        }
+        if (!existingTourism) {
+            return res.sendStatus(404);
+        }
 
-      db_ASB.update({ id: idURLInt }, { $set: updateData }, {}, (err, numReplaced) => {
-          if (err) {
-              console.error(err);
-              return res.sendStatus(500, 'Internal server error');
-          }
-          if (numReplaced === 0) {
-              return res.sendStatus(400, 'Bad request');
-          }
-          return res.sendStatus(200, 'Updated successfully');
-      });
+        // Actualizar el turismo en la base de datos
+        db_ASB.update({ geo: geo, time_period: time_periodN }, updatedTourism, {}, (err, numReplaced) => {
+            if (err) {
+                return res.sendStatus(500);
+            }
+            if (numReplaced === 0) {
+                return res.sendStatus(500);
+            }
+            return res.sendStatus(200);
+        });
+    });
+});
 
-  });
 
-  app.put(API_BASE + "/cars-by-motor", (req, res) => {
-      res.sendStatus(405, "METHOD NOT ALLOWED");
-  });
+app.put(API_BASE + "/cars_by_motor", (req, res) => {
+    res.sendStatus(405, "METHOD NOT ALLOWED");
+});
 
   // Manejar todos los otros métodos no permitidos
     app.all(API_BASE + "/cars-by-motor/*", (req, res) => {
