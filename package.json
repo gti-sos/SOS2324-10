@@ -4,6 +4,7 @@
     "cool-ascii-faces": "^1.3.4",
     "express": "^4.18.3",
     "nedb": "^1.8.0",
+    "newman": "^6.1.2",
     "node": "^21.7.1",
     "npx": "^10.2.2"
   },
@@ -13,10 +14,11 @@
   "main": "index.js",
   "scripts": {
     "start": "node index",
-    "test": "npx newman run ./api-test/test-TLR.json && npx newman run ./api-test/test-MRF.json && npx newman run ./api-test/test-ASC.json -e ./api-test/environment.json ",
+    "test": "npx newman run ./api-test/test-TLR.json && npx newman run ./api-test/test-MRF.json && npx newman run ./api-test/test-ASC.json -e ./api-test/environment.json && npx newman run ./api-test/test-ASB.json -e ./api-test/environment.json ",
     "test-TLR": "newman run ./api-test/test-TLR.json",
     "test-MRF": "newman run ./api-test/test-MRF.json",
-    "test-ASC": "newman run ./api-test/test-ASC.json -e ./api-test/environment.json"
+    "test-ASC": "newman run ./api-test/test-ASC.json -e ./api-test/environment.json",
+    "test-ASB": "newman run ./api-test/test-ASB.json -e ./api-test/environment.json"
   },
   "author": "Tomas",
   "license": "GPL-3.0",

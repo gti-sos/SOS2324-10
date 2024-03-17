@@ -96,7 +96,7 @@ module.exports = (app,db_ASB) => {
       });
   });
 
-  app.get(API_BASE + "/cars_by_motor/:geo/:time_period", (req, res) => {
+  app.get(API_BASE + "/cars-by-motor/:geo/:time_period", (req, res) => {
     const geo = req.params.geo;
     const time_period = parseInt(req.params.time_period);
 
@@ -222,7 +222,7 @@ app.delete(API_BASE + "/cars-by-motor/:geo", (req, res) => {
     });
 });
 
-app.delete(API_BASE + "/cars_by_motor/:geo/:time_period", (req, res) => {
+app.delete(API_BASE + "/cars-by-motor/:geo/:time_period", (req, res) => {
   const geoToDelete = req.params.geo;
   const timePeriodToDelete = parseInt(req.params.time_period);
 
@@ -247,7 +247,7 @@ app.delete(API_BASE + "/cars_by_motor/:geo/:time_period", (req, res) => {
 });
 
     //PUT
-  app.put(API_BASE + "/cars_by_motor/:geo/:time_period", (req, res) => {
+  app.put(API_BASE + "/cars-by-motor/:geo/:time_period", (req, res) => {
     const geo = req.params.geo;
     const time_periodN = parseInt(req.params.time_period);
     const updatedTourism = req.body;
@@ -294,7 +294,7 @@ app.delete(API_BASE + "/cars_by_motor/:geo/:time_period", (req, res) => {
 });
 
 
-app.put(API_BASE + "/cars_by_motor", (req, res) => {
+app.put(API_BASE + "/cars-by-motor", (req, res) => {
     res.sendStatus(405, "METHOD NOT ALLOWED");
 });
 

@@ -1,0 +1,360 @@
+{
+	"info": {
+		"_postman_id": "7201c931-a830-4778-a24d-8bc1129944f8",
+		"name": "ASB WEB",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33057699",
+		"_collection_link": "https://lunar-robot-589565.postman.co/workspace/My-Workspace~67473332-8141-4b90-88c6-b214f619e58d/collection/33057699-7201c931-a830-4778-a24d-8bc1129944f8?action=share&source=collection_link&creator=33057699"
+	},
+	"item": [
+		{
+			"name": "LOAD",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{web}}/api/v1/cars-by-motor/loadInitialData",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"cars-by-motor",
+						"loadInitialData"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET TODOS",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{web}}/api/v1/cars-by-motor",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"cars-by-motor"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET UNO",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{web}}/api/v1/cars-by-motor/AT/2016",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"cars-by-motor",
+						"AT",
+						"2016"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST TODOS",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {  \r\n    \"dataflow\": \"ESTAT:ROAD_EQS_CARPDA(1.0)\",\r\n    \"last_update\": \" \",\r\n    \"freq\": \"A\",\r\n    \"unit\": \"NR\",\r\n    \"motor_nrg\": \"ALT\",\r\n    \"geo\": \"ES\",\r\n    \"time_period\": 2024,\r\n    \"obs_value\": 10125,\r\n    \"obs_flag\": \"\",\r\n    \"millions_of_passenger_per_kilometres\": 90630,\r\n    \"road_deaths_per_million_inhabitants\": 479\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{web}}/api/v1/cars-by-motor",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"cars-by-motor"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST 400",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {  \r\n    \"id\":33,\r\n    \"dataflow\": \"ESTAT:ROAD_EQS_CARPDA(1.0)\",\r\n    \"last_update\": \" \",\r\n    \"freq\": \"A\",\r\n    \"unit\": \"NR\",\r\n    \"motor_nrg\": \"ALT\",\r\n    \"geo\": \"AT\",\r\n    \"time_period\": 2015,\r\n    \"obs_value\": 10125,\r\n    \"obs_flag\": \"\",\r\n    \"millions_of_passenger_per_kilometres\": 90630,\r\n    \"road_deaths_per_million_inhabitants\": 479\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{web}}/api/v1/cars-by-motor",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"cars-by-motor"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST 405",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {  \r\n    \"id\":33,\r\n    \"dataflow\": \"ESTAT:ROAD_EQS_CARPDA(1.0)\",\r\n    \"last_update\": \" \",\r\n    \"freq\": \"A\",\r\n    \"unit\": \"NR\",\r\n    \"motor_nrg\": \"ALT\",\r\n    \"geo\": \"AT\",\r\n    \"time_period\": 2015,\r\n    \"obs_value\": 10125,\r\n    \"obs_flag\": \"\",\r\n    \"millions_of_passenger_per_kilometres\": 90630,\r\n    \"road_deaths_per_million_inhabitants\": 479\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{web}}/api/v1/cars-by-motor/ES",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"cars-by-motor",
+						"ES"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST 409",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {  \r\n    \"dataflow\": \"ESTAT:ROAD_EQS_CARPDA(1.0)\",\r\n    \"last_update\": \" \",\r\n    \"freq\": \"A\",\r\n    \"unit\": \"NR\",\r\n    \"motor_nrg\": \"ALT\",\r\n    \"geo\": \"AT\",\r\n    \"time_period\": 2015,\r\n    \"obs_value\": 10125,\r\n    \"obs_flag\": \"\",\r\n    \"millions_of_passenger_per_kilometres\": 90630,\r\n    \"road_deaths_per_million_inhabitants\": 479\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{web}}/api/v1/cars-by-motor",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"cars-by-motor"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {  \r\n    \"dataflow\": \"EDIT\",\r\n    \"last_update\": \" \",\r\n    \"freq\": \"A\",\r\n    \"unit\": \"NR\",\r\n    \"motor_nrg\": \"ALT\",\r\n    \"geo\": \"AT\",\r\n    \"time_period\": 2015,\r\n    \"obs_value\": 10125,\r\n    \"obs_flag\": \"\",\r\n    \"millions_of_passenger_per_kilometres\": 90630,\r\n    \"road_deaths_per_million_inhabitants\": 479\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{web}}/api/v1/cars-by-motor/AT/2015",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"cars-by-motor",
+						"AT",
+						"2015"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT 400",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {  \r\n    \"last_update\": \" \",\r\n    \"freq\": \"A\",\r\n    \"unit\": \"NR\",\r\n    \"motor_nrg\": \"ALT\",\r\n    \"geo\": \"AT\",\r\n    \"time_period\": 2015,\r\n    \"obs_value\": 10125,\r\n    \"obs_flag\": \"\",\r\n    \"millions_of_passenger_per_kilometres\": 90630,\r\n    \"road_deaths_per_million_inhabitants\": 479\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{web}}/api/v1/cars-by-motor/ES/2017",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"cars-by-motor",
+						"ES",
+						"2017"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT 405",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {  \r\n    \"last_update\": \" \",\r\n    \"freq\": \"A\",\r\n    \"unit\": \"NR\",\r\n    \"motor_nrg\": \"ALT\",\r\n    \"geo\": \"AT\",\r\n    \"time_period\": 2015,\r\n    \"obs_value\": 10125,\r\n    \"obs_flag\": \"\",\r\n    \"millions_of_passenger_per_kilometres\": 90630,\r\n    \"road_deaths_per_million_inhabitants\": 479\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{web}}/api/v1/cars-by-motor",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"cars-by-motor"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE 404",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {  \r\n    \"last_update\": \" \",\r\n    \"freq\": \"A\",\r\n    \"unit\": \"NR\",\r\n    \"motor_nrg\": \"ALT\",\r\n    \"geo\": \"AT\",\r\n    \"time_period\": 2015,\r\n    \"obs_value\": 10125,\r\n    \"obs_flag\": \"\",\r\n    \"millions_of_passenger_per_kilometres\": 90630,\r\n    \"road_deaths_per_million_inhabitants\": 479\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{web}}/api/v1/cars-by-motor/ES/2025",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"cars-by-motor",
+						"ES",
+						"2025"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE UNO",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {  \r\n    \"last_update\": \" \",\r\n    \"freq\": \"A\",\r\n    \"unit\": \"NR\",\r\n    \"motor_nrg\": \"ALT\",\r\n    \"geo\": \"AT\",\r\n    \"time_period\": 2015,\r\n    \"obs_value\": 10125,\r\n    \"obs_flag\": \"\",\r\n    \"millions_of_passenger_per_kilometres\": 90630,\r\n    \"road_deaths_per_million_inhabitants\": 479\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{web}}/api/v1/cars-by-motor/ES/2024",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"cars-by-motor",
+						"ES",
+						"2024"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE TODOS",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {  \r\n    \"last_update\": \" \",\r\n    \"freq\": \"A\",\r\n    \"unit\": \"NR\",\r\n    \"motor_nrg\": \"ALT\",\r\n    \"geo\": \"AT\",\r\n    \"time_period\": 2015,\r\n    \"obs_value\": 10125,\r\n    \"obs_flag\": \"\",\r\n    \"millions_of_passenger_per_kilometres\": 90630,\r\n    \"road_deaths_per_million_inhabitants\": 479\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{web}}/api/v1/cars-by-motor",
+					"host": [
+						"{{web}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"cars-by-motor"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
