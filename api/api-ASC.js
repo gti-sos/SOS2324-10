@@ -13,7 +13,7 @@ module.exports = (app, db_ASC) => {
     // ----------- CUALQUIER CONSULTA GET --------------
 
     app.get(API_BASE + "/tourisms-per-age/docs", (req, res) => {
-        const documentationURL = 'https://documenter.getpostman.com/view/32965505/2sA2xiVrYz';
+        const documentationURL = 'https://documenter.getpostman.com/view/32972243/2sA2xpRTtt';
 
         // Redirigir al portal de documentación
         res.redirect(documentationURL);
