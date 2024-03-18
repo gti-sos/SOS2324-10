@@ -114,7 +114,7 @@ module.exports = (app, db_ASC) => {
                     return res.sendStatus(404).send("Not Found");
                 }
 
-                res.status(200).json(data);
+                res.status(200).json(data[0]);
             });
     });
 
