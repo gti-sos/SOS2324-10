@@ -42,21 +42,27 @@ module.exports = (app, db_TLR) => {
 
   app.get(API_BASE + "/vehicles-stock/search", (req, res) => {
     const queryParams = req.query;
-    const filteredData = datos_TLR.filter(vehicle => {
-        for (const key in queryParams) {
-            if (vehicle[key] !== queryParams[key]) {
-                return false;
-            }
-        }
-        return true;
-    });
 
-    if (filteredData.length === 0) {
-        return res.status(404).send("No se encontraron resultados para los parámetros de búsqueda proporcionados.");
+    // Construir el filtro para la consulta a la base de datos
+    const filter = {};
+    for (const key in queryParams) {
+        filter[key] = queryParams[key];
     }
 
-    res.status(200).send(filteredData);
+    // Consultar la base de datos con el filtro construido
+    db_TLR.find(filter, { _id: 0, id: 0 }, (err, filteredData) => {
+        if (err) {
+            return res.sendStatus(500).send("Internal Error");
+        }
+
+        if (filteredData.length === 0) {
+            return res.sendStatus(404).send("Not Found");
+        }
+
+        res.status(200).send(filteredData);
+    });
 });
+
 
 
   //Método GET Persistente
