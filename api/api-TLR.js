@@ -44,12 +44,12 @@ module.exports = (app, db_TLR) => {
     const queryParams = req.query;
   
     // Convertir los atributos numéricos a enteros si están presentes
-    const numericAttributes = ["time_period", "obs_value", "flights_passangers", "cars_deaths"];
+    const numericAttributes = ["year", "obs_value", "flights_passangers", "cars_deaths"];
     numericAttributes.forEach(attr => {
       if (queryParams[attr]) {
         queryParams[attr] = parseInt(queryParams[attr]);
         if (isNaN(queryParams[attr])) {
-          return res.status(400).send(`Bad Request: ${attr} debe ser un entero válido.`);
+          return res.sendStatus(400);
         }
       }
     });
@@ -57,14 +57,14 @@ module.exports = (app, db_TLR) => {
     // Consultar la base de datos con el filtro construido
     db_TLR.find(queryParams, { _id: 0, id: 0 }, (err, filteredData) => {
       if (err) {
-        return res.status(500).send("Internal Error");
+        return res.sensStatus(500);
       }
   
       if (filteredData.length === 0) {
-        return res.status(404).send("Not Found");
+        return res.sendStatus(404);
       }
   
-      res.status(200).send(filteredData);
+      res.sendStatus(200);
     });
   });
   
