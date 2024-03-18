@@ -106,21 +106,18 @@ module.exports = (app,db_ASB) => {
     }
 
     // Aplica el filtro de geo y time_period
-    db_ASB.find({ geo: geo, time_period: time_period }, { _id: 0, id: 0 })
-        .exec((err, data) => {
-            if (err) {
-                return res.sendStatus(500).send("Internal Error");
-            }
+    db_ASB.findOne({ geo: geo, time_period: time_period }, { _id: 0, id: 0 }, (err, data) => {
+      if (err) {
+          return res.status(500).send("Internal Error");
+      }
 
-            if (data.length === 0) {
-                return res.sendStatus(404).send("Not Found");
-            }
+      if (!data) {
+          return res.status(404).send("Not Found");
+      }
 
-            res.status(200).json(data);
-        });
+      res.status(200).json(data);
+  });
 });
-
-
   
   app.get(API_BASE + "/cars-by-motor/loadInitialData", (req, res) => {
     // Comprobar si la base de datos está vacía
