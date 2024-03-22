@@ -1,17 +1,17 @@
-const express = require("express");
-const bodyParser = require("body-parser");
+import express from "express";
+import bodyParser from "body-parser";
 let API_TLR = require("./api/api-TLR");
 let API_MRF = require("./api/api-MRF");
-let API_ASC = require("./api/api-ASC");
+import {API_ASC} from "./api/api-ASC";
 let API_ASB = require("./api/api-ASB");
 //neDB
-let dataStore = require("nedb");
+import dataStore from "nedb";
 let db_TLR = new dataStore();
 let db_ASC = new dataStore();
 let db_MRF = new dataStore();
 let db_ASB = new dataStore();
 
-const app = express();
+let app = express();
 const PORT = process.env.PORT || 8080;
 
 app.listen(PORT);

@@ -320,29 +320,4 @@ const csv = data.map((entry, index) => {
 
 module.exports = csv;
 
-function calcularMediaObsValuePorPais(csv) {
-    let mediasPais = {};
-    csv.forEach(function(n) {
-        let pais = csv.geo;
-        let obsValue = parseInt(csv.obs_value);
-        if (!mediasPais[pais]) {
-            mediasPais[pais] = {
-                totalObsValue: 0,
-                cont: 0
-            };
-        }
-        mediasPais[pais].totalObsValue += obsValue;
-        mediasPais[pais].cont++;
-    });
-    for (let pais in mediasPais) {
-        let media = mediasPais[pais].totalObsValue / mediasPais[pais].cont;
-        mediasPais[pais].media = media;
-        mediasPais[pais].mensaje = "La media de coches vendidos en " + pais + " es: " + media.toFixed(1) + "  coches";
-    }
-    return mediasPais;
-}
 
-let mediasObsValuePorPais = calcularMediaObsValuePorPais(csv);
-//for (let pais in mediasObsValuePorPais) {
-//    console.log(mediasObsValuePorPais[pais].mensaje);
-//}

@@ -2,12 +2,10 @@ const bodyParser = require("body-parser");
 const express = require("express");
 const app = express();
 const API_BASE = "/api/v1";
-const csv = require('../index-ASC');
 app.use(bodyParser.json());
-let dataStore = require("nedb")
 
 
-module.exports = (app, db_ASC) => {
+function API_ASC (app, db_ASC){
 
     // ------------ GET -------------
     // ----------- CUALQUIER CONSULTA GET --------------
@@ -289,6 +287,7 @@ module.exports = (app, db_ASC) => {
     app.all(API_BASE + "/tourisms-per-age/*", (req, res) => {
         res.sendStatus(405);
     });
+
 
     // ------------ POST --------------
 
@@ -712,3 +711,4 @@ module.exports = (app, db_ASC) => {
     });
 };
 
+export {API_ASC};

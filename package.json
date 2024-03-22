@@ -29,5 +29,6 @@
   "bugs": {
     "url": "https://github.com/gti-sos/SOS2324-10/issues"
   },
-  "homepage": "https://github.com/gti-sos/SOS2324-10#readme"
+  "homepage": "https://github.com/gti-sos/SOS2324-10#readme",
+  "type" : "module"
 }
