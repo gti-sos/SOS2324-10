@@ -1,13 +1,13 @@
 
 const API_BASE_V1 = "/api/v1/gdp-growth-rates"
 const API_BASE_V2 = "/api/v2/gdp-growth-rates"
-const express = require("express");
+import express from "express";
 const app = express();
-const bodyParser = require("body-parser");
+import bodyParser from "body-parser";
 
 app.use(bodyParser.json());
 
-module.exports = (app, db_MRF) => {
+function backend_MRF(app, db_MRF){
 
     //REDIRECCIÓN A DOCUMENTACIÓN API
     app.get(API_BASE_V1 + "/docs", (req, res) => {
@@ -428,7 +428,8 @@ module.exports = (app, db_MRF) => {
         return { id: index + 1, ...rest };
     });
 
-}
+};
+export {backend_MRF};
 
 
 
