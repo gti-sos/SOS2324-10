@@ -31,7 +31,8 @@ API_ASC(app, db_ASC);
 app.use(handler);
 
 // Establecemos subdirectorios de la web
-const path = require('path');
+import path from "path";
+//const path = require('path');
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
