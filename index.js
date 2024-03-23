@@ -31,10 +31,10 @@ API_ASC(app, db_ASC);
 app.use(handler);
 
 // Establecemos subdirectorios de la web
-//const path = require('path');
-//app.get('/', (req, res) => {
-//    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-//});
+const path = require('path');
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 app.use("/", express.static("./public"));
 console.log(`Server listening on port ${PORT}`);
