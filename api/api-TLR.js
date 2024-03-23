@@ -1,10 +1,9 @@
-const bodyParser = require("body-parser");
-const express = require("express");
-const app = express();
+
 const API_BASE = "/api/v1";
+import express from "express";
+const app = express();
+import bodyParser from "body-parser";
 app.use(bodyParser.json());
-
-
 
 
 // API Tomás
