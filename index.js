@@ -1,6 +1,6 @@
 import express from "express";
 import bodyParser from "body-parser";
-import {backend_TLR} from "./api/api-TLR.js";
+//let API_TLR = require("./api/api-TLR");
 import {backend_MRF} from "./api/api-MRF.js";
 import {API_ASC} from "./api/api-ASC.js";
 //let API_ASB = require("./api/api-ASB");
@@ -21,7 +21,7 @@ const PORT = process.env.PORT || 8080;
 app.listen(PORT);
 app.use(bodyParser.json());
 
-backend_TLR(app,db_TLR);
+//API_TLR(app,db_TLR);
 backend_MRF(app, db_MRF);
 API_ASC(app, db_ASC);
 //API_ASB(app, db_ASB);
