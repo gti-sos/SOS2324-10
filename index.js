@@ -1,6 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
-let API_TLR = require("./api/api-TLR");
+
+import {API_TLR}from "./api/api-TLR";
 let API_MRF = require("./api/api-MRF");
 import {API_ASC} from "./api/api-ASC";
 let API_ASB = require("./api/api-ASB");

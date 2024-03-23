@@ -8,7 +8,8 @@ app.use(bodyParser.json());
 
 
 // API Tomás
-module.exports = (app, db_TLR) => {
+
+function API_TLR(app, db_TLR) {
 
 
   app.get('/api/v1/vehicles-stock/docs', (req, res) => {
@@ -42,7 +43,7 @@ module.exports = (app, db_TLR) => {
 
   app.get(API_BASE + "/vehicles-stock/search", (req, res) => {
     const queryParams = req.query;
-  
+
     // Convertir los atributos numéricos a enteros si están presentes
     const numericAttributes = ["year", "obs_value", "flights_passangers", "cars_deaths"];
     numericAttributes.forEach(attr => {
@@ -53,21 +54,21 @@ module.exports = (app, db_TLR) => {
         }
       }
     });
-  
+
     // Consultar la base de datos con el filtro construido
     db_TLR.find(queryParams, { _id: 0, id: 0 }, (err, filteredData) => {
       if (err) {
         return res.sensStatus(500);
       }
-  
+
       if (filteredData.length === 0) {
         return res.sendStatus(404);
       }
-  
+
       res.sendStatus(200);
     });
   });
-  
+
 
 
 
@@ -546,3 +547,4 @@ module.exports = (app, db_TLR) => {
 
 }
 
+export {API_TLR};
