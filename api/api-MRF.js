@@ -1,21 +1,22 @@
 
-const API_BASE = "/api/v1/gdp-growth-rates"
-const express = require("express");
+const API_BASE_V1 = "/api/v1/gdp-growth-rates"
+const API_BASE_V2 = "/api/v2/gdp-growth-rates"
+import express from "express";
 const app = express();
-const bodyParser = require("body-parser");
+import bodyParser from "body-parser";
 
 app.use(bodyParser.json());
 
-module.exports = (app, db_MRF) => {
+function backend_MRF(app, db_MRF){
 
     //REDIRECCIÓN A DOCUMENTACIÓN API
-    app.get(API_BASE + "/docs", (req, res) => {
+    app.get(API_BASE_V1 + "/docs", (req, res) => {
         res.redirect("https://documenter.getpostman.com/view/32965505/2sA2xiYCme");
     });
 
 
     //CARGA INICIAL DE DATOS
-    app.get(API_BASE + "/loadInitialData", (req, res) => {
+    app.get(API_BASE_V1 + "/loadInitialData", (req, res) => {
 
         db_MRF.find({}, (err, data) => {
             if (err) {
@@ -38,7 +39,7 @@ module.exports = (app, db_MRF) => {
 
     // -------------------------------------- GET -----------------------------
 
-    app.get(API_BASE + "/", (req, res) => {
+    app.get(API_BASE_V1 + "/", (req, res) => {
         const { id, frequency, unit, na_item, geo, time_period, obs_value,
             growth_rate_2030, growth_rate_2040, limit = 10, offset = 0, from, to } = req.query;
 
@@ -83,7 +84,7 @@ module.exports = (app, db_MRF) => {
     });
 
 
-    app.get(API_BASE + "/:geo/:time_period", (req, res) => {
+    app.get(API_BASE_V1 + "/:geo/:time_period", (req, res) => {
         const geo = req.params.geo;
         const time_period = parseInt(req.params.time_period);
 
@@ -113,12 +114,12 @@ module.exports = (app, db_MRF) => {
     // -------------------------------------- POST -----------------------------
 
     //NO SE PUEDE HACER POST DE UN RECURSO CONCRETO 
-    app.post(API_BASE + "/*", (req, res) => {
+    app.post(API_BASE_V1 + "/*", (req, res) => {
         res.sendStatus(405);
     });
 
     //SOBRE LA RUTA GENERAL
-    app.post(API_BASE + "/", (req, res) => {
+    app.post(API_BASE_V1 + "/", (req, res) => {
         const newData = req.body;
         if (!newData.geo || !newData.time_period || !newData.id || !newData.frequency || !newData.unit
             || !newData.na_item || !newData.obs_value || !newData.growth_rate_2030 || !newData.growth_rate_2040) {
@@ -146,12 +147,12 @@ module.exports = (app, db_MRF) => {
     // -------------------------------------- PUT -----------------------------
 
     // NO SE PUEDE HACER UN PUT SOBRE TODOS LOS RECURSOS    
-    app.put(API_BASE + "/", (req, res) => {
+    app.put(API_BASE_V1 + "/", (req, res) => {
         res.sendStatus(405, "METHOD NOT ALLOWED");
     });
 
 
-    app.put(API_BASE + "/:geo/:time_period", (req, res) => {
+    app.put(API_BASE_V1 + "/:geo/:time_period", (req, res) => {
         const geoURL = req.params.geo;
         const time_periodURL = parseInt(req.params.time_period);
         const updatedGdp = req.body;
@@ -199,7 +200,7 @@ module.exports = (app, db_MRF) => {
 
 
     //ELIMINAR TODAS LAS VARIABLES
-    app.delete(API_BASE + "/", (req, res) => {
+    app.delete(API_BASE_V1 + "/", (req, res) => {
         db_MRF.remove({}, { multi: true }, (err, numRemoved) => {
             if (err) {
                 console.error(err);
@@ -211,7 +212,7 @@ module.exports = (app, db_MRF) => {
 
 
     //ELIMINAR RECURSO CONCRETO 
-    app.delete(API_BASE + "/:geo/:time_period", (req, res) => {
+    app.delete(API_BASE_V1 + "/:geo/:time_period", (req, res) => {
         const geoURL = req.params.geo;
         const time_periodURL = parseInt(req.params.time_period);
 
@@ -427,7 +428,8 @@ module.exports = (app, db_MRF) => {
         return { id: index + 1, ...rest };
     });
 
-}
+};
+export {backend_MRF};
 
 
 

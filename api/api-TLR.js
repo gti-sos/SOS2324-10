@@ -545,6 +545,7 @@ function API_TLR(app, db_TLR) {
 
 
 
-}
+};
+
 
 export {API_TLR};
