@@ -8,7 +8,7 @@ app.use(bodyParser.json());
 
 
 // API Tomás
-module.exports = (app, db_TLR) => {
+function backend_TLR(app, db_TLR){
 
 
   app.get('/api/v1/vehicles-stock/docs', (req, res) => {
@@ -544,5 +544,6 @@ module.exports = (app, db_TLR) => {
 
 
 
-}
+};
+export {backend_TLR};
 
