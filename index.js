@@ -16,6 +16,10 @@ let db_ASB = new dataStore();
 //Adaptador Svelte
 import {handler} from "./front/build/handler.js";
 
+import cors from "cors";
+
+
+
 let app = express();
 const PORT = process.env.PORT || 8080;
 
@@ -28,6 +32,7 @@ API_ASC(app, db_ASC);
 //API_ASB(app, db_ASB);
 
 //Uso del handler
+app.use(cors);
 app.use(handler);
 
 // Establecemos subdirectorios de la web
