@@ -45,6 +45,24 @@
             errorMsg = e;
         }
         
+
+    }
+
+    async function deleteGDPAll(){
+
+        try{
+            let response = await fetch(API_MRF,{
+                                    method: "DELETE"
+                        });
+            
+        /**if(response.status == 200)
+                getGDP();
+            else
+                errorMsg = "code: " + response.status */ 
+        } catch(e){
+            errorMsg = e;
+        }
+
     }
 
     async function deleteGDP(n){
@@ -101,7 +119,7 @@
 </ul>
 
 <button on:click="{createGDP}"> Create </button>
-
+<button on:click="{deleteGDPAll}"> Delete </button>
 {#if errorMsg != ""}
 <hr>ERROR: {errorMsg}
 {/if}

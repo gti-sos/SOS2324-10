@@ -122,7 +122,6 @@ function backend_MRF_v2(app, db_MRF){
     //SOBRE LA RUTA GENERAL
     app.post(API_BASE + "/", (req, res) => {
         const newData = req.body;
-        console.log("New POST with body:"+JSON.stringify(req.body,null,2));
         if (!newData.geo || !newData.time_period) {
             return res.sendStatus(400);
         }
