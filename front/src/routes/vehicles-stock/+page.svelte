@@ -1,7 +1,7 @@
 <!--Funciones para la tabla-->
 <script>
 	import { onMount } from 'svelte';
-	import { dev } from '$app/enviroment';
+	import { dev } from '$app/environment';
 
 	let API_TLR = '/api/v1/vehicles-stock';
 
@@ -91,6 +91,7 @@
 		<table>
 			<thead>
 				<tr>
+                    <th>Vista detallada</th>
 					{#each Object.keys(datos[0]) as key}
 						<th>{key}</th>
 					{/each}
@@ -101,13 +102,19 @@
 			<tbody>
 				{#each datos as dato}
 					<tr>
+                        <td>
+                            <!-- Botón de eliminar -->
+                            <a href="/vehicles-stock/{dato.geo}/{dato.year}" style="text-decoration: none; background-color: #666666; color: white; padding: 5px 10px; border-radius: 5px; cursor: pointer; display: inline-block;">
+                                Ver detalles
+                            </a>
+                        </td>
 						{#each Object.values(dato) as value}
 							<td>{value}</td>
 						{/each}
-						<!-- Botón de eliminar -->
+						
 						<td>
 							<button
-								style="background-color: #0366d6; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
+								style="background-color: #FF0000; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
 								on:click={() => deleteVehicle(dato.geo, dato.year)}>Eliminar</button
 							>
 						</td>
