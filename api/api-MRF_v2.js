@@ -1,22 +1,21 @@
 
-const API_BASE_V1 = "/api/v1/gdp-growth-rates"
-const API_BASE_V2 = "/api/v2/gdp-growth-rates"
+const API_BASE = "/api/v2/gdp-growth-rates"
 import express from "express";
 const app = express();
 import bodyParser from "body-parser";
 
 app.use(bodyParser.json());
 
-function backend_MRF(app, db_MRF){
+function backend_MRF_v2(app, db_MRF){
 
     //REDIRECCIÓN A DOCUMENTACIÓN API
-    app.get(API_BASE_V1 + "/docs", (req, res) => {
+    app.get(API_BASE + "/docs", (req, res) => {
         res.redirect("https://documenter.getpostman.com/view/32965505/2sA2xiYCme");
     });
 
 
     //CARGA INICIAL DE DATOS
-    app.get(API_BASE_V1 + "/loadInitialData", (req, res) => {
+    app.get(API_BASE + "/loadInitialData", (req, res) => {
 
         db_MRF.find({}, (err, data) => {
             if (err) {
@@ -39,7 +38,8 @@ function backend_MRF(app, db_MRF){
 
     // -------------------------------------- GET -----------------------------
 
-    app.get(API_BASE_V1 + "/", (req, res) => {
+    app.get(API_BASE + "/", (req, res) => {
+        
         const { id, frequency, unit, na_item, geo, time_period, obs_value,
             growth_rate_2030, growth_rate_2040, limit = 10, offset = 0, from, to } = req.query;
 
@@ -84,7 +84,8 @@ function backend_MRF(app, db_MRF){
     });
 
 
-    app.get(API_BASE_V1 + "/:geo/:time_period", (req, res) => {
+
+    app.get(API_BASE + "/:geo/:time_period", (req, res) => {
         const geo = req.params.geo;
         const time_period = parseInt(req.params.time_period);
 
@@ -114,15 +115,14 @@ function backend_MRF(app, db_MRF){
     // -------------------------------------- POST -----------------------------
 
     //NO SE PUEDE HACER POST DE UN RECURSO CONCRETO 
-    app.post(API_BASE_V1 + "/*", (req, res) => {
+    app.post(API_BASE + "/*", (req, res) => {
         res.sendStatus(405);
     });
 
     //SOBRE LA RUTA GENERAL
-    app.post(API_BASE_V1 + "/", (req, res) => {
+    app.post(API_BASE + "/", (req, res) => {
         const newData = req.body;
-        if (!newData.geo || !newData.time_period || !newData.id || !newData.frequency || !newData.unit
-            || !newData.na_item || !newData.obs_value || !newData.growth_rate_2030 || !newData.growth_rate_2040) {
+        if (!newData.geo || !newData.time_period) {
             return res.sendStatus(400);
         }
 
@@ -147,12 +147,12 @@ function backend_MRF(app, db_MRF){
     // -------------------------------------- PUT -----------------------------
 
     // NO SE PUEDE HACER UN PUT SOBRE TODOS LOS RECURSOS    
-    app.put(API_BASE_V1 + "/", (req, res) => {
+    app.put(API_BASE + "/", (req, res) => {
         res.sendStatus(405, "METHOD NOT ALLOWED");
     });
 
 
-    app.put(API_BASE_V1 + "/:geo/:time_period", (req, res) => {
+    app.put(API_BASE + "/:geo/:time_period", (req, res) => {
         const geoURL = req.params.geo;
         const time_periodURL = parseInt(req.params.time_period);
         const updatedGdp = req.body;
@@ -200,7 +200,7 @@ function backend_MRF(app, db_MRF){
 
 
     //ELIMINAR TODAS LAS VARIABLES
-    app.delete(API_BASE_V1 + "/", (req, res) => {
+    app.delete(API_BASE + "/", (req, res) => {
         db_MRF.remove({}, { multi: true }, (err, numRemoved) => {
             if (err) {
                 console.error(err);
@@ -211,8 +211,24 @@ function backend_MRF(app, db_MRF){
     });
 
 
+    app.delete(API_BASE + "/:geo", (req, res) => {
+        const geoURL = req.params.geo;
+
+        // Eliminar el vehículo por geo y time_period de la base de datos
+        db_MRF.remove({ geo: geoURL}, {}, (err, numRemoved) => {
+            if (err) {
+                return res.sendStatus(500);
+            } else {
+                if (numRemoved >= 1) {
+                    return res.sendStatus(200);
+                } else {
+                    return res.sendStatus(404);
+                }
+            }
+        });
+    });
     //ELIMINAR RECURSO CONCRETO 
-    app.delete(API_BASE_V1 + "/:geo/:time_period", (req, res) => {
+    app.delete(API_BASE + "/:geo/:time_period", (req, res) => {
         const geoURL = req.params.geo;
         const time_periodURL = parseInt(req.params.time_period);
 
@@ -259,131 +275,11 @@ function backend_MRF(app, db_MRF){
             frequency: 'a',
             unit: 'clv_pch_pre',
             na_item: 'b1gq',
-            geo: 'austria',
-            time_period: 2021,
-            obs_value: 4.2,
-            growth_rate_2030: 34832,
-            growth_rate_2040: 39426
-        },
-        {
-            dataflow: 'estat:teco0115(1.0)',
-            last_update: '02/02/24 23:00:00',
-            frequency: 'a',
-            unit: 'clv_pch_pre',
-            na_item: 'b1gq',
-            geo: 'austria',
-            time_period: 2022,
-            obs_value: 4.8,
-            growth_rate_2030: 51398,
-            growth_rate_2040: 58177
-        },
-        {
-            dataflow: 'estat:teco0115(1.0)',
-            last_update: '02/02/24 23:00:00',
-            frequency: 'a',
-            unit: 'clv_pch_pre',
-            na_item: 'b1gq',
             geo: 'belgium',
             time_period: 2020,
             obs_value: -5.3,
             growth_rate_2030: 71574,
             growth_rate_2040: 81533
-        },
-        {
-            dataflow: 'estat:teco0115(1.0)',
-            last_update: '02/02/24 23:00:00',
-            frequency: 'a',
-            unit: 'clv_pch_pre',
-            na_item: 'b1gq',
-            geo: 'belgium',
-            time_period: 2021,
-            obs_value: 6.9,
-            growth_rate_2030: 44930,
-            growth_rate_2040: 51183
-        },
-        {
-            dataflow: 'estat:teco0115(1.0)',
-            last_update: '02/02/24 23:00:00',
-            frequency: 'a',
-            unit: 'clv_pch_pre',
-            na_item: 'b1gq',
-            geo: 'belgium',
-            time_period: 2022,
-            obs_value: 3.0,
-            growth_rate_2030: 32478,
-            growth_rate_2040: 36998
-        },
-        {
-            dataflow: 'estat:teco0115(1.0)',
-            last_update: '02/02/24 23:00:00',
-            frequency: 'a',
-            unit: 'clv_pch_pre',
-            na_item: 'b1gq',
-            geo: 'czech_republic',
-            time_period: 2020,
-            obs_value: -5.5,
-            growth_rate_2030: 42058,
-            growth_rate_2040: 49646
-        },
-        {
-            dataflow: 'estat:teco0115(1.0)',
-            last_update: '02/02/24 23:00:00',
-            frequency: 'a',
-            unit: 'clv_pch_pre',
-            na_item: 'b1gq',
-            geo: 'czech_republic',
-            time_period: 2021,
-            obs_value: 3.6,
-            growth_rate_2030: 15609,
-            growth_rate_2040: 18424
-        },
-        {
-            dataflow: 'estat:teco0115(1.0)',
-            last_update: '02/02/24 23:00:00',
-            frequency: 'a',
-            unit: 'clv_pch_pre',
-            na_item: 'b1gq',
-            geo: 'czech_republic',
-            time_period: 2022,
-            obs_value: 2.4,
-            growth_rate_2030: 17403,
-            growth_rate_2040: 20542
-        },
-        {
-            dataflow: 'estat:teco0115(1.0)',
-            last_update: '02/02/24 23:00:00',
-            frequency: 'a',
-            unit: 'clv_pch_pre',
-            na_item: 'b1gq',
-            geo: 'denmark',
-            time_period: 2020,
-            obs_value: -2.4,
-            growth_rate_2030: 66538,
-            growth_rate_2040: 75680
-        },
-        {
-            dataflow: 'estat:teco0115(1.0)',
-            last_update: '02/02/24 23:00:00',
-            frequency: 'a',
-            unit: 'clv_pch_pre',
-            na_item: 'b1gq',
-            geo: 'denmark',
-            time_period: 2021,
-            obs_value: 6.8,
-            growth_rate_2030: 38794,
-            growth_rate_2040: 44123
-        },
-        {
-            dataflow: 'estat:teco0115(1.0)',
-            last_update: '02/02/24 23:00:00',
-            frequency: 'a',
-            unit: 'clv_pch_pre',
-            na_item: 'b1gq',
-            geo: 'denmark',
-            time_period: 2022,
-            obs_value: 2.7,
-            growth_rate_2030: 49658,
-            growth_rate_2040: 56480
         },
         {
             dataflow: 'estat:teco0115(1.0)',
@@ -397,30 +293,6 @@ function backend_MRF(app, db_MRF){
             growth_rate_2030: 33894,
             growth_rate_2040: 37961
         },
-        {
-            dataflow: 'estat:teco0115(1.0)',
-            last_update: '02/02/24 23:00:00',
-            frequency: 'a',
-            unit: 'clv_pch_pre',
-            na_item: 'b1gq',
-            geo: 'spain',
-            time_period: 2022,
-            obs_value: 5.8,
-            growth_rate_2030: 36109,
-            growth_rate_2040: 40443
-        },
-        {
-            dataflow: 'estat:teco0115(1.0)',
-            last_update: '02/02/24 23:00:00',
-            frequency: 'a',
-            unit: 'clv_pch_pre',
-            na_item: 'b1gq',
-            geo: 'spain',
-            time_period: 2023,
-            obs_value: 2.5,
-            growth_rate_2030: 32608,
-            growth_rate_2040: 36522
-        }
     ];
 
     const datos_MRF = data.map((entry, index) => {
@@ -429,7 +301,7 @@ function backend_MRF(app, db_MRF){
     });
 
 };
-export {backend_MRF};
+export {backend_MRF_v2};
 
 
 
