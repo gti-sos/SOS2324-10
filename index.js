@@ -2,7 +2,8 @@ import express from "express";
 import bodyParser from "body-parser";
 
 import {API_TLR} from "./api/api-TLR.js";
-import {backend_MRF} from "./api/api-MRF.js";
+import {backend_MRF_v1} from "./api/api-MRF_v1.js";
+import {backend_MRF_v2} from "./api/api-MRF_v2.js";
 import {API_ASC} from "./api/api-ASC.js";
 //let API_ASB = require("./api/api-ASB");
 
@@ -23,16 +24,19 @@ import cors from "cors";
 let app = express();
 const PORT = process.env.PORT || 8080;
 
+app.use(cors());
+
 app.listen(PORT);
 app.use(bodyParser.json());
 
 API_TLR(app,db_TLR);
-backend_MRF(app, db_MRF);
+backend_MRF_v1(app, db_MRF);
+backend_MRF_v2(app, db_MRF);
 API_ASC(app, db_ASC);
 //API_ASB(app, db_ASB);
 
 //Uso del handler
-app.use(cors);
+
 app.use(handler);
 
 // Establecemos subdirectorios de la web
