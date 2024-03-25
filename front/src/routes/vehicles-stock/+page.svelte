@@ -66,7 +66,7 @@ async function postVehicle() {
             await getVehicles(); // Actualizar los datos después de la creación exitosa
         } else {
             if (response.status == 400) {
-                errorMsg = 'No puedes cambiar ni el país ni el año manito';
+                errorMsg = 'Error en la estructura de los datos';
                 alert(errorMsg);
             } else if (response.status == 409) {
                 errorMsg = 'Ya existe una entrada con ese país y año';
