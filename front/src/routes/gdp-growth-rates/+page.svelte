@@ -9,11 +9,13 @@
         API_MRF = "http://localhost:8080" + API_MRF;
 
     let gdp = [];
-    let newGdp = {geo: "geo", time_period: "0000"};
+    let newGdp = {geo: "", time_period: "", dataflow: "", last_update: "",
+            frequency: "", unit: "", na_item: "", obs_value: "", growth_rate_2030: "",
+            growth_rate_2040: ""};
     let errorMsg = '';
 
-    onMount(()=>{
-        getInitialGDP();
+    onMount(async ()=>{
+       await getGDP();
     })
 
     async function getInitialGDP(){
@@ -36,7 +38,7 @@
   
     async function getGDP(){
         try{
-            let response = await fetch(API_MRF+"/",{
+            let response = await fetch(API_MRF+"?limit=100",{
                                       method: "GET"
             });
             if(response.ok){
@@ -59,6 +61,7 @@
 
     async function createGDP(){
         try{
+            await getGDP();
             let response = await fetch(API_MRF,{
                                       method: "POST",
                                       headers: {
@@ -87,18 +90,18 @@
     }
 
     async function deleteGDPAll(){
-
+        
         try{
             let response = await fetch(API_MRF,{
                                     method: "DELETE"
                         });
             
             if(response.ok){
-                getGDP();
+                await getGDP();
                 errorMsg = "Todos los datos fueron eliminados"
             }else{
                 if(reponse.status == 404){
-                    errorMsg = "No existen datos en l a base de datos";
+                    errorMsg = "No existen datos en la base de datos";
                 }
                 
             }
@@ -106,16 +109,18 @@
             errorMsg = e;
         }
 
+
     }
 
-    async function deleteGDP(n){
-
+    async function deleteGDP(geo, time_period){
+        
         try{
-            let response = await fetch(API_MRF+"/"+n,{
+            
+            let response = await fetch(API_MRF + "/" + geo + "/" + time_period,{
                                       method: "DELETE"
                         });
             if(response.ok){
-                getGDP();
+                await getGDP();
                 errorMsg = "Dato eliminado correctamente";
             } else {
                 if(response.status == 400){
@@ -128,7 +133,7 @@
         } catch(e){
             errorMsg = e;
         }
-        
+     
     }
 
 
@@ -136,37 +141,76 @@
 </script>
 
 
-<table>
-    <thead>
-        <tr>
-            <th>
-                País
-            </th>
-            <th>
-                Año
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr> 
-            <td>
-                <input bind:value={newGdp.geo}>
-            </td>
-            <td>
-                <input bind:value={newGdp.time_period}>
-            </td>
-        </tr>
-    </tbody>
-    
-</table>
+<Row>
+    <Col>
+        <Table>
+            <thead>
+                <tr>
+                    <th>Geo</th>
+                    <th>Time Period</th>
+                    <th>Dataflow</th>
+                    <th>Last Update</th>
+                    <th>Frequency</th>
+                    <th>Unit</th>
+                    <th>NA Item</th>
+                    <th>Obs Value</th>
+                    <th>Growth Rate 2030</th>
+                    <th>Growth Rate 2040</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><Input bind:value={newGdp.geo} /></td>
+                    <td><Input bind:value={newGdp.time_period} type="number" /></td>
+                    <td><Input bind:value={newGdp.dataflow} /></td>
+                    <td><Input bind:value={newGdp.last_update} /></td>
+                    <td><Input bind:value={newGdp.frequency} /></td>
+                    <td><Input bind:value={newGdp.unit} /></td>
+                    <td><Input bind:value={newGdp.na_item} /></td>
+                    <td><Input bind:value={newGdp.obs_value} type="number" step="0.01" /></td>
+                    <td><Input bind:value={newGdp.growth_rate_2030} type="number" /></td>
+                    <td><Input bind:value={newGdp.growth_rate_2040} type="number" /></td>
+                </tr>
+            </tbody>
+        </Table>
+        <Button color="primary" on:click={createGDP}>Agregar Nuevo Dato</Button>
+    </Col>
+</Row>
 
-<ul>
-    {#each gdp as g}
-        <li><a href="/gdp-growth-rates/{g.geo}">{g.geo}</a> - {g.time_period} <button on:click="{deleteGDP(g.geo)}"> Borrar entrada </button></li>
-    {/each}
-</ul>
 
-<button on:click="{createGDP}"> Crear nueva entrada </button>
+<Row>
+    <Col>
+        <div class="table-responsive">
+            <Table class="table-striped">
+                <thead>
+                    <tr>
+                        <th>Geo</th>
+                        <th>Time Period</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {#if gdp.length === 0}
+                        <tr>
+                            <td colspan="3" class="text-center">No hay datos disponibles</td>
+                        </tr>
+                    {:else}
+                        {#each gdp as g}
+                            <tr>
+                                <td><a href="/gdp-growth-rates/{g.geo}/{g.time_period}">{g.geo}</a></td>
+                                <td>{g.time_period}</td>
+                                <td>
+                                    <Button color="danger" on:click={() => deleteGDP(g.geo, g.time_period)}>Borrar entrada</Button>
+                                </td>
+                            </tr>
+                        {/each}
+                    {/if}
+                </tbody>
+            </Table>
+        </div>
+    </Col>
+</Row>
+
 <button on:click="{deleteGDPAll}"> Borrar todos los datos </button>
 <button on:click="{getInitialGDP}"> Datos de prueba </button>
 

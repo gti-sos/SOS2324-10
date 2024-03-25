@@ -11,6 +11,7 @@
         API_MRF = "http://localhost:8080" + API_MRF;
     let errorMsg = '';
     let geo = $page.params.geo;
+    let time_period = $page.params.time_period;
     let formData = {
         frequency: '',
         unit: '',
@@ -25,7 +26,7 @@
 
     async function fetchGeoDetails() {
         try {
-            const response = await fetch(API_MRF+`/${geo}`,{
+            const response = await fetch(API_MRF+`/${geo}/${time_period}`,{
                                         method: "GET"
                                         
             }); 
@@ -39,7 +40,7 @@
 
     async function updateGeoDetails() {
         try {
-            const response = await fetch(API_MRF+`/${geo}`,{
+            const response = await fetch(API_MRF+`/${geo}/${time_period}`,{
                                         method: "PUT",
                                         headers: {
                                         "Content-Type": "application/json"
