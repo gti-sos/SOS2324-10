@@ -2,12 +2,14 @@
 <script>
 	import { onMount } from 'svelte';
 	import { dev } from '$app/environment';
+	import Error from '../+error.svelte';
+	import { areThingsEqual } from 'nedb/lib/model';
 
 	let API_TLR = '/api/v1/vehicles-stock';
 
-    if(dev){
-        API_TLR = "http://localhost:8080" + API_TLR
-    }
+	if (dev) {
+		API_TLR = 'http://localhost:8080' + API_TLR;
+	}
 	let datos = [];
 	let errorMsg = '';
 	let showForm = false;
@@ -30,7 +32,11 @@
 	async function getVehicles() {
 		try {
 			let response = await fetch(API_TLR + '?limit=-1', {
-				method: 'GET'
+				method: 'GET',
+				headers: {
+					'Cache-Control': 'no-cache',
+					'Pragma': 'no-cache'
+				}
 			});
 			let data = await response.json();
 			datos = data;
@@ -40,32 +46,39 @@
 		}
 	}
 
-	//Post objesto
-	async function postVehicle() {
-		try {
-			let response = await fetch(API_TLR, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify(newDato)
-			});
+	//Post objeto
+async function postVehicle() {
+    try {
+        let response = await fetch(API_TLR, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newDato)
+        });
 
-			let status = response.status;
-			console.log(`Creation response status ${status}`);
+        let status = response.status;
+        console.log(`Creation response status ${status}`);
 
-			if (status === 201) {
-				getVehicles();
-				showForm = false;
-			} else {
-				let data = await response.json();
-				throw new Error(`Objeto no creado, error: ${status}, Objeto: ${JSON.stringify(newDato)}`);
-			}
-		} catch (error) {
-			errorMsg = error.message;
-			console.error(error);
-		}
-	}
+        if (response.ok) {
+            showForm = false;
+            await getVehicles(); // Actualizar los datos después de la creación exitosa
+        } else {
+            if (response.status == 400) {
+                errorMsg = 'Error en la estructura de los datos';
+                alert(errorMsg);
+            } else if (response.status == 409) {
+                errorMsg = 'Ya existe una entrada con ese país y año';
+                alert(errorMsg);
+            }
+        }
+		
+    } catch (error) {
+		errorMsg = error;
+        console.error(error);
+    }
+}
+
 
 	//Delete Objeto
 	async function deleteVehicle(geo, year) {
@@ -83,6 +96,22 @@
 			errorMsg = error;
 		}
 	}
+
+	//Delete ALL
+	async function deleteALL() {
+		try {
+			let response = await fetch(API_TLR, {
+				method: 'DELETE'
+			});
+			if (response.status == 200) {
+				getVehicles();
+			} else {
+				errorMsg = 'Código error:' + response.status;
+			}
+		} catch (error) {
+			errorMsg = error;
+		}
+	}
 </script>
 
 <!--Estilo y formato de la tabla-->
@@ -91,7 +120,7 @@
 		<table>
 			<thead>
 				<tr>
-                    <th>Vista detallada</th>
+					<th>Vista detallada</th>
 					{#each Object.keys(datos[0]) as key}
 						<th>{key}</th>
 					{/each}
@@ -102,16 +131,19 @@
 			<tbody>
 				{#each datos as dato}
 					<tr>
-                        <td>
-                            <!-- Botón de eliminar -->
-                            <a href="/vehicles-stock/{dato.geo}/{dato.year}" style="text-decoration: none; background-color: #666666; color: white; padding: 5px 10px; border-radius: 5px; cursor: pointer; display: inline-block;">
-                                Ver detalles
-                            </a>
-                        </td>
+						<td>
+							<!-- Botón de eliminar -->
+							<a
+								href="/vehicles-stock/{dato.geo}/{dato.year}"
+								style="text-decoration: none; background-color: #666666; color: white; padding: 5px 10px; border-radius: 5px; cursor: pointer; display: inline-block;"
+							>
+								Ver detalles
+							</a>
+						</td>
 						{#each Object.values(dato) as value}
 							<td>{value}</td>
 						{/each}
-						
+
 						<td>
 							<button
 								style="background-color: #FF0000; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
@@ -124,12 +156,19 @@
 		</table>
 
 		<!--Botón para crear entrada-->
-		<div style="text-align: right; margin-top: 20px;">
+		<div style="margin-top: 20px; display: flex; justify-content: space-between;">
 			<button
 				style="background-color: #0366d6; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
 				on:click={() => {
 					showForm = true;
 				}}>Crear Entrada</button
+			>
+
+			<button
+				style="background-color: #FF0000; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+				on:click={() => {
+					deleteALL();
+				}}>Eliminar Todos</button
 			>
 		</div>
 	</div>
