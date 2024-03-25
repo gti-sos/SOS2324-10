@@ -2,8 +2,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { dev } from '$app/environment';
-	import Error from '../+error.svelte';
-	import { areThingsEqual } from 'nedb/lib/model';
+
 
 	let API_TLR = '/api/v1/vehicles-stock';
 
@@ -31,7 +30,7 @@
 	//Get lista
 	async function getVehicles() {
 		try {
-			let response = await fetch(API_TLR + '?limit=-1', {
+			let response = await fetch(API_TLR + '?limit=100', {
 				method: 'GET',
 				headers: {
 					'Cache-Control': 'no-cache',
@@ -49,7 +48,7 @@
 	//Post objeto
 async function postVehicle() {
     try {
-		await getVehicles();
+		
         let response = await fetch(API_TLR, {
             method: 'POST',
             headers: {
@@ -61,7 +60,8 @@ async function postVehicle() {
         let status = response.status;
         console.log(`Creation response status ${status}`);
 
-        if (response.ok) {
+		
+        if (response.status == 201) {
             showForm = false;
             await getVehicles(); // Actualizar los datos después de la creación exitosa
         } else {
@@ -92,7 +92,7 @@ async function postVehicle() {
 			});
 
 			if (response.status == 200) {
-				getVehicles();
+				await getVehicles();
 			} else {
 				if (response.status == 400) {
                 errorMsg = 'Error en la estructura de los datos';
