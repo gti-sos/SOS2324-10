@@ -21,11 +21,12 @@
             let response = await fetch(API_MRF+"/loadInitialData",{
                                       method: "GET"
             });
-            if(response.status == 200)
-                getGDP();
-            else
-                errorMsg = "code: " + response.status;
-
+            if(response.ok){
+               getGDP();
+               errorMsg = "Datos cargados correctamente";
+            } else {
+                errorMsg = "Ya existen datos en la base de datos";
+            }
         } catch(e){
             errorMsg = e;
         }
@@ -66,10 +67,9 @@
                                       body: JSON.stringify(newGdp)
                                     });
 
-        console.log(`Creation response status ${status}`);
-
         if(response.ok){
             getGDP();
+            errorMsg = "Dato creado correctamente";
         } else {
             if(response.status == 400){
                 errorMsg = "Todos los datos deben ser introducidos";
@@ -93,10 +93,15 @@
                                     method: "DELETE"
                         });
             
-            if(response.status == 200)
+            if(response.ok){
                 getGDP();
-            else
-                errorMsg = "code: " + response.status
+                errorMsg = "Todos los datos fueron eliminados"
+            }else{
+                if(reponse.status == 404){
+                    errorMsg = "No existen datos en l a base de datos";
+                }
+                
+            }
         } catch(e){
             errorMsg = e;
         }
@@ -111,6 +116,7 @@
                         });
             if(response.ok){
                 getGDP();
+                errorMsg = "Dato eliminado correctamente";
             } else {
                 if(response.status == 400){
                     errorMsg = "Fallo en el dato"
