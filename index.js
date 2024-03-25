@@ -16,18 +16,20 @@ let db_ASB = new dataStore();
 
 //Adaptador Svelte
 import {handler} from "./front/build/handler.js";
-
 import cors from "cors";
 
 
 
 let app = express();
 const PORT = process.env.PORT || 8080;
+//Activar CORS
+app.use(cors());
 
 app.use(cors());
 
 app.listen(PORT);
 app.use(bodyParser.json());
+
 
 API_TLR(app,db_TLR);
 backend_MRF_v1(app, db_MRF);
