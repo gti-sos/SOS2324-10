@@ -127,6 +127,8 @@
                     errorMsg = "Fallo en el dato"
                 } else if(response.status == 404){
                     errorMsg = "Dato no existente en la base de datos"
+                } else if (response.status == 409) {
+                    errorMsg = 'Ya existe una entrada con ese país y año';
                 }
             } 
           

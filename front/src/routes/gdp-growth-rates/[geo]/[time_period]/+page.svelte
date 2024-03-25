@@ -10,8 +10,10 @@
     if(dev)
         API_MRF = "http://localhost:8080" + API_MRF;
     let errorMsg = '';
+    let dato = {};
     let geo = $page.params.geo;
     let time_period = $page.params.time_period;
+
     let formData = {
         frequency: '',
         unit: '',
@@ -22,7 +24,9 @@
         growth_rate_2040: 0
     };
 
-    onMount(fetchGeoDetails);
+    onMount(
+        getGDP(geo, time_period)
+    );
 
     async function fetchGeoDetails() {
         try {
@@ -35,6 +39,33 @@
             formData = { ...data }; // Copiar los datos obtenidos en el formulario
         } catch (error) {
             console.error('Error al obtener los detalles de la geo:', error);
+        }
+    }
+
+    async function getGDP(geo, time_period) {
+        try {
+            let response = await fetch(API_MRF + '/' + geo + '/' + time_period, {
+                method: 'GET'
+            });
+
+            if (response.status == 200) {
+                let res = await response.json();
+                dato = res[0];
+            } else {
+                if (response.status == 400) {
+                errorMsg = 'Error en la estructura de los datos';
+                alert(errorMsg);
+            } else if (response.status == 409) {
+                errorMsg = 'Ya existe una entrada con ese país y año';
+                alert(errorMsg);
+            } else if(response.status == 404){
+				errorMsg = "Dato no encontrado";
+				alert(errorMsg);
+			}
+            }
+			console.log("Datos Originales: " + JSON.stringify(dato))
+        } catch (e) {
+            errorMsg = e;
         }
     }
 
@@ -63,7 +94,7 @@
     }
 </script>
 
-<h1>Modificar datos de {geo}</h1>
+<h1>Modificar datos de {geo} en el año {time_period}</h1>
 
 <Row>
     <Col md="6">
