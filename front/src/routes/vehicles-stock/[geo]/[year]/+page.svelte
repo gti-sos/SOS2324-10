@@ -31,7 +31,16 @@
                 let res = await response.json();
                 dato = res[0];
             } else {
-                errorMsg = 'Código error:' + response.status;
+                if (response.status == 400) {
+                errorMsg = 'Error en la estructura de los datos';
+                alert(errorMsg);
+            } else if (response.status == 409) {
+                errorMsg = 'Ya existe una entrada con ese país y año';
+                alert(errorMsg);
+            } else if(response.status == 404){
+				errorMsg = "Dato no encontrado";
+				alert(errorMsg);
+			}
             }
 			console.log("Datos Originales: " + JSON.stringify(dato))
         } catch (e) {
@@ -56,7 +65,16 @@
                 showForm = false; // Cerrar el formulario después de modificar
                 await getVehicle(geo, year); // Volver a cargar los datos actualizados
             } else {
-                errorMsg = 'Código error:' + response.status;
+				if (response.status == 400) {
+                errorMsg = 'No puedes cambiar ni el país ni el año manito';
+                alert(errorMsg);
+            } else if (response.status == 409) {
+                errorMsg = 'Ya existe una entrada con ese país y año';
+                alert(errorMsg);
+            } else if(response.status == 404){
+				errorMsg = "Dato no encontrado";
+				alert(errorMsg);
+			}
             }
 			
 			console.log("Datos Modificados: "+JSON.stringify(modifiedData));

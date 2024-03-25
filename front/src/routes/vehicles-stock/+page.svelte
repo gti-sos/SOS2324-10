@@ -49,6 +49,7 @@
 	//Post objeto
 async function postVehicle() {
     try {
+		await getVehicles();
         let response = await fetch(API_TLR, {
             method: 'POST',
             headers: {
@@ -65,12 +66,15 @@ async function postVehicle() {
             await getVehicles(); // Actualizar los datos después de la creación exitosa
         } else {
             if (response.status == 400) {
-                errorMsg = 'Error en la estructura de los datos';
+                errorMsg = 'No puedes cambiar ni el país ni el año manito';
                 alert(errorMsg);
             } else if (response.status == 409) {
                 errorMsg = 'Ya existe una entrada con ese país y año';
                 alert(errorMsg);
-            }
+            } else if(response.status == 404){
+				errorMsg = "Dato no encontrado";
+				alert(errorMsg);
+			}
         }
 		
     } catch (error) {
@@ -90,7 +94,16 @@ async function postVehicle() {
 			if (response.status == 200) {
 				getVehicles();
 			} else {
-				errorMsg = 'Código error:' + response.status;
+				if (response.status == 400) {
+                errorMsg = 'Error en la estructura de los datos';
+                alert(errorMsg);
+            } else if (response.status == 409) {
+                errorMsg = 'Ya existe una entrada con ese país y año';
+                alert(errorMsg);
+            } else if(response.status == 404){
+				errorMsg = "Dato no encontrado";
+				alert(errorMsg);
+			}
 			}
 		} catch (error) {
 			errorMsg = error;
@@ -106,7 +119,16 @@ async function postVehicle() {
 			if (response.status == 200) {
 				getVehicles();
 			} else {
-				errorMsg = 'Código error:' + response.status;
+				if (response.status == 400) {
+                errorMsg = 'Error en la estructura de los datos';
+                alert(errorMsg);
+            } else if (response.status == 409) {
+                errorMsg = 'Ya existe una entrada con ese país y año';
+                alert(errorMsg);
+            } else if(response.status == 404){
+				errorMsg = "Dato no encontrado";
+				alert(errorMsg);
+			}
 			}
 		} catch (error) {
 			errorMsg = error;
@@ -187,27 +209,27 @@ async function postVehicle() {
 				<form on:submit|preventDefault={postVehicle}>
 					<label>
 						Freq:
-						<input type="text" bind:value={newDato.freq} style="margin-bottom: 10px;" />
+						<input type="text" bind:value={newDato.freq} style="margin-bottom: 10px;" required />
 					</label>
 					<label>
 						Vehicle:
-						<input type="text" bind:value={newDato.vehicle} style="margin-bottom: 10px;" />
+						<input type="text" bind:value={newDato.vehicle} style="margin-bottom: 10px;" required />
 					</label>
 					<label>
 						Unit:
-						<input type="text" bind:value={newDato.unit} style="margin-bottom: 10px;" />
+						<input type="text" bind:value={newDato.unit} style="margin-bottom: 10px;" required />
 					</label>
 					<label>
 						Geo:
-						<input type="text" bind:value={newDato.geo} style="margin-bottom: 10px;" />
+						<input type="text" bind:value={newDato.geo} style="margin-bottom: 10px;" required />
 					</label>
 					<label>
 						Year:
-						<input type="number" bind:value={newDato.year} style="margin-bottom: 10px;" />
+						<input type="number" bind:value={newDato.year} style="margin-bottom: 10px;" required />
 					</label>
 					<label>
 						Obs Value:
-						<input type="number" bind:value={newDato.obs_value} style="margin-bottom: 10px;" />
+						<input type="number" bind:value={newDato.obs_value} style="margin-bottom: 10px;" required />
 					</label>
 					<label>
 						Flights Passangers:
@@ -215,18 +237,19 @@ async function postVehicle() {
 							type="number"
 							bind:value={newDato.flights_passangers}
 							style="margin-bottom: 10px;"
+							required
 						/>
 					</label>
 					<label>
 						Cars Deaths:
-						<input type="number" bind:value={newDato.cars_deaths} style="margin-bottom: 10px;" />
+						<input type="number" bind:value={newDato.cars_deaths} style="margin-bottom: 10px;" required />
 					</label>
 					<button
 						type="submit"
 						style="background-color: #0366d6; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
-						>Crear</button
-					>
+					>Crear</button>
 				</form>
+				
 			</div>
 		</div>
 	{/if}
