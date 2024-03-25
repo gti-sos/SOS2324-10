@@ -35,16 +35,15 @@ function backend_MRF_v2(app, db_MRF){
         });
     });
 
-
+    
     // -------------------------------------- GET -----------------------------
 
     app.get(API_BASE + "/", (req, res) => {
         
-        const { id, frequency, unit, na_item, geo, time_period, obs_value,
+        const {frequency, unit, na_item, geo, time_period, obs_value,
             growth_rate_2030, growth_rate_2040, limit = 10, offset = 0, from, to } = req.query;
 
         const query = {};
-        if (id) query.id = parseInt(id);
         if (frequency) query.frequency = frequency;
         if (unit) query.unit = unit;
         if (na_item) query.na_item = na_item;
@@ -54,33 +53,38 @@ function backend_MRF_v2(app, db_MRF){
         if (growth_rate_2030) query.growth_rate_2030 = parseInt(growth_rate_2030);
         if (growth_rate_2040) query.growth_rate_2040 = parseInt(growth_rate_2040);
 
-        if (id) {
-
-            db_MRF.findOne(query, { _id: 0 }, (error, result) => {
+        db_MRF.find(query, { _id: 0, id: 0 })
+            .skip(parseInt(offset))
+            .limit(parseInt(limit))
+            .exec((error, results) => {
                 if (error) {
                     res.sendStatus(500);
-                } else if (!result) {
+                } else if (results.length === 0) {
                     res.sendStatus(404);
                 } else {
-                    res.sendStatus(200).json(result);
+                    res.status(200).json(results);
                 }
             });
+        
+    });
 
-        } else {
+    app.get(API_BASE + "/:geo", (req, res) => {
+        const geo = req.params.geo;
 
-            db_MRF.find(query, { _id: 0, id: 0 })
-                .skip(parseInt(offset))
-                .limit(parseInt(limit))
-                .exec((error, results) => {
-                    if (error) {
-                        res.sendStatus(500);
-                    } else if (results.length === 0) {
-                        res.sendStatus(404);
-                    } else {
-                        res.status(200).json(results);
-                    }
-                });
-        }
+
+        // Consultar la base de datos con el filtro de geo
+        db_MRF.find({ geo: geo}, { _id: 0, id: 0 })
+            .exec((err, filteredData) => {
+                if (err) {
+                    return res.sendStatus(500, "Internal Error");
+                }
+
+                if (filteredData.length === 0) {
+                    return res.sendStatus(404, "Not Found");
+                }
+
+                res.status(200).send(filteredData);
+            });
     });
 
 
@@ -149,6 +153,42 @@ function backend_MRF_v2(app, db_MRF){
     // NO SE PUEDE HACER UN PUT SOBRE TODOS LOS RECURSOS    
     app.put(API_BASE + "/", (req, res) => {
         res.sendStatus(405, "METHOD NOT ALLOWED");
+    });
+
+    app.put(API_BASE + "/:geo", (req, res) => {
+        const geoURL = req.params.geo;
+        const updatedGdp = req.body;
+
+
+        const expectedFields = ["frequency", "unit", "na_item", "geo", "time_period", "obs_value", "growth_rate_2030", "growth_rate_2040"];
+        const parametersBody = Object.keys(updatedGdp);
+        const missingFields = expectedFields.filter(field => !parametersBody.includes(field));
+        if (missingFields.length > 0) {
+            return res.sendStatus(400);
+        }
+        /**
+        if (geoURL !== updatedGdp.geo) {
+            return res.sendStatus(400);
+        }*/
+
+        db_MRF.findOne({ geo: geoURL}, (err, existingGdp) => {
+            if (err) {
+                return res.sendStatus(500);
+            }
+            if (!existingGdp) {
+                return res.sendStatus(404);
+            }
+
+            db_MRF.update({ geo: geoURL}, updatedGdp, {}, (err, numReplaced) => {
+                if (err) {
+                    return res.sendStatus(500);
+                }
+                if (numReplaced === 0) {
+                    return res.sendStatus(500);
+                }
+                return res.sendStatus(200);
+            });
+        });
     });
 
 
