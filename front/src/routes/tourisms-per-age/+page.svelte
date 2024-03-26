@@ -1,5 +1,5 @@
 <script>
 
-    let API_ASC 
-    
+    let API_ASC
+
 </script>
