@@ -25,6 +25,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@sveltestrap/sveltestrap": "^6.2.7"
+		"@sveltestrap/sveltestrap": "^6.2.7",
+		"cors": "^2.8.5"
 	}
 }

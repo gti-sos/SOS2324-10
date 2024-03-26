@@ -53,6 +53,14 @@ function backend_MRF_v2(app, db_MRF){
         if (growth_rate_2030) query.growth_rate_2030 = parseInt(growth_rate_2030);
         if (growth_rate_2040) query.growth_rate_2040 = parseInt(growth_rate_2040);
 
+        if (from && to) {
+            query.time_period = { $gte: parseInt(from), $lte: parseInt(to) };
+        } else if (from) {
+            query.time_period = { $gte: parseInt(from) };
+        } else if (to) {
+            query.time_period = { $lte: parseInt(to) };
+        }
+
         db_MRF.find(query, { _id: 0, id: 0 })
             .skip(parseInt(offset))
             .limit(parseInt(limit))
@@ -62,7 +70,14 @@ function backend_MRF_v2(app, db_MRF){
                 } else if (results.length === 0) {
                     res.sendStatus(404);
                 } else {
-                    res.status(200).json(results);
+                    db_MRF.count(query, (countError, totalCount) => {
+                        if (countError) {
+                            res.sendStatus(500);
+                        } else {
+                            // Enviar resultados paginados y el total de resultados
+                            res.status(200).json({ data: results, total: totalCount });
+                        }
+                    });
                 }
             });
         
