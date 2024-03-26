@@ -39,52 +39,63 @@
 
 	//Función filtro
 	async function getVehiclesFilter() {
-    try {
-        // Construye la URL de búsqueda a partir de los filtros proporcionados
-        let searchParams = new URLSearchParams();
-        for (const key in selectedFilter) {
-            if (selectedFilter[key] !== '') {
-                searchParams.append(key, selectedFilter[key]);
-            }
-        }
-        let searchUrl = `${API_TLR}/search?${searchParams.toString()}`;
-		console.log(searchUrl);
-        // Realiza la petición GET a la API con la URL de búsqueda generada
-        let response = await fetch(searchUrl, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
+		try {
+			// Construye la URL de búsqueda a partir de los filtros proporcionados
+			let searchParams = new URLSearchParams();
+			if (selectedFilter.length == 0) {
+				selectedFilter = {
+					freq: '',
+					vehicle: '',
+					unit: '',
+					geo: '',
+					year: '',
+					obs_value: '',
+					flights_passangers: '',
+					cars_deaths: ''
+				};
+			}
+			for (const key in selectedFilter) {
+				if (selectedFilter[key] !== '') {
+					searchParams.append(key, selectedFilter[key]);
+				}
+			}
+			let searchUrl = `${API_TLR}/search?${searchParams.toString()}`;
+			console.log(searchUrl);
+			// Realiza la petición GET a la API con la URL de búsqueda generada
+			let response = await fetch(searchUrl, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
 
-        // Manejo de la respuesta de la API
-        let status = response.status;
-        console.log(`Response status: ${status}`);
+			// Manejo de la respuesta de la API
+			let status = response.status;
+			console.log(`Response status: ${status}`);
 
-        if (response.status == 200) {
-            // Actualiza los datos después de una búsqueda exitosa
-            let data = await response.json();
-            datos = data;
-            console.log(data);
-        } else {
-            // Manejo de errores
-            if (response.status == 400) {
-                errorMsg = 'Error en la estructura de los datos';
-                alert(errorMsg);
-            } else if (response.status == 409) {
-                errorMsg = 'Ya existe una entrada con ese país y año';
-                alert(errorMsg);
-            } else if (response.status == 404) {
-                errorMsg = 'Dato no encontrado';
-                alert(errorMsg);
-            }
-        }
-    } catch (error) {
-        errorMsg = error;
-        console.error(error);
-    }
-}
-
+			if (response.status == 200) {
+				// Actualiza los datos después de una búsqueda exitosa
+				let data = await response.json();
+				datos = data;
+				console.log(data);
+			} else {
+				// Manejo de errores
+				if (response.status == 400) {
+					errorMsg = 'Error en la estructura de los datos';
+					alert(errorMsg);
+				} else if (response.status == 409) {
+					errorMsg = 'Ya existe una entrada con ese país y año';
+					alert(errorMsg);
+				} else if (response.status == 404) {
+					errorMsg = 'Dato no encontrado';
+					alert(errorMsg);
+				}
+			}
+		} catch (error) {
+			errorMsg = error;
+			console.error(error);
+		}
+	}
 
 	//Get lista
 	async function getVehicles() {
@@ -331,73 +342,70 @@
 	{/if}
 	<!-- Botón desplegable de filtro -->
 	{#if showFilter}
-	<div class="modal">
-		<div class="modal-content">
-			<span
-				class="close"
-				on:click={() => {
-					showFilter = false;
-				}}>&times;</span
-			>
-			<h2 style="color: #0366d6;">Aplicar filtros</h2>
-			<form on:submit|preventDefault={getVehiclesFilter}>
-				<label>
-					Freq:<!---->
-					<input type="text" bind:value={selectedFilter.freq} style="margin-bottom: 10px;"  />
-				</label>
-				<label>
-					Vehicle:
-					<input type="text" bind:value={selectedFilter.vehicle} style="margin-bottom: 10px;"  />
-				</label>
-				<label>
-					Unit:
-					<input type="text" bind:value={selectedFilter.unit} style="margin-bottom: 10px;"  />
-				</label>
-				<label
-					><!---->
-					Geo:
-					<input type="text" bind:value={selectedFilter.geo} style="margin-bottom: 10px;"  />
-				</label>
-				<label>
-					Year:
-					<input type="number" bind:value={selectedFilter.year} style="margin-bottom: 10px;"  />
-				</label>
-				<label>
-					Obs Value:
-					<input
-						type="number"
-						bind:value={selectedFilter.obs_value}
-						style="margin-bottom: 10px;"
-						
-					/>
-				</label>
-				<label>
-					Flights Passangers:
-					<input
-						type="number"
-						bind:value={selectedFilter.flights_passangers}
-						style="margin-bottom: 10px;"
-						
-					/>
-				</label>
-				<label
-					><!---->
-					Cars Deaths:
-					<input
-						type="number"
-						bind:value={selectedFilter.cars_deaths}
-						style="margin-bottom: 10px;"
-						
-					/>
-				</label>
-				<button
-					type="submit"
-					style="background-color: #0366d6; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
-					>Filtrar</button
+		<div class="modal">
+			<div class="modal-content">
+				<span
+					class="close"
+					on:click={() => {
+						showFilter = false;
+					}}>&times;</span
 				>
-			</form>
+				<h2 style="color: #0366d6;">Aplicar filtros</h2>
+				<form on:submit|preventDefault={getVehiclesFilter}>
+					<label>
+						Freq:<!---->
+						<input type="text" bind:value={selectedFilter.freq} style="margin-bottom: 10px;" />
+					</label>
+					<label>
+						Vehicle:
+						<input type="text" bind:value={selectedFilter.vehicle} style="margin-bottom: 10px;" />
+					</label>
+					<label>
+						Unit:
+						<input type="text" bind:value={selectedFilter.unit} style="margin-bottom: 10px;" />
+					</label>
+					<label
+						><!---->
+						Geo:
+						<input type="text" bind:value={selectedFilter.geo} style="margin-bottom: 10px;" />
+					</label>
+					<label>
+						Year:
+						<input type="number" bind:value={selectedFilter.year} style="margin-bottom: 10px;" />
+					</label>
+					<label>
+						Obs Value:
+						<input
+							type="number"
+							bind:value={selectedFilter.obs_value}
+							style="margin-bottom: 10px;"
+						/>
+					</label>
+					<label>
+						Flights Passangers:
+						<input
+							type="number"
+							bind:value={selectedFilter.flights_passangers}
+							style="margin-bottom: 10px;"
+						/>
+					</label>
+					<label
+						><!---->
+						Cars Deaths:
+						<input
+							type="number"
+							bind:value={selectedFilter.cars_deaths}
+							style="margin-bottom: 10px;"
+						/>
+					</label>
+					<button
+						type="submit"
+						style="background-color: #0366d6; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+						>Filtrar</button
+					>
+				</form>
+			</div>
 		</div>
-	</div>
 	{/if}
 	{#if errorMsg != ''}
 		ERROR: {errorMsg}
