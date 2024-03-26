@@ -137,7 +137,7 @@ async function postVehicle() {
 </script>
 
 <!--Estilo y formato de la tabla-->
-{#if datos && datos.length > 0}
+{#if datos && datos.length > 0}<!---->
 	<div class="container">
 		<table>
 			<thead>
@@ -165,7 +165,7 @@ async function postVehicle() {
 						{#each Object.values(dato) as value}
 							<td>{value}</td>
 						{/each}
-
+							<!----> 
 						<td>
 							<button
 								style="background-color: #FF0000; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
@@ -185,7 +185,7 @@ async function postVehicle() {
 					showForm = true;
 				}}>Crear Entrada</button
 			>
-
+<!---->
 			<button
 				style="background-color: #FF0000; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
 				on:click={() => {
@@ -194,7 +194,7 @@ async function postVehicle() {
 			>
 		</div>
 	</div>
-
+<!---->
 	<!-- Popup para crear nuevo objeto -->
 	{#if showForm}
 		<div class="modal">
@@ -208,7 +208,7 @@ async function postVehicle() {
 				<h2 style="color: #0366d6;">Crear Nueva Entrada</h2>
 				<form on:submit|preventDefault={postVehicle}>
 					<label>
-						Freq:
+						Freq:<!---->
 						<input type="text" bind:value={newDato.freq} style="margin-bottom: 10px;" required />
 					</label>
 					<label>
@@ -219,7 +219,7 @@ async function postVehicle() {
 						Unit:
 						<input type="text" bind:value={newDato.unit} style="margin-bottom: 10px;" required />
 					</label>
-					<label>
+					<label><!---->
 						Geo:
 						<input type="text" bind:value={newDato.geo} style="margin-bottom: 10px;" required />
 					</label>
@@ -240,7 +240,7 @@ async function postVehicle() {
 							required
 						/>
 					</label>
-					<label>
+					<label><!---->
 						Cars Deaths:
 						<input type="number" bind:value={newDato.cars_deaths} style="margin-bottom: 10px;" required />
 					</label>
