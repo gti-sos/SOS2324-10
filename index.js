@@ -6,7 +6,8 @@ import {backend_MRF_v1} from "./api/api-MRF_v1.js";
 import {backend_MRF_v2} from "./api/api-MRF_v2.js";
 import {API_ASC_v1} from "./api/api-ASC_v1.js";
 import {API_ASC_v2} from "./api/api-ASC_v2.js";
-import {API_ASB} from "./api/api-ASB.js";
+import {API_ASB_v1} from "./api/api-ASB_v1.js";
+import {API_ASB_v2} from "./api/api-ASB_v2.js";
 
 //neDB
 import dataStore from "nedb";
@@ -36,7 +37,8 @@ backend_MRF_v1(app, db_MRF);
 backend_MRF_v2(app, db_MRF);
 API_ASC_v1(app, db_ASC);
 API_ASC_v2(app, db_ASC);
-API_ASB(app, db_ASB);
+API_ASB_v1(app, db_ASB);
+API_ASB_v2(app, db_ASB);
 
 //Uso del handler
 

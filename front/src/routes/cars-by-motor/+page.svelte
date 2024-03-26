@@ -1,71 +1,64 @@
 <script>
     import {onMount} from "svelte";
-
-    let tourisms = []
-    let API_ASC = "http://localhost:8080/api/v1/tourisms-per-age";
+    
+    let API_ASB = "http://localhost:8080/api/v2/cars-by-motor";
+    let cars = [];
+    let newCar = {geo: "geo", time_period: "0000"};
+    let errorMsg = '';
 
     onMount(()=>{
-        getTourisms();
+        getCars();
     })
 
-    async function getTourisms(){
+    async function getCar(){
         console.log(cars);
         try{
-            let response = await fetch(API_ASC,{
+            let response = await fetch(API_ASB,{
                                       method: "GET"
             });
             let data = await response.json();
-            tourisms = data;
+            cars = data;
             console.log(data); 
         } catch(e){
             errorMsg = e;
         }
-        
     }
 
-    async function createTourism(){
+    async function createCar(){
         try{
-            let response = await fetch(API_ASC,{
+            let response = await fetch(API_ASB,{
                                       method: "POST",
                                       headers: {
                                         "Content-Type": "application/json"
                                       },
-                                      body: JSON.stringify(newTourism)
+                                      body: JSON.stringify(newCar)
                                     });
-
         let status = await response.status;
         console.log(`Creation response status ${status}`);
         }catch(e){
             errorMsg = e;
         }
-        
-
     }
 
-    async function deleteTourismAll(){
-
+    async function deleteCars(){
         try{
-            let response = await fetch(API_ASC,{
-                                    method: "DELETE"
-                        });
+            let response = await fetch(API_ASB,{
+                            method: "DELETE"
+                                    });
         } catch(e){
             errorMsg = e;
         }
-
     }
 
-    async function deleteTourism(n){
-
-        console.log(`Deleting contact with name ${n}`); 
-
+    async function deleteCar(n){
+        console.log(`Deleting car ${n}`); 
         try{
-            let response = await fetch(API_ASC+"/"+n,{
-                                      method: "DELETE"
-                        });
+            let response = await fetch(API_ASB+"/"+n,{
+                              method: "DELETE"
+                                        });
         } catch(e){
             errorMsg = e;
         }
-        
     }
 
 </script>
