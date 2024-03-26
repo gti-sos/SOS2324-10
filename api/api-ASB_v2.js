@@ -1,12 +1,12 @@
 import bodyParser from "body-parser";
 import express from "express";
 const app = express();
-const API_BASE = "/api/v1"
+const API_BASE = "/api/v2"
 app.use(bodyParser.json());
 
 
 
-function API_ASB (app,db_ASB){
+function API_ASB_v2 (app,db_ASB){
     //GET
 
     app.get(API_BASE + "/cars-by-motor/docs", (req, res) => {
