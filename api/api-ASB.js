@@ -1,5 +1,5 @@
-const bodyParser = require("body-parser");
-const express = require("express");
+import bodyParser from "body-parser";
+import express from "express";
 const app = express();
 const API_BASE = "/api/v1"
 app.use(bodyParser.json());
@@ -9,7 +9,7 @@ let dataStore = require("nedb");
 
 
 
-module.exports = (app,db_ASB) => {
+function API_ASB (app,db_ASB){
     //GET
 
     app.get(API_BASE + "/cars-by-motor/docs", (req, res) => {
@@ -570,3 +570,5 @@ app.put(API_BASE + "/cars-by-motor", (req, res) => {
             return { id: index + 1, ...rest };
       });
 };  
+
+export {API_ASB};
