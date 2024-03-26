@@ -5,7 +5,7 @@ import {API_TLR} from "./api/api-TLR.js";
 import {backend_MRF_v1} from "./api/api-MRF_v1.js";
 import {backend_MRF_v2} from "./api/api-MRF_v2.js";
 import {API_ASC} from "./api/api-ASC.js";
-import {API_ASB} from "./api/api-ASB";
+import {API_ASB} from "./api/api-ASB.js";
 
 //neDB
 import dataStore from "nedb";
