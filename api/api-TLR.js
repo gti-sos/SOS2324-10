@@ -92,9 +92,11 @@ function API_TLR(app, db_TLR) {
 
       if (filteredData.length === 0) {
         return res.sendStatus(404);
+      }else{
+        res.send(filteredData).sendStatus(200);
       }
 
-      res.sendStatus(200);
+      
     });
   });
 

@@ -3,7 +3,6 @@
 	import { onMount } from 'svelte';
 	import { dev } from '$app/environment';
 
-
 	let API_TLR = '/api/v1/vehicles-stock';
 
 	if (dev) {
@@ -12,6 +11,17 @@
 	let datos = [];
 	let errorMsg = '';
 	let showForm = false;
+	let showFilter = false;
+	let selectedFilter = {
+		freq: '',
+		vehicle: '',
+		unit: '',
+		geo: '',
+		year: '',
+		obs_value: '',
+		flights_passangers: '',
+		cars_deaths: ''
+	};
 	let newDato = {
 		freq: '',
 		vehicle: '',
@@ -27,6 +37,55 @@
 		await getVehicles();
 	});
 
+	//Función filtro
+	async function getVehiclesFilter() {
+    try {
+        // Construye la URL de búsqueda a partir de los filtros proporcionados
+        let searchParams = new URLSearchParams();
+        for (const key in selectedFilter) {
+            if (selectedFilter[key] !== '') {
+                searchParams.append(key, selectedFilter[key]);
+            }
+        }
+        let searchUrl = `${API_TLR}/search?${searchParams.toString()}`;
+		console.log(searchUrl);
+        // Realiza la petición GET a la API con la URL de búsqueda generada
+        let response = await fetch(searchUrl, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        // Manejo de la respuesta de la API
+        let status = response.status;
+        console.log(`Response status: ${status}`);
+
+        if (response.status == 200) {
+            // Actualiza los datos después de una búsqueda exitosa
+            let data = await response.json();
+            datos = data;
+            console.log(data);
+        } else {
+            // Manejo de errores
+            if (response.status == 400) {
+                errorMsg = 'Error en la estructura de los datos';
+                alert(errorMsg);
+            } else if (response.status == 409) {
+                errorMsg = 'Ya existe una entrada con ese país y año';
+                alert(errorMsg);
+            } else if (response.status == 404) {
+                errorMsg = 'Dato no encontrado';
+                alert(errorMsg);
+            }
+        }
+    } catch (error) {
+        errorMsg = error;
+        console.error(error);
+    }
+}
+
+
 	//Get lista
 	async function getVehicles() {
 		try {
@@ -34,7 +93,7 @@
 				method: 'GET',
 				headers: {
 					'Cache-Control': 'no-cache',
-					'Pragma': 'no-cache'
+					Pragma: 'no-cache'
 				}
 			});
 			let data = await response.json();
@@ -46,43 +105,39 @@
 	}
 
 	//Post objeto
-async function postVehicle() {
-    try {
-		
-        let response = await fetch(API_TLR, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(newDato)
-        });
+	async function postVehicle() {
+		try {
+			let response = await fetch(API_TLR, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(newDato)
+			});
 
-        let status = response.status;
-        console.log(`Creation response status ${status}`);
+			let status = response.status;
+			console.log(`Creation response status ${status}`);
 
-		
-        if (response.status == 201) {
-            showForm = false;
-            await getVehicles(); // Actualizar los datos después de la creación exitosa
-        } else {
-            if (response.status == 400) {
-                errorMsg = 'Error en la estructura de los datos';
-                alert(errorMsg);
-            } else if (response.status == 409) {
-                errorMsg = 'Ya existe una entrada con ese país y año';
-                alert(errorMsg);
-            } else if(response.status == 404){
-				errorMsg = "Dato no encontrado";
-				alert(errorMsg);
+			if (response.status == 201) {
+				showForm = false;
+				await getVehicles(); // Actualizar los datos después de la creación exitosa
+			} else {
+				if (response.status == 400) {
+					errorMsg = 'Error en la estructura de los datos';
+					alert(errorMsg);
+				} else if (response.status == 409) {
+					errorMsg = 'Ya existe una entrada con ese país y año';
+					alert(errorMsg);
+				} else if (response.status == 404) {
+					errorMsg = 'Dato no encontrado';
+					alert(errorMsg);
+				}
 			}
-        }
-		
-    } catch (error) {
-		errorMsg = error;
-        console.error(error);
-    }
-}
-
+		} catch (error) {
+			errorMsg = error;
+			console.error(error);
+		}
+	}
 
 	//Delete Objeto
 	async function deleteVehicle(geo, year) {
@@ -95,15 +150,15 @@ async function postVehicle() {
 				await getVehicles();
 			} else {
 				if (response.status == 400) {
-                errorMsg = 'Error en la estructura de los datos';
-                alert(errorMsg);
-            } else if (response.status == 409) {
-                errorMsg = 'Ya existe una entrada con ese país y año';
-                alert(errorMsg);
-            } else if(response.status == 404){
-				errorMsg = "Dato no encontrado";
-				alert(errorMsg);
-			}
+					errorMsg = 'Error en la estructura de los datos';
+					alert(errorMsg);
+				} else if (response.status == 409) {
+					errorMsg = 'Ya existe una entrada con ese país y año';
+					alert(errorMsg);
+				} else if (response.status == 404) {
+					errorMsg = 'Dato no encontrado';
+					alert(errorMsg);
+				}
 			}
 		} catch (error) {
 			errorMsg = error;
@@ -120,15 +175,15 @@ async function postVehicle() {
 				getVehicles();
 			} else {
 				if (response.status == 400) {
-                errorMsg = 'Error en la estructura de los datos';
-                alert(errorMsg);
-            } else if (response.status == 409) {
-                errorMsg = 'Ya existe una entrada con ese país y año';
-                alert(errorMsg);
-            } else if(response.status == 404){
-				errorMsg = "Dato no encontrado";
-				alert(errorMsg);
-			}
+					errorMsg = 'Error en la estructura de los datos';
+					alert(errorMsg);
+				} else if (response.status == 409) {
+					errorMsg = 'Ya existe una entrada con ese país y año';
+					alert(errorMsg);
+				} else if (response.status == 404) {
+					errorMsg = 'Dato no encontrado';
+					alert(errorMsg);
+				}
 			}
 		} catch (error) {
 			errorMsg = error;
@@ -139,6 +194,15 @@ async function postVehicle() {
 <!--Estilo y formato de la tabla-->
 {#if datos && datos.length > 0}<!---->
 	<div class="container">
+		<div style="margin-bottom: 20px; display: flex; justify-content: space-between;">
+			<button
+				style="background-color: #0366d6; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+				on:click={() => {
+					showFilter = true;
+				}}
+				>Filtros
+			</button>
+		</div>
 		<table>
 			<thead>
 				<tr>
@@ -165,7 +229,7 @@ async function postVehicle() {
 						{#each Object.values(dato) as value}
 							<td>{value}</td>
 						{/each}
-							<!----> 
+						<!---->
 						<td>
 							<button
 								style="background-color: #FF0000; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
@@ -185,7 +249,7 @@ async function postVehicle() {
 					showForm = true;
 				}}>Crear Entrada</button
 			>
-<!---->
+			<!---->
 			<button
 				style="background-color: #FF0000; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
 				on:click={() => {
@@ -194,7 +258,7 @@ async function postVehicle() {
 			>
 		</div>
 	</div>
-<!---->
+	<!---->
 	<!-- Popup para crear nuevo objeto -->
 	{#if showForm}
 		<div class="modal">
@@ -219,7 +283,8 @@ async function postVehicle() {
 						Unit:
 						<input type="text" bind:value={newDato.unit} style="margin-bottom: 10px;" required />
 					</label>
-					<label><!---->
+					<label
+						><!---->
 						Geo:
 						<input type="text" bind:value={newDato.geo} style="margin-bottom: 10px;" required />
 					</label>
@@ -229,7 +294,12 @@ async function postVehicle() {
 					</label>
 					<label>
 						Obs Value:
-						<input type="number" bind:value={newDato.obs_value} style="margin-bottom: 10px;" required />
+						<input
+							type="number"
+							bind:value={newDato.obs_value}
+							style="margin-bottom: 10px;"
+							required
+						/>
 					</label>
 					<label>
 						Flights Passangers:
@@ -240,20 +310,95 @@ async function postVehicle() {
 							required
 						/>
 					</label>
-					<label><!---->
+					<label
+						><!---->
 						Cars Deaths:
-						<input type="number" bind:value={newDato.cars_deaths} style="margin-bottom: 10px;" required />
+						<input
+							type="number"
+							bind:value={newDato.cars_deaths}
+							style="margin-bottom: 10px;"
+							required
+						/>
 					</label>
 					<button
 						type="submit"
 						style="background-color: #0366d6; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
-					>Crear</button>
+						>Crear</button
+					>
 				</form>
-				
 			</div>
 		</div>
 	{/if}
-
+	<!-- Botón desplegable de filtro -->
+	{#if showFilter}
+	<div class="modal">
+		<div class="modal-content">
+			<span
+				class="close"
+				on:click={() => {
+					showFilter = false;
+				}}>&times;</span
+			>
+			<h2 style="color: #0366d6;">Aplicar filtros</h2>
+			<form on:submit|preventDefault={getVehiclesFilter}>
+				<label>
+					Freq:<!---->
+					<input type="text" bind:value={selectedFilter.freq} style="margin-bottom: 10px;"  />
+				</label>
+				<label>
+					Vehicle:
+					<input type="text" bind:value={selectedFilter.vehicle} style="margin-bottom: 10px;"  />
+				</label>
+				<label>
+					Unit:
+					<input type="text" bind:value={selectedFilter.unit} style="margin-bottom: 10px;"  />
+				</label>
+				<label
+					><!---->
+					Geo:
+					<input type="text" bind:value={selectedFilter.geo} style="margin-bottom: 10px;"  />
+				</label>
+				<label>
+					Year:
+					<input type="number" bind:value={selectedFilter.year} style="margin-bottom: 10px;"  />
+				</label>
+				<label>
+					Obs Value:
+					<input
+						type="number"
+						bind:value={selectedFilter.obs_value}
+						style="margin-bottom: 10px;"
+						
+					/>
+				</label>
+				<label>
+					Flights Passangers:
+					<input
+						type="number"
+						bind:value={selectedFilter.flights_passangers}
+						style="margin-bottom: 10px;"
+						
+					/>
+				</label>
+				<label
+					><!---->
+					Cars Deaths:
+					<input
+						type="number"
+						bind:value={selectedFilter.cars_deaths}
+						style="margin-bottom: 10px;"
+						
+					/>
+				</label>
+				<button
+					type="submit"
+					style="background-color: #0366d6; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+					>Filtrar</button
+				>
+			</form>
+		</div>
+	</div>
+	{/if}
 	{#if errorMsg != ''}
 		ERROR: {errorMsg}
 	{/if}
@@ -262,15 +407,6 @@ async function postVehicle() {
 {/if}
 
 <style>
-	body {
-		font-family: Arial, sans-serif;
-		line-height: 1.6;
-		margin: 0;
-		padding: 0;
-		background-color: #f3f7ff; /* Azul claro */
-		color: #333;
-	}
-
 	.container {
 		width: 80%;
 		margin: 50px auto;

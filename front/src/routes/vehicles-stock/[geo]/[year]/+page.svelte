@@ -147,7 +147,7 @@
 				<div style="margin-top: 20px; display: flex; justify-content: space-between;">
 					<button
 						type="submit"
-						style="background-color: #0366d6; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+						style="text-align:center ;background-color: #0366d6; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
 						on:click={() => { showForm = false; putVehicle(); }}
 					>
 						Guardar Cambios
@@ -212,45 +212,6 @@
 		text-align: center;
 		color: #0366d6; /* Azul */
 	}
-	/* Estilos para el popup */
-    .modal {
-        display: block; /* Muestra el popup */
-        position: fixed;
-        z-index: 1;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.4); /* Fondo oscuro */
-    }
-
-    .modal-content {
-        background-color: #fefefe; /* Color de fondo */
-        margin: 15% auto; /* Centrar el popup verticalmente */
-        padding: 20px;
-        border: 1px solid #888;
-        width: 50%;
-        border-radius: 5px;
-        box-shadow:
-            0 4px 8px 0 rgba(0, 0, 0, 0.2),
-            0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    }
-
-    /* Botón de cerrar (x) del popup */
-    .close {
-        color: #aaa;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
-    }
-
-    .close:hover,
-    .close:focus {
-        color: black;
-        text-decoration: none;
-        cursor: pointer;
-    }
 
     /* Estilos para los inputs del formulario */
     input[type='text'] {

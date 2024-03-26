@@ -26,7 +26,6 @@ const PORT = process.env.PORT || 8080;
 //Activar CORS
 app.use(cors());
 
-app.use(cors());
 
 app.listen(PORT);
 app.use(bodyParser.json());
