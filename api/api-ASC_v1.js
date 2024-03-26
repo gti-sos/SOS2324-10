@@ -5,7 +5,7 @@ const API_BASE = "/api/v1";
 app.use(bodyParser.json());
 
 
-function API_ASC (app, db_ASC){
+function API_ASC_v1 (app, db_ASC){
 
     // ------------ GET -------------
     // ----------- CUALQUIER CONSULTA GET --------------
@@ -711,4 +711,4 @@ function API_ASC (app, db_ASC){
     });
 };
 
-export {API_ASC};
+export {API_ASC_v1};
