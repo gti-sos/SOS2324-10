@@ -3,8 +3,6 @@ import express from "express";
 const app = express();
 const API_BASE = "/api/v1"
 app.use(bodyParser.json());
-//
-let dataStore = require("nedb");
 
 
 
