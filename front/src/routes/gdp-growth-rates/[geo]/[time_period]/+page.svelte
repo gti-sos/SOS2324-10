@@ -6,7 +6,7 @@
     import { Button, Col, Row, Input } from '@sveltestrap/sveltestrap';
 
 
-    let API_MRF = "/api/v2/gdp-growth-rates";
+    let API_MRF = "/api/v2/gdp-growth-rates"; 
     if(dev)
         API_MRF = "http://localhost:8080" + API_MRF;
     let errorMsg = '';
@@ -25,7 +25,7 @@
     };
 
     onMount(
-        getGDP(geo, time_period)
+        fetchGeoDetails
     );
 
     async function fetchGeoDetails() {
@@ -41,7 +41,7 @@
             console.error('Error al obtener los detalles de la geo:', error);
         }
     }
-
+    /**
     async function getGDP(geo, time_period) {
         try {
             let response = await fetch(API_MRF + '/' + geo + '/' + time_period, {
@@ -67,7 +67,7 @@
         } catch (e) {
             errorMsg = e;
         }
-    }
+    }**/
 
     async function updateGeoDetails() {
         try {
@@ -80,10 +80,10 @@
                                          }); 
             if(response.ok){
                 errorMsg = "Dato actualizado correctamente"
-                window.location.href = API_MRF;
+                window.location.href = "http://localhost:5173/gdp-growth-rates";
             }else if(!response.ok) {
                 if(response.status == 400){
-                    errorMsg = "Todos los campos deben ser rellenados";
+                    errorMsg = "Todos los campos deben ser rellenados. El pais y el año deben coincidir con los del dato a actualizar";
                 } else if(response.status == 405) {
                     errorMsg = "Método no permitido";
                 }
@@ -129,7 +129,6 @@
     </Col>
 </Row>
 <Button color="primary" on:click="{updateGeoDetails}">Guardar cambios</Button>
-
 
 
 

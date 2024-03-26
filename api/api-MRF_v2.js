@@ -198,10 +198,12 @@ function backend_MRF_v2(app, db_MRF){
         const time_periodURL = parseInt(req.params.time_period);
         const updatedGdp = req.body;
 
-
-        if (isNaN(time_periodURL)) {
+        /**
+         * if (isNaN(time_periodURL)) {
             return res.sendStatus(400);
         }
+         */
+        
 
         const expectedFields = ["frequency", "unit", "na_item", "geo", "time_period", "obs_value", "growth_rate_2030", "growth_rate_2040"];
         const parametersBody = Object.keys(updatedGdp);

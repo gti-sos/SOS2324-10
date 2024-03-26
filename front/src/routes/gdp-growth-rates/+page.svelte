@@ -1,7 +1,7 @@
 <script>
     import {onMount} from "svelte";
     import { dev } from "$app/environment";
-    import { Button, Col, Row, Table, Input } from '@sveltestrap/sveltestrap';
+    import { Styles, Button, Col, Row, Table, Input } from '@sveltestrap/sveltestrap';
 
 
     let API_MRF = "/api/v2/gdp-growth-rates";
@@ -38,7 +38,7 @@
   
     async function getGDP(){
         try{
-            let response = await fetch(API_MRF+"?limit=100",{
+            let response = await fetch(API_MRF,{
                                       method: "GET"
             });
             if(response.ok){
@@ -141,77 +141,46 @@
 
 
 </script>
+{#if gdp.length > 0}
+
+<Table class="table-striped">
+    <thead>
+        <tr>
+            <th class="text-center">Column</th>
+            <th class="text-center">Geo</th>
+            <th class="text-center">Time Period</th>
+            <th class="text-center">Frequency</th>
+            <th class="text-center">Unit</th>
+            <th class="text-center">NA Item</th>
+            <th class="text-center">Obs Value</th>
+            <th class="text-center">Growth Rate 2030</th>
+            <th class="text-center">Growth Rate 2040</th>
+            <th class="text-center">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {#each gdp as g, index}
+        <tr>
+            <td class="text-center">{index + 1}</td>
+            <td class="text-center"><a href="/gdp-growth-rates/{g.geo}/{g.time_period}">{g.geo}</a></td>
+            <td class="text-center">{g.time_period}</td>
+            <td class="text-center">{g.frequency}</td>
+            <td class="text-center">{g.unit}</td>
+            <td class="text-center">{g.na_item}</td>
+            <td class="text-center">{g.obs_value}</td>
+            <td class="text-center">{g.growth_rate_2030}</td>
+            <td class="text-center">{g.growth_rate_2040}</td>
+            <td class="text-center">
+                <button class="btn btn-danger" on:click={() => deleteGDP(g.geo, g.time_period)}>Borrar dato</button>
+            </td>
+        </tr>
+        {/each}
+    </tbody>
+</Table>
+{/if}
 
 
-<Row>
-    <Col>
-        <Table>
-            <thead>
-                <tr>
-                    <th>Geo</th>
-                    <th>Time Period</th>
-                    <th>Dataflow</th>
-                    <th>Last Update</th>
-                    <th>Frequency</th>
-                    <th>Unit</th>
-                    <th>NA Item</th>
-                    <th>Obs Value</th>
-                    <th>Growth Rate 2030</th>
-                    <th>Growth Rate 2040</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><Input bind:value={newGdp.geo} /></td>
-                    <td><Input bind:value={newGdp.time_period} type="number" /></td>
-                    <td><Input bind:value={newGdp.dataflow} /></td>
-                    <td><Input bind:value={newGdp.last_update} /></td>
-                    <td><Input bind:value={newGdp.frequency} /></td>
-                    <td><Input bind:value={newGdp.unit} /></td>
-                    <td><Input bind:value={newGdp.na_item} /></td>
-                    <td><Input bind:value={newGdp.obs_value} type="number" step="0.01" /></td>
-                    <td><Input bind:value={newGdp.growth_rate_2030} type="number" /></td>
-                    <td><Input bind:value={newGdp.growth_rate_2040} type="number" /></td>
-                </tr>
-            </tbody>
-        </Table>
-        <Button color="primary" on:click={createGDP}>Agregar Nuevo Dato</Button>
-    </Col>
-</Row>
-
-
-<Row>
-    <Col>
-        <div class="table-responsive">
-            <Table class="table-striped">
-                <thead>
-                    <tr>
-                        <th>Geo</th>
-                        <th>Time Period</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {#if gdp.length === 0}
-                        <tr>
-                            <td colspan="3" class="text-center">No hay datos disponibles</td>
-                        </tr>
-                    {:else}
-                        {#each gdp as g}
-                            <tr>
-                                <td><a href="/gdp-growth-rates/{g.geo}/{g.time_period}">{g.geo}</a></td>
-                                <td>{g.time_period}</td>
-                                <td>
-                                    <Button color="danger" on:click={() => deleteGDP(g.geo, g.time_period)}>Borrar entrada</Button>
-                                </td>
-                            </tr>
-                        {/each}
-                    {/if}
-                </tbody>
-            </Table>
-        </div>
-    </Col>
-</Row>
+                          
 
 <button on:click="{deleteGDPAll}"> Borrar todos los datos </button>
 <button on:click="{getInitialGDP}"> Datos de prueba </button>
