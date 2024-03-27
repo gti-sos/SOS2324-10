@@ -139,11 +139,11 @@ function API_TLR(app, db_TLR) {
     db_TLR.find({ geo: geo, year: year }, { _id: 0, id: 0 })
       .exec((err, filteredData) => {
         if (err) {
-          res.sendStatus(500, "Internal Error");
+          return res.sendStatus(500, "Internal Error");
         }
 
         if (filteredData.length === 0) {
-          res.sendStatus(404, "Not Found");
+          return res.sendStatus(404, "Not Found");
         }
 
         res.status(200).send(filteredData);
@@ -156,7 +156,7 @@ function API_TLR(app, db_TLR) {
   app.post(API_BASE + "/vehicles-stock/:id", (req, res) => {
     const id = req.params.id;
     if (id) {
-      return res.sendStatus(405, "Bad Request");
+     res.sendStatus(405, "Bad Request");
     }
   });
 
@@ -169,29 +169,29 @@ function API_TLR(app, db_TLR) {
 
     // Verificar si se recibieron campos adicionales no esperados
     if (unexpectedFields.length > 0 || 'id' in req.body) {
-      return res.sendStatus(400);
+      res.sendStatus(400);
     }
 
     //Verificamos que no exista dicha entrada
     db_TLR.findOne({ year: req.body.year, geo: req.body.geo }, (err, existingVehicle) => {
       if (err) {
-        return res.sendStatus(500);
+        res.sendStatus(500);
       }
       if (existingVehicle) {
-        return res.sendStatus(409);
+        res.sendStatus(409);
       }
 
       // Si no existe un vehículo con el mismo year y geo, continuar con la inserción del nuevo vehículo
       db_TLR.find({}).sort({ id: -1 }).limit(1).exec((err, lastVehicle) => {
         if (err) {
-          return res.sendStatus(500);
+          res.sendStatus(500);
         }
         const lastId = lastVehicle.length > 0 ? parseInt(lastVehicle[0].id) : 0;
         req.body.id = (lastId + 1).toString(); // Asignar un nuevo ID al vehículo
         // Insertar el nuevo vehículo en la base de datos
         db_TLR.insert(req.body, (err, newVehicle) => {
           if (err) {
-            return res.sendStatus(500);
+            res.sendStatus(500);
           }
           res.sendStatus(201);
         });
@@ -215,7 +215,7 @@ function API_TLR(app, db_TLR) {
 
     // Verificar si el año es un número válido
     if (isNaN(yearURL)) {
-      return res.sendStatus(400);
+      res.sendStatus(400);
     }
 
     // Verificar que todos los parámetros deseados estén presentes
@@ -223,32 +223,32 @@ function API_TLR(app, db_TLR) {
     const receivedFields = Object.keys(updatedVehicle);
     const missingFields = expectedFields.filter(field => !receivedFields.includes(field));
     if (missingFields.length > 0) {
-      return res.sendStatus(400);
+      res.sendStatus(400);
     }
 
     // Verificar que el geo y year de la URL coincidan con los del cuerpo de la solicitud
     if (geoURL !== updatedVehicle.geo || yearURL !== updatedVehicle.year) {
-      return res.sendStatus(400);
+      res.sendStatus(400);
     }
 
     // Buscar el vehículo por geo y year y actualizarlo
     db_TLR.findOne({ geo: geoURL, year: yearURL }, (err, existingVehicle) => {
       if (err) {
-        return res.sendStatus(500);
+        res.sendStatus(500);
       }
       if (!existingVehicle) {
-        return res.sendStatus(404);
+        res.sendStatus(404);
       }
 
       // Actualizar el vehículo en la base de datos
       db_TLR.update({ geo: geoURL, year: yearURL }, updatedVehicle, {}, (err, numReplaced) => {
         if (err) {
-          return res.sendStatus(500);
+          res.sendStatus(500);
         }
         if (numReplaced === 0) {
-          return res.sendStatus(500);
+          res.sendStatus(500);
         }
-        return res.sendStatus(200);
+        res.sendStatus(200);
       });
     });
   });

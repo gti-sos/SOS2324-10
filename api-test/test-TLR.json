@@ -133,7 +133,8 @@
 							"    });",
 							"});"
 						],
-						"type": "text/javascript"
+						"type": "text/javascript",
+						"packages": {}
 					}
 				}
 			],
@@ -141,7 +142,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/vehicles-stock/Bulgaria/2018",
+					"raw": "https://sos2324-10.appspot.com/api/v1/vehicles-stock/search?geo=Albania",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -152,8 +153,13 @@
 						"api",
 						"v1",
 						"vehicles-stock",
-						"Bulgaria",
-						"2018"
+						"search"
+					],
+					"query": [
+						{
+							"key": "geo",
+							"value": "Albania"
+						}
 					]
 				}
 			},
@@ -317,7 +323,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/vehicles-stock/Malasia/2000",
+					"raw": "https://sos2324-10.appspot.com/api/v1/vehicles-stock/search?geo=Malasia",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -328,8 +334,13 @@
 						"api",
 						"v1",
 						"vehicles-stock",
-						"Malasia",
-						"2000"
+						"search"
+					],
+					"query": [
+						{
+							"key": "geo",
+							"value": "Malasia"
+						}
 					]
 				}
 			},
@@ -356,7 +367,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n        \"freq\": \"A\",\r\n        \"vehicle\": \"BUS_TOT\",\r\n        \"unit\": \"NR\",\r\n        \"geo\": \"Marruecos\",\r\n        \"year\": 2017,\r\n        \"obs_value\": 6583,\r\n        \"flights_passangers\": 18336,\r\n        \"cars_deaths\": 1079\r\n}",
+					"raw": "{\r\n        \"freq\": \"A\",\r\n        \"vehicle\": \"BUS_TOT\",\r\n        \"unit\": \"NR\",\r\n        \"geo\": \"Japón\",\r\n        \"year\": 2017,\r\n        \"obs_value\": 6583,\r\n        \"flights_passangers\": 18336,\r\n        \"cars_deaths\": 1079\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -468,6 +479,51 @@
 						"v1",
 						"vehicles-stock",
 						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Conflict",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response status code is 409\", function () {\r",
+							"  pm.expect(pm.response.code).to.equal(409);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"freq\": \"A\",\r\n        \"vehicle\": \"BUS_TOT\",\r\n        \"unit\": \"NR\",\r\n        \"geo\": \"Albania\",\r\n        \"year\": 2017,\r\n        \"obs_value\": 6583,\r\n        \"flights_passangers\": 18336,\r\n        \"cars_deaths\": 1079\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://sos2324-10.appspot.com/api/v1/vehicles-stock",
+					"protocol": "https",
+					"host": [
+						"sos2324-10",
+						"appspot",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"vehicles-stock"
 					]
 				}
 			},
