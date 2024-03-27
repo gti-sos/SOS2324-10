@@ -12,6 +12,9 @@
 	let errorMsg = '';
 	let showForm = false;
 	let showFilter = false;
+	let page = 1;
+	let totalPages = 1;
+	let totalDatos = 0;
 	let selectedFilter = {
 		freq: '',
 		vehicle: '',
@@ -98,9 +101,9 @@
 	}
 
 	//Get lista
-	async function getVehicles() {
+	async function getVehiclesTotal() {
 		try {
-			let response = await fetch(API_TLR + '?limit=100', {
+			let response = await fetch(API_TLR, {
 				method: 'GET',
 				headers: {
 					'Cache-Control': 'no-cache',
@@ -108,12 +111,56 @@
 				}
 			});
 			let data = await response.json();
+			totalDatos = data.length;
+			console.log("datos totales: "+totalDatos);
+			totalPages =totalDatos/10;
+			console.log("Total páginas: "+totalPages);
+		} catch (e) {
+			errorMsg = e;
+		}
+	}
+	
+	async function getVehicles() {
+		getVehiclesTotal;
+		try {
+			let response = await fetch(API_TLR + '?page='+page, {
+				method: 'GET',
+				headers: {
+					'Cache-Control': 'no-cache',
+					Pragma: 'no-cache'
+				}
+			});
+			
+			let data = await response.json();
 			datos = data;
 			console.log(data);
 		} catch (e) {
 			errorMsg = e;
 		}
 	}
+	// Función para ir a la página anterior
+	function goToPreviousPage() {
+    if (currentPage > 1) {
+      currentPage--;
+      getVehicles(currentPage);
+    }
+  }
+
+  // Función para ir a la página siguiente
+  function goToNextPage() {
+    if (currentPage < totalPages) {
+      currentPage++;
+      getVehicles(currentPage);
+    }
+  }
+
+  // Función para ir a una página específica
+  function goToPage(page) {
+    if (page >= 1 && page <= totalPages) {
+      currentPage = page;
+      getVehicles();
+    }
+  }
 
 	//Post objeto
 	async function postVehicle() {
