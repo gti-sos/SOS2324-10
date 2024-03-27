@@ -87,14 +87,16 @@ function API_TLR(app, db_TLR) {
     // Consultar la base de datos con el filtro construido
     db_TLR.find(queryParams, { _id: 0, id: 0 }, (err, filteredData) => {
       if (err) {
-        return res.sensStatus(500);
+        return res.sendStatus(500);
       }
 
       if (filteredData.length === 0) {
         return res.sendStatus(404);
+      }else{
+        return res.send(filteredData);
       }
 
-      res.sendStatus(200);
+      
     });
   });
 
@@ -137,11 +139,11 @@ function API_TLR(app, db_TLR) {
     db_TLR.find({ geo: geo, year: year }, { _id: 0, id: 0 })
       .exec((err, filteredData) => {
         if (err) {
-          return res.sendStatus(500, "Internal Error");
+          res.sendStatus(500, "Internal Error");
         }
 
         if (filteredData.length === 0) {
-          return res.sendStatus(404, "Not Found");
+          res.sendStatus(404, "Not Found");
         }
 
         res.status(200).send(filteredData);

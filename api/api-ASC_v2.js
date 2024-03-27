@@ -1,11 +1,11 @@
 import bodyParser from "body-parser";
 import express from "express";
 const app = express();
-const API_BASE = "/api/v1";
+const API_BASE = "/api/v2";
 app.use(bodyParser.json());
 
 
-function API_ASC (app, db_ASC){
+function API_ASC_v2 (app, db_ASC){
 
     // ------------ GET -------------
     // ----------- CUALQUIER CONSULTA GET --------------
@@ -711,4 +711,4 @@ function API_ASC (app, db_ASC){
     });
 };
 
-export {API_ASC};
+export {API_ASC_v2};
