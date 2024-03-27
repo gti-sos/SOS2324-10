@@ -125,3 +125,11 @@
 		}
 	}
 </script>
+
+{#if errMsg != ""}
+        <hr>ERROR: {errMsg}
+    {:else}
+        {#if exitMsg != ""}
+            <hr>EXITO: {exitMsg}
+        {/if}
+    {/if}
