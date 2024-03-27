@@ -61,11 +61,11 @@ function API_TLR(app, db_TLR) {
           if (err) {
             res.sendStatus(500, "Internal Error");
           }
-          res.sendStatus(200, "OK");
+          res.sendStatus(201, "OK");
         });
       } else {
 
-        res.sendStatus(200, "OK");
+        res.sendStatus(201, "OK");
       }
     });
   });
