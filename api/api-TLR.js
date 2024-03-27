@@ -228,7 +228,7 @@ function API_TLR(app, db_TLR) {
 
     // Verificar que el geo y year de la URL coincidan con los del cuerpo de la solicitud
     if (geoURL !== updatedVehicle.geo || yearURL !== updatedVehicle.year) {
-      res.sendStatus(400);
+      return res.sendStatus(400);
     }
 
     // Buscar el vehículo por geo y year y actualizarlo
