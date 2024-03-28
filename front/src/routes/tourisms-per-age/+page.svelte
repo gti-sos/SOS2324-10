@@ -32,7 +32,7 @@
 	});
 
 	async function getTourisms() {
-		console.log(cars);
+		console.log(tourisms);
 		try {
 			let response = await fetch(API_ASC, {
 				method: 'GET'
