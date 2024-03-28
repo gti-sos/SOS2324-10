@@ -171,7 +171,7 @@
 		<table>
 			<thead>
 				<tr>
-					<th>Vista detallada</th>
+					<th>Vista elemento</th>
 					{#each Object.keys(tourisms[0]) as key}
 						<th>{key}</th>
 					{/each}
@@ -186,7 +186,7 @@
 							<!-- Botón de ver detalles -->
 							<button
 								style="background-color: #4caf50; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;"
-								on:click={() => showDetails(index)}>Ver detalles</button
+								on:click={() => showDetails(index)}>Editar elemento</button
 							>
 						</td>
 						{#each Object.keys(dato) as key}
@@ -219,7 +219,7 @@
 				style="background-color: #6d7fcc; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
 				on:click={() => {
 					showForm = true;
-				}}>Crear Entrada</button
+				}}>Crear Turismo</button
 			>
 			<button
 				style="background-color: #d32f2f; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
