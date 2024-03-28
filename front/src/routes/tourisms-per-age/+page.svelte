@@ -37,12 +37,8 @@
 			let response = await fetch(API_ASC, {
 				method: 'GET'
 			});
-			let data = await response.json();
-			tourisms = data;
-			console.log(data);
-
 			if (response.ok) {
-				let { data, total } = await response.json();
+				let data = await response.json();
 				tourisms = data;
 				console.log(data);
 				errMsg = '';
