@@ -31,11 +31,11 @@
             let response = await fetch(API_ASB,{
                                       method: "GET"
             });
-            if(response.ok){
-                let {data, total} = await response.json();
+            if (response.ok) {
+                let {data} = await response.json();
                 cars = data;
                 console.log(data);
-                errorMsg = "";
+                errorMsg = '';
             } else {
                 if(response.status == 404){
                     errorMsg = "No hay datos en la base de datos";
@@ -82,7 +82,7 @@
                             method: "DELETE"
                                     });
                                     if(response.ok){
-            await getcars();
+            await getCars();
             successMsg = "Todos los datos fueron eliminados"
             errorMsg = "";
             }else{
