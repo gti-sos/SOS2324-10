@@ -13,6 +13,17 @@
 		gdp: '',
 		volgdp: ''
 	};
+	let selectedFilter = {
+		frequency: '',
+		unit: '',
+		age: '',
+		geo: '',
+		time_period: '',
+		obs_value: '',
+		gdp: '',
+		volgdp: ''
+	};
+	let showForm = false;
 	let errMsg = '';
 	let exitMsg = '';
 
@@ -34,7 +45,6 @@
 				let { data, total } = await response.json();
 				tourisms = data;
 				console.log(data);
-				items = total;
 				errMsg = '';
 			} else {
 				if (response.status == 404) {
@@ -60,7 +70,6 @@
 			});
 
 			if (response.ok) {
-				showForm = false;
 				getTourisms();
 				exitMsg = 'Dato creado correctamente';
 			} else {
@@ -126,10 +135,245 @@
 	}
 </script>
 
-{#if errMsg != ""}
-        <hr>ERROR: {errMsg}
-    {:else}
-        {#if exitMsg != ""}
-            <hr>EXITO: {exitMsg}
-        {/if}
-    {/if}
+{#if errMsg != ''}
+	<hr />
+	ERROR: {errMsg}
+{:else if exitMsg != ''}
+	<hr />
+	EXITO: {exitMsg}
+{/if}
+
+<!-- Estilo y formato de la tabla -->
+{#if tourisms && tourisms.length > 0}<!---->
+	<div class="container">
+		<table>
+			<thead>
+				<tr>
+					<th>Vista detallada</th>
+					{#each Object.keys(tourisms[0]) as key}
+						<th>{key}</th>
+					{/each}
+					<!-- Nueva columna para el botón de eliminar -->
+					<th>Eliminar</th>
+				</tr>
+			</thead>
+			<tbody>
+				{#each tourisms as dato}
+					<tr>
+						<td>
+							<!-- Botón de eliminar -->
+							<a
+								href="/tourisms-per-age/{dato.geo}/{dato.time_period}"
+								style="text-decoration: none; background-color: #8c6bc9; color: white; padding: 5px 10px; border-radius: 5px; cursor: pointer; display: inline-block;"
+							>
+								Ver detalles
+							</a>
+						</td>
+						{#each Object.values(dato) as value}
+							<td>{value}</td>
+						{/each}
+						<td>
+							<button
+								style="background-color: #d32f2f; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
+								on:click={() => deleteTourism(dato.geo, dato.time_period)}>Eliminar</button
+							>
+						</td>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+
+		<!-- Botón para crear entrada -->
+		<div style="margin-top: 20px; display: flex; justify-content: space-between;">
+			<button
+				style="background-color: #6d7fcc; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+				on:click={() => {
+					showForm = true;
+				}}>Crear Entrada</button
+			>
+			<button
+				style="background-color: #d32f2f; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+				on:click={() => {
+					deleteTourismAll();
+				}}>Eliminar Todos</button
+			>
+		</div>
+	</div>
+	<!---->
+	<!-- Popup para crear nuevo objeto -->
+	{#if showForm}
+		<div class="modal">
+			<div class="modal-content">
+				<span
+					class="close"
+					on:click={() => {
+						showForm = false;
+					}}>&times;</span
+				>
+				<h2 style="color: #6d7fcc;">Crear Nueva Entrada</h2>
+				<form on:submit|preventDefault={createTourism}>
+					<label>
+						Frequency:
+						<input
+							type="text"
+							bind:value={newTourism.frequency}
+							style="margin-bottom: 10px;"
+							required
+						/>
+					</label>
+					<label>
+						Unit:
+						<input type="text" bind:value={newTourism.unit} style="margin-bottom: 10px;" required />
+					</label>
+					<label>
+						Age:
+						<input type="text" bind:value={newTourism.age} style="margin-bottom: 10px;" required />
+					</label>
+					<label>
+						Geo:
+						<input type="text" bind:value={newTourism.geo} style="margin-bottom: 10px;" required />
+					</label>
+					<label>
+						Time Period:
+						<input
+							type="text"
+							bind:value={newTourism.time_period}
+							style="margin-bottom: 10px;"
+							required
+						/>
+					</label>
+					<label>
+						Obs Value:
+						<input
+							type="number"
+							bind:value={newTourism.obs_value}
+							style="margin-bottom: 10px;"
+							required
+						/>
+					</label>
+					<label>
+						GDP:
+						<input
+							type="number"
+							bind:value={newTourism.gdp}
+							style="margin-bottom: 10px;"
+							required
+						/>
+					</label>
+					<label>
+						Volgdp:
+						<input
+							type="number"
+							bind:value={newTourism.volgdp}
+							style="margin-bottom: 10px;"
+							required
+						/>
+					</label>
+					<button
+						type="submit"
+						style="background-color: #6d7fcc; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+						>Crear</button
+					>
+				</form>
+			</div>
+		</div>
+	{/if}
+	{#if errMsg != ''}
+		ERROR: {errMsg}
+	{/if}
+{:else}
+	<p class="container">No hay datos disponibles</p>
+{/if}
+
+<style>
+	.container {
+		width: 80%;
+		margin: 50px auto;
+		background-color: #ffffff; /* Blanco */
+		border: 1px solid #a4caef; /* Azul claro */
+		border-radius: 5px;
+		box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+		padding: 20px;
+	}
+
+	table {
+		width: 100%;
+		border-collapse: collapse;
+	}
+
+	th,
+	td {
+		border: 1px solid #ddd;
+		padding: 8px;
+		text-align: left;
+	}
+
+	th {
+		background-color: #b5b8cf; /* Morado */
+	}
+
+	tr:nth-child(even) {
+		background-color: #d1d1e0; /* Lavanda */
+	}
+
+	tr:hover {
+		background-color: #e3e4f1; /* Lila */
+	}
+
+	/* Estilos para el popup */
+	.modal {
+		display: block; /* Muestra el popup */
+		position: fixed;
+		z-index: 1;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		overflow: auto;
+		background-color: rgba(0, 0, 0, 0.4); /* Fondo oscuro */
+	}
+
+	.modal-content {
+		background-color: #fefefe; /* Color de fondo */
+		margin: 15% auto; /* Centrar el popup verticalmente */
+		padding: 20px;
+		border: 1px solid #888;
+		width: 50%;
+		border-radius: 5px;
+		box-shadow:
+			0 4px 8px 0 rgba(0, 0, 0, 0.2),
+			0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	}
+
+	/* Botón de cerrar (x) del popup */
+	.close {
+		color: #aaa;
+		float: right;
+		font-size: 28px;
+		font-weight: bold;
+	}
+
+	.close:hover,
+	.close:focus {
+		color: black;
+		text-decoration: none;
+		cursor: pointer;
+	}
+
+	/* Estilos para los inputs del formulario */
+	input[type='text'],
+	input[type='number'] {
+		width: 100%;
+		padding: 12px 20px;
+		margin: 8px 0;
+		box-sizing: border-box;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		resize: vertical;
+	}
+
+	input[type='text']:focus,
+	input[type='number']:focus {
+		border: 3px solid #555;
+	}
+</style>
