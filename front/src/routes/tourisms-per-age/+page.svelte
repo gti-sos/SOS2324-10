@@ -23,6 +23,7 @@
 		gdp: '',
 		volgdp: ''
 	};
+	let selectedTourismIndex = null;
 	let showForm = false;
 	let errMsg = '';
 	let exitMsg = '';
@@ -68,6 +69,7 @@
 			if (response.ok) {
 				getTourisms();
 				exitMsg = 'Dato creado correctamente';
+				showForm = false; // Cerrar el formulario después de crear la entrada
 			} else {
 				if (response.status == 400) {
 					errMsg = 'Todos los datos deben ser introducidos';
@@ -129,15 +131,39 @@
 			errMsg = e;
 		}
 	}
-</script>
 
-{#if errMsg != ''}
-	<hr />
-	ERROR: {errMsg}
-{:else if exitMsg != ''}
-	<hr />
-	EXITO: {exitMsg}
-{/if}
+	function showDetails(index) {
+		selectedTourismIndex = index;
+	}
+
+	async function updateTourism() {
+		try {
+			let response = await fetch(
+				API_ASC +
+					'/' +
+					tourisms[selectedTourismIndex].geo +
+					'/' +
+					tourisms[selectedTourismIndex].time_period,
+				{
+					method: 'PUT',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify(tourisms[selectedTourismIndex])
+				}
+			);
+			if (response.ok) {
+				await getTourisms();
+				exitMsg = 'Dato actualizado correctamente';
+				selectedTourismIndex = null; // Cerrar los detalles después de actualizar
+			} else {
+				errMsg = 'Error al actualizar el dato';
+			}
+		} catch (e) {
+			errMsg = e;
+		}
+	}
+</script>
 
 <!-- Estilo y formato de la tabla -->
 {#if tourisms && tourisms.length > 0}<!---->
@@ -154,19 +180,27 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each tourisms as dato}
+				{#each tourisms as dato, index}
 					<tr>
 						<td>
-							<!-- Botón de eliminar -->
-							<a
-								href="/tourisms-per-age/{dato.geo}/{dato.time_period}"
-								style="text-decoration: none; background-color: #8c6bc9; color: white; padding: 5px 10px; border-radius: 5px; cursor: pointer; display: inline-block;"
+							<!-- Botón de ver detalles -->
+							<button
+								style="background-color: #4caf50; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;"
+								on:click={() => showDetails(index)}>Ver detalles</button
 							>
-								Ver detalles
-							</a>
 						</td>
-						{#each Object.values(dato) as value}
-							<td>{value}</td>
+						{#each Object.keys(dato) as key}
+							<td>
+								{#if index === selectedTourismIndex}
+									<input
+										type="text"
+										bind:value={tourisms[index][key]}
+										on:change={() => updateTourism()}
+									/>
+								{:else}
+									{dato[key]}
+								{/if}
+							</td>
 						{/each}
 						<td>
 							<button
@@ -196,6 +230,36 @@
 		</div>
 	</div>
 	<!---->
+	{#if selectedTourismIndex !== null}
+		<div class="modal">
+			<div class="modal-content">
+				<span
+					class="close"
+					on:click={() => {
+						selectedTourismIndex = null;
+					}}>&times;</span
+				>
+				<h2 style="color: #6d7fcc;">Detalles del Turismo</h2>
+				<form on:submit|preventDefault={updateTourism}>
+					{#each Object.entries(tourisms[selectedTourismIndex]) as [key, value]}
+						<label>{key}:</label>
+						<input
+							type="text"
+							bind:value={tourisms[selectedTourismIndex][key]}
+							style="margin-bottom: 10px;"
+							required
+						/>
+					{/each}
+					<button
+						type="submit"
+						style="background-color: #6d7fcc; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+						>Actualizar</button
+					>
+				</form>
+			</div>
+		</div>
+	{/if}
+
 	<!-- Popup para crear nuevo objeto -->
 	{#if showForm}
 		<div class="modal">
