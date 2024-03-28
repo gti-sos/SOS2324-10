@@ -33,7 +33,6 @@
                 let {data, total} = await response.json();
                 cars = data;
                 console.log(data);
-                totalItems = total;
                 errorMsg = "";
             } else {
                 if(response.status == 404){
@@ -58,7 +57,6 @@
                                       body: JSON.stringify(newCar)
                                     });
                                     if(response.ok){
-            showForm = false;
             getCars();
             successMsg = "Dato creado correctamente";
             errorMsg = "";
@@ -130,7 +128,7 @@
 {#if errorMsg != ""}
     <hr>ERROR: {errorMsg}
 {:else}
-    {#if exitoMsg != ""}
-        <hr>EXITO: {exitoMsg}
+    {#if successMsg != ""}
+        <hr>EXITO: {successMsg}
     {/if}
 {/if}
