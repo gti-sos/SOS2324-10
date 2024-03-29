@@ -296,7 +296,7 @@ function API_ASB_v2 (app,db_ASB){
 
       // Paginación
       const pgeo = queryParams.pgeo || 1; // Página predeterminada: 1
-      const limit = queryParams.limit || 10; // Límite predeterminado: 10
+      const limit = queryParams.limit || 20; // Límite predeterminado: 10
       const offset = (pgeo - 1) * limit; // Calcular el número de documentos a saltar
 
       // Objeto para almacenar parámetros de consulta parseados
@@ -410,7 +410,9 @@ function API_ASB_v2 (app,db_ASB){
       const nuevosDatos = req.body;
 
       // Validar el JSON recibido
-      const expectedKeys = ['dataflow', 'last_update', 'freq', 'unit', 'motor_nrg', 'geo', 'time_period', 
+      const expectedKeys = [
+        // 'dataflow', 'last_update', 
+        'freq', 'unit', 'motor_nrg', 'geo', 'time_period', 
         'obs_value', 'obs_flag', 'millions_of_passenger_per_kilometres', 'road_deaths_per_million_inhabitants'];
       const actualKeys = Object.keys(nuevosDatos);
       const isValidJson = expectedKeys.every(key => actualKeys.includes(key));
@@ -520,8 +522,10 @@ app.delete(API_BASE + "/cars-by-motor/:geo/:time_period", (req, res) => {
     }
 
     // Verificar todos los parámetros 
-    const expectedKeys = ['dataflow', 'last_update', 'freq', 'unit', 'motor_nrg', 'geo', 'time_period', 
-    'obs_value', 'obs_flag', 'millions_of_passenger_per_kilometres', 'road_deaths_per_million_inhabitants'];
+    const expectedKeys = [
+      // 'dataflow', 'last_update', 
+      'freq', 'unit', 'motor_nrg', 'geo', 'time_period', 
+      'obs_value', 'obs_flag', 'millions_of_passenger_per_kilometres', 'road_deaths_per_million_inhabitants'];
     const receivedKeys = Object.keys(updatedTourism);
     const missingKeys = expectedKeys.filter(key => !receivedKeys.includes(key));
     if (missingKeys.length > 0) {
