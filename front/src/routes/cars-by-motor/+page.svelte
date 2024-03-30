@@ -51,7 +51,6 @@
 
     async function createCar(){
         try{
-            await getCars();
             let response = await fetch(API_ASB,{
                                       method: "POST",
                                       headers: {
@@ -59,18 +58,19 @@
                                       },
                                       body: JSON.stringify(newCar)
                                     });
-                                    if(response.ok){
-            getCars();
-            successMsg = "Dato creado correctamente";
-            errorMsg = "";
-        } else {
-            if(response.status == 400){
-                errorMsg = "Todos los datos deben ser introducidos";
-            } else if (response.status == 405){
-                errorMsg = "Método no permitido";
-            } else if (response.status == 409){
-                errorMsg = "Elemento ya existente"
-            }
+            if(response.status == 201){
+                showForm = false;
+                successMsg = "Dato creado correctamente";
+                errorMsg = "";
+                await getCars();
+            } else {
+                if(response.status == 400){
+                    errorMsg = "Todos los datos deben ser introducidos";
+                } else if (response.status == 405){
+                    errorMsg = "Método no permitido";
+                } else if (response.status == 409){
+                    errorMsg = "Elemento ya existente"
+                }
         }
         }catch(e){
             errorMsg = e;
@@ -87,7 +87,7 @@
             successMsg = "Todos los datos fueron eliminados"
             errorMsg = "";
             }else{
-                if(reponse.status == 404){
+                if(response.status == 404){
                     errorMsg = "No existen datos en la base de datos";
                 }
                 
@@ -102,7 +102,7 @@
             let response = await fetch(API_ASB+'/' + geo + '/' + time_period,{
                               method: "DELETE"
                                         });
-            if(response.ok){
+            if(response.status == 200){
                 await getCars();
              
                 if (cars.length === 0) {
@@ -124,35 +124,6 @@
             errorMsg = e;
         }
     }
-
-    // async function deleteCar(geo, time_period){
-    //     try{
-    //         let response = await fetch(API_ASB+'/' + geo + '/' + time_period,{
-    //                           method: "DELETE"
-    //                                     });
-    //         if(response.ok){
-    //             await getCars();
-             
-    //             if (cars.length === 0) {
-    //                 errorMsg = "No hay datos disponibles";
-    //             }
-                
-    //             successMsg = "Dato eliminado correctamente";
-    //             errorMsg = "";
-    //         } else {
-    //             if(response.status == 400){
-    //                 errorMsg = "Fallo en el dato"
-    //             } else if(response.status == 404){
-    //                 errorMsg = "Dato no existente en la base de datos"
-    //             } else if (response.status == 409) {
-    //                 errorMsg = 'Ya existe una entrada con ese país y año';
-    //             }
-    //         } 
-    //     } catch(e){
-    //         errorMsg = e;
-    //     }
-    // }
-
 </script>
 
 {#if cars && cars.length > 0}

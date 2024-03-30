@@ -156,11 +156,20 @@
 							<tr>
 								<td class="attribute">{key}:</td>
 								<td class="value">
-									<input
-										type="text"
-										bind:value={car[key]}
-										style="background-color: #f3e5f5; border: 1px solid #49b027; color: #673ab7;"
-									/>
+									{#if key === 'geo' || key === 'time_period'}
+										<input
+											type="text"
+											bind:value={car[key]}
+											readonly
+											style="background-color: #f3e5f5; border: 1px solid #9c27b0; color: #673ab7;"
+										/>
+									{:else}
+										<input
+											type="text"
+											bind:value={car[key]}
+											style="background-color: #f3e5f5; border: 1px solid #9c27b0; color: #673ab7;"
+										/>
+									{/if}
 								</td>
 							</tr>
 						{/each}
