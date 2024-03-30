@@ -161,14 +161,14 @@
         <table>
             <thead>
                 <tr>
-                    <th>ID</th> <!-- Aquí colocamos primero la columna del ID -->
+                    <th>id</th> <!-- Aquí colocamos primero la columna del ID -->
                     {#each Object.keys(cars[0]) as key}
                         {#if key !== 'id'} <!-- Evitamos mostrar la columna ID nuevamente -->
                             <th>{key}</th>
                         {/if}
                     {/each}
-                    <th>Modificar</th> <!-- Nuevo encabezado para el botón Modificar -->
-                    <th>Eliminar</th>
+                    <th>modificar</th> <!-- Nuevo encabezado para el botón Modificar -->
+                    <th>eliminar</th>
                 </tr>
             </thead>
             <tbody>
@@ -177,7 +177,9 @@
                         <td>{car.id}</td> <!-- Aquí mostramos primero el ID -->
                         {#each Object.entries(car) as [key, value]} <!-- Usamos Object.entries para mantener el orden de las propiedades -->
                             {#if key !== 'id'} <!-- Evitamos mostrar la columna ID nuevamente -->
-                                <td>{value}</td>
+                                <td>
+                                    {value}
+                                </td>
                             {/if}
                         {/each}
                         <td>
@@ -186,7 +188,7 @@
                                 style="background-color: #007bff; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
                                 on:click={() => modifyCar(car.geo, car.time_period)}>Modificar</button> -->
                                 <a
-                                href="/cars-by-motor/{car.geo}/{car.year}"
+                                href="/cars-by-motor/{car.geo}/{car.time_period}"
                                 style="background-color: #007bff; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer; text-decoration: none;"
                                 >Modificar</a>
                         </td>
@@ -223,7 +225,65 @@
                     }}>&times;</span>
                 <h2 style="color: #33BF30;">Agregar Nueva Entrada</h2>
                 <form on:submit|preventDefault={createCar}>
-                    <!-- Aquí van los campos del formulario para agregar una nueva entrada -->
+                    <!-- <label>
+                        Dataflow:
+                        <input type="text" bind:value={newCar.dataflow} style="margin-bottom: 10px;" required />
+                    </label>
+                    <label>
+                        Last Update:
+                        <input type="text" bind:value={newCar.last_update} style="margin-bottom: 10px;" required />
+                    </label> -->
+                    <label>
+                        Freq:
+                        <input type="text" bind:value={newCar.freq} style="margin-bottom: 10px;" required />
+                    </label>
+                    <label>
+                        Unit:
+                        <input type="text" bind:value={newCar.unit} style="margin-bottom: 10px;" required />
+                    </label>
+                    <label>
+                        Motor NRG:
+                        <input type="text" bind:value={newCar.motor_nrg} style="margin-bottom: 10px;" required />
+                    </label>
+                    <label>
+                        Geo:
+                        <input type="text" bind:value={newCar.geo} style="margin-bottom: 10px;" required />
+                    </label>
+                    <label>
+                        Time Period:
+                        <input type="text" bind:value={newCar.time_period} style="margin-bottom: 10px;" required />
+                    </label>
+                    <label>
+                        Obs Value:
+                        <input type="text" bind:value={newCar.obs_value} style="margin-bottom: 10px;" required />
+                    </label>
+                    <label>
+                        Obs Flag:
+                        <input type="text" bind:value={newCar.obs_flag} style="margin-bottom: 10px;" required />
+                    </label>
+                    <label>
+                        Millions of Passengers per Kilometre:
+                        <input
+                            type="text"
+                            bind:value={newCar.millions_of_passenger_per_kilometres}
+                            style="margin-bottom: 10px;"
+                            required
+                        />
+                    </label>
+                    <label>
+                        Road Deaths per Million Inhabitants:
+                        <input
+                            type="text"
+                            bind:value={newCar.road_deaths_per_million_inhabitants}
+                            style="margin-bottom: 10px;"
+                            required
+                        />
+                    </label>
+                    <button
+                        type="submit"
+                        style="background-color: #33BF30; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+                        >Agregar</button
+                    >
                 </form>
             </div>
         </div>

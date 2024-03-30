@@ -362,9 +362,9 @@ function API_ASB_v2 (app,db_ASB){
     const time_period = parseInt(req.params.time_period);
 
     // Verificar time_period válido
-    if (isNaN(time_period)) {
-        return res.sendStatus(400).send("Bad Request");
-    }
+    // if (isNaN(time_period)) {
+    //     return res.sendStatus(400).send("Bad Request");
+    // }
 
     // Aplica el filtro de geo y time_period
     db_ASB.find({ geo: geo, time_period: time_period }, { _id: 0, id: 0 })

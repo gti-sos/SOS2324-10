@@ -10,25 +10,26 @@
 
     let showForm = false;
     let car = {};
+    let cars = {};
     let geo = $page.params.geo;
     let time_period = $page.params.time_period;
     let errorMsg = '';
     let successMsg = '';
 
     onMount(()=>{
-        getCars();
+        getCar(geo,time_period);
     })
 
     
 
-    async function getCars(){
+    async function getCar(geo,time_period){
         try{
             let response = await fetch(API_ASB, + '/' + geo + '/' + time_period,{
                                       method: "GET"
             });
             if (response.ok) {
                 let data = await response.json();
-                car = data;
+                car = data[0];
                 console.log(data);
                 errorMsg = '';
             } else {
@@ -56,9 +57,10 @@
 				}
 			);
 			if (response.ok) {
+                cars = JSON.stringify(car);
                 showForm = false;
-				await getCars();
-				exitMsg = 'Dato actualizado correctamente';
+				await getCar(geo,time_period);
+				successMsg = 'Dato actualizado correctamente';
 			} else {
 				errorMsg = 'Error al actualizar el dato';
 			}
@@ -67,38 +69,46 @@
 		}
 	}
 </script>
-<div class="container">
-    <div style="margin-bottom: 20px; display: flex; justify-content: space-between;">
-        <table>
-            <tbody>
-                {#each Object.entries(car) as [key, value]} <!-- Usamos Object.entries para mantener el orden de las propiedades -->
+
+<h2>Ubicación: {geo} Año:{time_period}</h2>
+
+
+{#if !showForm}
+    <div class="container">
+        <div style="margin-bottom: 20px; display: flex; justify-content: space-between;">
+            <table>
+                <thead>
                     <tr>
-                        <td class="attribute">{key}:</td>
-                        <td class="value">
-                            {#if typeof value === 'object'}
-                                {JSON.stringify(value)}
-                            {:else}
-                                {value}
-                            {/if}
-                        </td>
+                        {#each Object.entries(car) as [key, value]}
+                            <th>{key}</th>
+                        {/each}
                     </tr>
-                {/each}
-                        <!-- <td>
-                            <button
-                                style="background-color: #E85A4F; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
-                                on:click={() => modifyCar(car.geo, car.time_period)}>Actualizar</button>
-                        </td> -->
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {#each Object.entries(car) as [key, value]} <!-- Usamos Object.entries para mantener el orden de las propiedades -->
+                        <tr>
+                            <td class="attribute">{key}:</td>
+                            <td class="value">
+                                {#if typeof value === 'object'}
+                                    {JSON.stringify(value)}
+                                {:else}
+                                    {value}
+                                {/if}
+                            </td>
+                        </tr>
+                    {/each}
+                </tbody>
+            </table>
+        </div>
+        <div style="margin-top: 20px; display: flex; justify-content: space-between;">
+            <button
+                style="background-color: #33BF30; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+                on:click={() => {
+                    showForm = true;
+                }}>Actualizar</button>
+        </div>
     </div>
-    <div style="margin-top: 20px; display: flex; justify-content: space-between;">
-        <button
-            style="background-color: #33BF30; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
-            on:click={() => {
-                showForm = true;
-            }}>Actualizar</button>
-    </div>
-</div>
+{/if}
 
 <style>
     .container {
@@ -132,3 +142,11 @@
         margin-top: 10px;
     }
 </style>
+
+{#if errorMsg != ""}
+    <hr>ERROR: {errorMsg}
+{:else}
+    {#if successMsg != ""}
+        <hr>EXITO: {successMsg}
+    {/if}
+{/if}
