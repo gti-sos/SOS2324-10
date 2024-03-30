@@ -1,8 +1,14 @@
 <script>
 	import { onMount } from 'svelte';
+	import { dev } from '$app/environment';
+
+	let API_ASC = '/api/v2/tourisms-per-age';
+
+	if (dev) {
+		API_ASC = 'http://localhost:8080' + API_ASC;
+	}
 
 	let tourisms = [];
-	let API_ASC = 'http://localhost:8080/api/v2/tourisms-per-age';
 	let newTourism = {
 		frequency: '',
 		unit: '',
@@ -132,37 +138,37 @@
 		}
 	}
 
-	function showDetails(index) {
-		selectedTourismIndex = index;
-	}
+	// function showDetails(index) {
+	// 	selectedTourismIndex = index;
+	// }
 
-	async function updateTourism() {
-		try {
-			let response = await fetch(
-				API_ASC +
-					'/' +
-					tourisms[selectedTourismIndex].geo +
-					'/' +
-					tourisms[selectedTourismIndex].time_period,
-				{
-					method: 'PUT',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify(tourisms[selectedTourismIndex])
-				}
-			);
-			if (response.ok) {
-				await getTourisms();
-				exitMsg = 'Dato actualizado correctamente';
-				selectedTourismIndex = null; // Cerrar los detalles después de actualizar
-			} else {
-				errMsg = 'Error al actualizar el dato';
-			}
-		} catch (e) {
-			errMsg = e;
-		}
-	}
+	// async function updateTourism() {
+	// 	try {
+	// 		let response = await fetch(
+	// 			API_ASC +
+	// 				'/' +
+	// 				tourisms[selectedTourismIndex].geo +
+	// 				'/' +
+	// 				tourisms[selectedTourismIndex].time_period,
+	// 			{
+	// 				method: 'PUT',
+	// 				headers: {
+	// 					'Content-Type': 'application/json'
+	// 				},
+	// 				body: JSON.stringify(tourisms[selectedTourismIndex])
+	// 			}
+	// 		);
+	// 		if (response.ok) {
+	// 			await getTourisms();
+	// 			exitMsg = 'Dato actualizado correctamente';
+	// 			selectedTourismIndex = null; // Cerrar los detalles después de actualizar
+	// 		} else {
+	// 			errMsg = 'Error al actualizar el dato';
+	// 		}
+	// 	} catch (e) {
+	// 		errMsg = e;
+	// 	}
+	// }
 </script>
 
 <!-- Estilo y formato de la tabla -->
@@ -171,25 +177,40 @@
 		<table>
 			<thead>
 				<tr>
-					<th>Vista elemento</th>
+					<th>vista_elemento</th>
+					<th>id</th>
+					<!-- Aquí colocamos primero la columna del ID -->
 					{#each Object.keys(tourisms[0]) as key}
-						<th>{key}</th>
+						{#if key !== 'id'}
+							<!-- Evitamos mostrar la columna ID nuevamente -->
+							<th>{key}</th>
+						{/if}
 					{/each}
 					<!-- Nueva columna para el botón de eliminar -->
-					<th>Eliminar</th>
+					<th>eliminar</th>
 				</tr>
 			</thead>
 			<tbody>
-				{#each tourisms as dato, index}
+				{#each tourisms as dato}
 					<tr>
 						<td>
 							<!-- Botón de ver detalles -->
-							<button
-								style="background-color: #4caf50; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;"
-								on:click={() => showDetails(index)}>Editar elemento</button
+							<a
+								href="/tourisms-per-age/{dato.geo}/{dato.time_period}"
+								style="text-decoration: none; background-color: #4CAF50; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer; display: inline-block;"
 							>
+								Vista detallada
+							</a>
 						</td>
-						{#each Object.keys(dato) as key}
+						<td>{dato.id}</td>
+						{#each Object.entries(dato) as [key, value]}
+							<!-- Usamos Object.entries para mantener el orden de las propiedades -->
+							{#if key !== 'id'}
+								<!-- Evitamos mostrar la columna ID nuevamente -->
+								<td>{value}</td>
+							{/if}
+						{/each}
+						<!-- {#each Object.keys(dato) as key}
 							<td>
 								{#if index === selectedTourismIndex}
 									<input
@@ -201,7 +222,7 @@
 									{dato[key]}
 								{/if}
 							</td>
-						{/each}
+						{/each} -->
 						<td>
 							<button
 								style="background-color: #d32f2f; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
@@ -230,7 +251,7 @@
 		</div>
 	</div>
 	<!---->
-	{#if selectedTourismIndex !== null}
+	<!-- {#if selectedTourismIndex !== null}
 		<div class="modal">
 			<div class="modal-content">
 				<span
@@ -258,7 +279,7 @@
 				</form>
 			</div>
 		</div>
-	{/if}
+	{/if} -->
 
 	<!-- Popup para crear nuevo objeto -->
 	{#if showForm}
@@ -339,7 +360,11 @@
 		</div>
 	{/if}
 	{#if errMsg != ''}
+		<hr />
 		ERROR: {errMsg}
+	{:else if exitMsg != ''}
+		<hr />
+		EXITO: {exitMsg}
 	{/if}
 {:else}
 	<p class="container">No hay datos disponibles</p>

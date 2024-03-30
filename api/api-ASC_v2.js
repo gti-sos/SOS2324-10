@@ -350,7 +350,7 @@ function API_ASC_v2(app, db_ASC) {
 
         // Paginación
         const page = queryParams.page || 1; // Página predeterminada: 1
-        const limit = queryParams.limit || 20; // Límite predeterminado: 10
+        const limit = queryParams.limit || 40; // Límite predeterminado: 10
         const skip = (page - 1) * limit; // Calcular el número de documentos a saltar
 
         // Objeto para almacenar parámetros de consulta parseados
@@ -414,9 +414,9 @@ function API_ASC_v2(app, db_ASC) {
         const time_period = parseInt(req.params.time_period);
 
         // Verificar time_period válido
-        if (isNaN(time_period)) {
-            return res.sendStatus(400).send("Bad Request");
-        }
+        // if (isNaN(time_period)) {
+        //     return res.sendStatus(400).send("Bad Request");
+        // }
 
         // Aplica el filtro de geo y time_period
         db_ASC.find({ geo: geo, time_period: time_period }, { _id: 0, id: 0 })
