@@ -161,7 +161,7 @@
         <table>
             <thead>
                 <tr>
-                    <th>id</th> <!-- Aquí colocamos primero la columna del ID -->
+                    <!-- <th>id</th> Aquí colocamos primero la columna del ID -->
                     {#each Object.keys(cars[0]) as key}
                         {#if key !== 'id'} <!-- Evitamos mostrar la columna ID nuevamente -->
                             <th>{key}</th>
@@ -174,7 +174,7 @@
             <tbody>
                 {#each cars as car}
                     <tr>
-                        <td>{car.id}</td> <!-- Aquí mostramos primero el ID -->
+                        <!-- <td>{car.id}</td> Aquí mostramos primero el ID -->
                         {#each Object.entries(car) as [key, value]} <!-- Usamos Object.entries para mantener el orden de las propiedades -->
                             {#if key !== 'id'} <!-- Evitamos mostrar la columna ID nuevamente -->
                                 <td>
@@ -225,14 +225,6 @@
                     }}>&times;</span>
                 <h2 style="color: #33BF30;">Agregar Nueva Entrada</h2>
                 <form on:submit|preventDefault={createCar}>
-                    <!-- <label>
-                        Dataflow:
-                        <input type="text" bind:value={newCar.dataflow} style="margin-bottom: 10px;" required />
-                    </label>
-                    <label>
-                        Last Update:
-                        <input type="text" bind:value={newCar.last_update} style="margin-bottom: 10px;" required />
-                    </label> -->
                     <label>
                         Freq:
                         <input type="text" bind:value={newCar.freq} style="margin-bottom: 10px;" required />

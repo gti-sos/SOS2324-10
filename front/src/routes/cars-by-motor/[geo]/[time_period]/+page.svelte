@@ -20,97 +20,198 @@
         getCar(geo,time_period);
     })
 
-    
-
-    async function getCar(geo,time_period){
-        try{
-            let response = await fetch(API_ASB, + '/' + geo + '/' + time_period,{
-                                      method: "GET"
-            });
-            if (response.ok) {
-                let data = await response.json();
-                car = data[0];
-                console.log(data);
-                errorMsg = '';
-            } else {
-                if(response.status == 404){
-                    errorMsg = "No hay datos en la base de datos";
-                } else {
-                    errorMsg = `Error ${response.status}: ${response.statusText}`;
-                }
-            }
-        } catch(e){
-            errorMsg = e;
-        }
-    }
-
-    async function modifyCar() {
+    async function getCar(geo, time_period) {
 		try {
-			let response = await fetch(
-				API_ASB + '/' + geo +'/' + time_period,
-				{
-					method: 'PUT',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify(car)
-				}
-			);
-			if (response.ok) {
-                cars = JSON.stringify(car);
-                showForm = false;
-				await getCar(geo,time_period);
-				successMsg = 'Dato actualizado correctamente';
+			let response = await fetch(API_ASB + '/' + geo + '/' + time_period, {
+				method: 'GET'
+			});
+
+			if (response.status == 200) {
+				let resp = await response.json();
+				car = resp;
 			} else {
-				errorMsg = 'Error al actualizar el dato';
+				if (response.status == 400) {
+					errorMsg = 'Error en la estructura de los datos';
+					alert(errorMsg);
+				} else if (response.status == 409) {
+					errorMsg = 'Ya existe una entrada con ese país y año';
+					alert(errorMsg);
+				} else if (response.status == 404) {
+					errorMsg = 'Dato no encontrado';
+					alert(errorMsg);
+				}
 			}
+			console.log('Datos Originales: ' + JSON.stringify(car));
 		} catch (e) {
 			errorMsg = e;
 		}
 	}
+
+    async function modifyCar() {
+		try {
+			let response = await fetch(API_ASB + '/' + geo + '/' + time_period, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(car)
+			});
+
+			if (response.status == 200) {
+				cars = JSON.stringify(car);
+				showForm = false;
+				successMsg = 'Dato modificado correctamente';
+				await getCar(geo, time_period);
+			} else {
+				if (response.status == 400) {
+					errorMsg = 'No se puede cambiar pais ni año';
+				} else if (response.status == 409) {
+					errorMsg = 'Ya existe una entrada con ese país y año';
+				} else if (response.status == 404) {
+					errorMsg = 'Dato no encontrado';
+				}
+			}
+			console.log('Datos Modificados: ' + JSON.stringify(cars));
+		} catch (e) {
+			errorMsg = e;
+		}
+	}
+
+    // async function modifyCar() {
+	// 	try {
+	// 		let response = await fetch(
+	// 			API_ASB + '/' + geo +'/' + time_period,
+	// 			{
+	// 				method: 'PUT',
+	// 				headers: {
+	// 					'Content-Type': 'application/json'
+	// 				},
+	// 				body: JSON.stringify(car)
+	// 			}
+	// 		);
+	// 		if (response.status == 200) {
+    //             cars = JSON.stringify(car);
+    //             showForm = false;
+	// 			await getCar(geo,time_period);
+	// 			successMsg = 'Dato actualizado correctamente';
+	// 		} else {
+	// 			errorMsg = 'Error al actualizar el dato';
+	// 		}
+	// 	} catch (e) {
+	// 		errorMsg = e;
+	// 	}
+	// }
 </script>
 
 <h2>Ubicación: {geo} Año:{time_period}</h2>
 
 
 {#if !showForm}
-    <div class="container">
-        <div style="margin-bottom: 20px; display: flex; justify-content: space-between;">
-            <table>
-                <thead>
-                    <tr>
-                        {#each Object.entries(car) as [key, value]}
-                            <th>{key}</th>
-                        {/each}
-                    </tr>
-                </thead>
-                <tbody>
-                    {#each Object.entries(car) as [key, value]} <!-- Usamos Object.entries para mantener el orden de las propiedades -->
-                        <tr>
-                            <td class="attribute">{key}:</td>
-                            <td class="value">
-                                {#if typeof value === 'object'}
-                                    {JSON.stringify(value)}
-                                {:else}
-                                    {value}
-                                {/if}
-                            </td>
-                        </tr>
-                    {/each}
-                </tbody>
-            </table>
-        </div>
-        <div style="margin-top: 20px; display: flex; justify-content: space-between;">
-            <button
-                style="background-color: #33BF30; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
-                on:click={() => {
-                    showForm = true;
-                }}>Actualizar</button>
-        </div>
-    </div>
+	<!-- Vista de detalles del vehículo -->
+	{#if Object.keys(car).length > 0}
+		<div class="container">
+			<div class="card">
+				<table>
+					<tbody>
+						{#each Object.entries(car) as [key, value]}
+							<tr>
+								<td class="attribute">{key}:</td>
+								<td class="value">
+									{#if typeof value === 'object'}
+										{JSON.stringify(value)}
+									{:else}
+										{value}
+									{/if}
+								</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+				<div
+					style="text-align:center ;margin-top: 20px; display: flex; justify-content: space-between;"
+				>
+					<button
+						style="background-color: #8bc34a; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+						on:click={() => {
+							showForm = true;
+						}}
+					>
+						Modificar Entrada
+					</button>
+				</div>
+			</div>
+		</div>
+	{:else}
+		<p class="container">No hay datos disponibles</p>
+	{/if}
+{:else}
+	<!-- Formulario para modificar la entrada -->
+	<div class="container">
+		<div class="card">
+			<h2 style="color: #000000;">Modificar Entrada</h2>
+			<form on:submit|preventDefault={modifyCar}>
+				<table>
+					<tbody>
+						{#each Object.entries(car) as [key, value]}
+							<tr>
+								<td class="attribute">{key}:</td>
+								<td class="value">
+									<input
+										type="text"
+										bind:value={car[key]}
+										style="background-color: #f3e5f5; border: 1px solid #49b027; color: #673ab7;"
+									/>
+								</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+				<div style="margin-top: 20px; display: flex; justify-content: space-between;">
+					<button
+						type="submit"
+						style="text-align:center ;background-color: #49b027; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+						on:click={() => {
+							showForm = false;
+							modifyCar();
+						}}
+					>
+						Guardar Cambios
+					</button>
+					<button
+						style="background-color: #ef5350; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+						on:click={() => {
+							showForm = false;
+						}}
+					>
+						Cancelar
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
 {/if}
 
 <style>
+    .card {
+		background-color: #fff;
+		border: 1px solid #49b027;
+		border-radius: 5px;
+		box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+		padding: 20px;
+		max-width: 600px;
+		margin: 0 auto;
+	}
+
+	table {
+		width: 100%;
+		border-collapse: collapse;
+	}
+
+	td {
+		border: 1px solid #ddd;
+		padding: 8px;
+		text-align: left;
+	}
     .container {
         width: 80%;
         margin: 50px auto;
@@ -119,16 +220,6 @@
         border-radius: 5px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         padding: 20px;
-    }
-
-    .form-group {
-        margin-bottom: 20px;
-    }
-
-    label {
-        display: block;
-        font-weight: bold;
-        margin-bottom: 5px;
     }
 
     input[type="text"] {
