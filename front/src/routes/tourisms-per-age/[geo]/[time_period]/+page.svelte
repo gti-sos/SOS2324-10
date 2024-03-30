@@ -29,16 +29,14 @@
 			if (response.status == 200) {
 				let resp = await response.json();
 				tourism = resp;
+				exitMsg = 'Dato leido correctamente';
 			} else {
 				if (response.status == 400) {
 					errMsg = 'Error en la estructura de los datos';
-					alert(errMsg);
 				} else if (response.status == 409) {
 					errMsg = 'Ya existe una entrada con ese país y año';
-					alert(errMsg);
 				} else if (response.status == 404) {
 					errMsg = 'Dato no encontrado';
-					alert(errMsg);
 				}
 			}
 			console.log('Datos Originales: ' + JSON.stringify(tourism));
@@ -130,11 +128,20 @@
 							<tr>
 								<td class="attribute">{key}:</td>
 								<td class="value">
-									<input
-										type="text"
-										bind:value={tourism[key]}
-										style="background-color: #f3e5f5; border: 1px solid #9c27b0; color: #673ab7;"
-									/>
+									{#if key === 'geo' || key === 'time_period'}
+										<input
+											type="text"
+											bind:value={tourism[key]}
+											readonly
+											style="background-color: #f3e5f5; border: 1px solid #9c27b0; color: #673ab7;"
+										/>
+									{:else}
+										<input
+											type="text"
+											bind:value={tourism[key]}
+											style="background-color: #f3e5f5; border: 1px solid #9c27b0; color: #673ab7;"
+										/>
+									{/if}
 								</td>
 							</tr>
 						{/each}

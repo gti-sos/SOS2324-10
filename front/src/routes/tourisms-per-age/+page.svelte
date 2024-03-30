@@ -178,7 +178,7 @@
 			<thead>
 				<tr>
 					<th>vista_elemento</th>
-					<th>id</th>
+					<!-- <th>id</th> -->
 					<!-- Aquí colocamos primero la columna del ID -->
 					{#each Object.keys(tourisms[0]) as key}
 						{#if key !== 'id'}
@@ -202,7 +202,7 @@
 								Vista detallada
 							</a>
 						</td>
-						<td>{dato.id}</td>
+						<!-- <td>{dato.id}</td> -->
 						{#each Object.entries(dato) as [key, value]}
 							<!-- Usamos Object.entries para mantener el orden de las propiedades -->
 							{#if key !== 'id'}
