@@ -19,17 +19,6 @@
 		gdp: '',
 		volgdp: ''
 	};
-	let selectedFilter = {
-		frequency: '',
-		unit: '',
-		age: '',
-		geo: '',
-		time_period: '',
-		obs_value: '',
-		gdp: '',
-		volgdp: ''
-	};
-	let selectedTourismIndex = null;
 	let showForm = false;
 	let errMsg = '';
 	let exitMsg = '';
@@ -72,10 +61,11 @@
 				body: JSON.stringify(newTourism)
 			});
 
-			if (response.ok) {
-				getTourisms();
-				exitMsg = 'Dato creado correctamente';
+			if (response.status == 201) {
 				showForm = false; // Cerrar el formulario después de crear la entrada
+				await getTourisms();
+				exitMsg = 'Dato creado correctamente';
+				
 			} else {
 				if (response.status == 400) {
 					errMsg = 'Todos los datos deben ser introducidos';
@@ -317,7 +307,7 @@
 					<label>
 						Time Period:
 						<input
-							type="text"
+							type="number"
 							bind:value={newTourism.time_period}
 							style="margin-bottom: 10px;"
 							required
