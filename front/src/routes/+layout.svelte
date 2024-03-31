@@ -4,11 +4,21 @@
     import { Styles } from '@sveltestrap/sveltestrap';
 </script>
 
- 
+<style>
+    h1 {
+        height: 100%;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        
+    }
+</style>
 
 <Header/>
-<h1>PRUEBA PRUEBA</h1>
+<h1>SOS2324-10</h1>
 <hr>
 <slot> </slot>
 <hr>
+
 <Footer/>
