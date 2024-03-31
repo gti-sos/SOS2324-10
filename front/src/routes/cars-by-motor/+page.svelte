@@ -25,7 +25,26 @@
     })
 
     
+    async function loadInitialData() {
+		try {
+			if (datos.length === 0) {
+				let response = await fetch(API_ASB + '/loadInitialData', {
+					method: 'GET'
+				});
 
+				if (response.status==200) {
+					getCars();
+					alert('Datos Cargados Correctamente');
+				} else {
+					errorMsg = 'La base de datos no está vacía';
+				}
+			} else {
+				errorMsg = 'La base de datos no está vacía';
+			}
+		} catch (error) {
+			errorMsg = error;
+		}
+	}
     async function getCars(){
         console.log(cars);
         try{
@@ -127,130 +146,138 @@
 </script>
 
 {#if cars && cars.length > 0}
-<div class="container">
-    <div style="margin-bottom: 20px; display: flex; justify-content: space-between;">
-        <table>
-            <thead>
-                <tr>
-                    <!-- <th>id</th> Aquí colocamos primero la columna del ID -->
-                    {#each Object.keys(cars[0]) as key}
-                        {#if key !== 'id'} <!-- Evitamos mostrar la columna ID nuevamente -->
-                            <th>{key}</th>
-                        {/if}
-                    {/each}
-                    <th>modificar</th> <!-- Nuevo encabezado para el botón Modificar -->
-                    <th>eliminar</th>
-                </tr>
-            </thead>
-            <tbody>
-                {#each cars as car}
+    <div class="container">
+        <div style="margin-bottom: 20px; display: flex; justify-content: space-between;">
+            <table>
+                <thead>
                     <tr>
-                        <!-- <td>{car.id}</td> Aquí mostramos primero el ID -->
-                        {#each Object.entries(car) as [key, value]} <!-- Usamos Object.entries para mantener el orden de las propiedades -->
+                        <!-- <th>id</th> Aquí colocamos primero la columna del ID -->
+                        {#each Object.keys(cars[0]) as key}
                             {#if key !== 'id'} <!-- Evitamos mostrar la columna ID nuevamente -->
-                                <td>
-                                    {value}
-                                </td>
+                                <th>{key}</th>
                             {/if}
                         {/each}
-                        <td>
-                            <!-- <button
-                               
-                                style="background-color: #007bff; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
-                                on:click={() => modifyCar(car.geo, car.time_period)}>Modificar</button> -->
-                                <a
-                                href="/cars-by-motor/{car.geo}/{car.time_period}"
-                                style="background-color: #007bff; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer; text-decoration: none;"
-                                >Modificar</a>
-                        </td>
-                        <td>
-                            <button
-                                style="background-color: #E85A4F; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
-                                on:click={() => deleteCar(car.geo, car.time_period)}>Eliminar</button>
-                        </td>
+                        <th>modificar</th> <!-- Nuevo encabezado para el botón Modificar -->
+                        <th>eliminar</th>
                     </tr>
-                {/each}
-            </tbody>
-        </table>
-    </div>
-    <div style="margin-top: 20px; display: flex; justify-content: space-between;">
-        <button
-            style="background-color: #33BF30; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
-            on:click={() => {
-                showForm = true;
-            }}>Agregar Nuevo</button>
-        <button
-            style="background-color: #FF0000; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
-            on:click={() => {
-                deleteCars();
-            }}>Eliminar Todo</button>
-    </div>
-</div>
-    {#if showForm}
-        <div class="custom-modal">
-            <div class="modal-content">
-                <span
-                    class="close"
-                    on:click={() => {
-                        showForm = false;
-                    }}>&times;</span>
-                <h2 style="color: #33BF30;">Agregar Nueva Entrada</h2>
-                <form on:submit|preventDefault={createCar}>
-                    <label>
-                        Freq:
-                        <input type="text" bind:value={newCar.freq} style="margin-bottom: 10px;" required />
-                    </label>
-                    <label>
-                        Unit:
-                        <input type="text" bind:value={newCar.unit} style="margin-bottom: 10px;" required />
-                    </label>
-                    <label>
-                        Motor NRG:
-                        <input type="text" bind:value={newCar.motor_nrg} style="margin-bottom: 10px;" required />
-                    </label>
-                    <label>
-                        Geo:
-                        <input type="text" bind:value={newCar.geo} style="margin-bottom: 10px;" required />
-                    </label>
-                    <label>
-                        Time Period:
-                        <input type="number" bind:value={newCar.time_period} style="margin-bottom: 10px;" required />
-                    </label>
-                    <label>
-                        Obs Value:
-                        <input type="number" bind:value={newCar.obs_value} style="margin-bottom: 10px;" required />
-                    </label>
-                    <label>
-                        Obs Flag:
-                        <input type="text" bind:value={newCar.obs_flag} style="margin-bottom: 10px;" required />
-                    </label>
-                    <label>
-                        Millions of Passengers per Kilometre:
-                        <input
-                            type="number"
-                            bind:value={newCar.millions_of_passenger_per_kilometres}
-                            style="margin-bottom: 10px;"
-                            required
-                        />
-                    </label>
-                    <label>
-                        Road Deaths per Million Inhabitants:
-                        <input
-                            type="number"
-                            bind:value={newCar.road_deaths_per_million_inhabitants}
-                            style="margin-bottom: 10px;"
-                            required
-                        />
-                    </label>
-                    <button
-                        type="submit"
-                        style="background-color: #33BF30; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
-                        >Agregar</button
-                    >
-                </form>
-            </div>
+                </thead>
+                <tbody>
+                    {#each cars as car}
+                        <tr>
+                            <!-- <td>{car.id}</td> Aquí mostramos primero el ID -->
+                            {#each Object.entries(car) as [key, value]} <!-- Usamos Object.entries para mantener el orden de las propiedades -->
+                                {#if key !== 'id'} <!-- Evitamos mostrar la columna ID nuevamente -->
+                                    <td>
+                                        {value}
+                                    </td>
+                                {/if}
+                            {/each}
+                            <td>
+                                <!-- <button
+                                
+                                    style="background-color: #007bff; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
+                                    on:click={() => modifyCar(car.geo, car.time_period)}>Modificar</button> -->
+                                    <a
+                                    href="/cars-by-motor/{car.geo}/{car.time_period}"
+                                    style="background-color: #007bff; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer; text-decoration: none;"
+                                    >Modificar</a>
+                            </td>
+                            <td>
+                                <button
+                                    style="background-color: #E85A4F; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
+                                    on:click={() => deleteCar(car.geo, car.time_period)}>Eliminar</button>
+                            </td>
+                        </tr>
+                    {/each}
+                </tbody>
+            </table>
         </div>
-    {/if}
+        <div style="margin-top: 20px; display: flex; justify-content: space-between;">
+            <button
+                style="background-color: #33BF30; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+                on:click={() => {
+                    showForm = true;
+                }}>Agregar Nuevo</button>
+            <button
+                style="background-color: #FF0000; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+                on:click={() => {
+                    deleteCars();
+                }}>Eliminar Todo</button>
+        </div>
+    </div>
+        {#if showForm}
+            <div class="custom-modal">
+                <div class="modal-content">
+                    <span
+                        class="close"
+                        on:click={() => {
+                            showForm = false;
+                        }}>&times;</span>
+                    <h2 style="color: #33BF30;">Agregar Nueva Entrada</h2>
+                    <form on:submit|preventDefault={createCar}>
+                        <label>
+                            Freq:
+                            <input type="text" bind:value={newCar.freq} style="margin-bottom: 10px;" required />
+                        </label>
+                        <label>
+                            Unit:
+                            <input type="text" bind:value={newCar.unit} style="margin-bottom: 10px;" required />
+                        </label>
+                        <label>
+                            Motor NRG:
+                            <input type="text" bind:value={newCar.motor_nrg} style="margin-bottom: 10px;" required />
+                        </label>
+                        <label>
+                            Geo:
+                            <input type="text" bind:value={newCar.geo} style="margin-bottom: 10px;" required />
+                        </label>
+                        <label>
+                            Time Period:
+                            <input type="number" bind:value={newCar.time_period} style="margin-bottom: 10px;" required />
+                        </label>
+                        <label>
+                            Obs Value:
+                            <input type="number" bind:value={newCar.obs_value} style="margin-bottom: 10px;" required />
+                        </label>
+                        <label>
+                            Obs Flag:
+                            <input type="text" bind:value={newCar.obs_flag} style="margin-bottom: 10px;" required />
+                        </label>
+                        <label>
+                            Millions of Passengers per Kilometre:
+                            <input
+                                type="number"
+                                bind:value={newCar.millions_of_passenger_per_kilometres}
+                                style="margin-bottom: 10px;"
+                                required
+                            />
+                        </label>
+                        <label>
+                            Road Deaths per Million Inhabitants:
+                            <input
+                                type="number"
+                                bind:value={newCar.road_deaths_per_million_inhabitants}
+                                style="margin-bottom: 10px;"
+                                required
+                            />
+                        </label>
+                        <button
+                            type="submit"
+                            style="background-color: #33BF30; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+                            >Agregar</button
+                        >
+                    </form>
+                </div>
+            </div>
+        {/if}
+        {:else}
+        <button
+            style="background-color: #33BF30; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
+            on:click={() => loadInitialData()}
+        >
+            Cargar datos
+        </button>
+        <p class="container">No hay datos disponibles</p>  
 {/if}
 <style>
     .container {
