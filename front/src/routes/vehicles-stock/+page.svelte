@@ -38,7 +38,30 @@
 
 	onMount(async () => {
 		await getVehicles();
+		await getVehiclesTotal();
 	});
+
+	//Datos Iniciales
+	async function getInitialData() {
+		try {
+			if (datos.length === 0) {
+				let response = await fetch(API_TLR + '/loadInitialData', {
+					method: 'GET'
+				});
+
+				if (response.ok) {
+					getVehicles();
+					alert('Datos Cargados Correctamente');
+				} else {
+					errorMsg = 'La base de datos no está vacía';
+				}
+			} else {
+				errorMsg = 'La base de datos no está vacía';
+			}
+		} catch (error) {
+			errorMsg = error;
+		}
+	}
 
 	//Función filtro
 	async function getVehiclesFilter() {
@@ -100,37 +123,35 @@
 		}
 	}
 
-	//Get lista
+	//Get Vehicles total
 	async function getVehiclesTotal() {
 		try {
-			let response = await fetch(API_TLR, {
-				method: 'GET',
-				headers: {
-					'Cache-Control': 'no-cache',
-					Pragma: 'no-cache'
-				}
+			let response = await fetch(API_TLR + '?limit=100', {
+				method: 'GET'
 			});
-			let data = await response.json();
-			totalDatos = data.length;
-			console.log("datos totales: "+totalDatos);
-			totalPages =totalDatos/10;
-			console.log("Total páginas: "+totalPages);
+			let dataT = await response.json();
+			totalDatos = dataT.length;
+			console.log('DATOOS TODOS: ' + dataT);
+			console.log('URL: ' + API_TLR);
+			console.log('datos totales: ' + totalDatos);
+			totalPages = Math.ceil(totalDatos / 10); // Calcular el número total de páginas
+			console.log('Total páginas: ' + totalPages);
 		} catch (e) {
 			errorMsg = e;
 		}
 	}
-	
+
 	async function getVehicles() {
-		getVehiclesTotal;
+		await getVehiclesTotal();
 		try {
-			let response = await fetch(API_TLR + '?page='+page, {
+			let response = await fetch(API_TLR + '?page=' + page, {
 				method: 'GET',
 				headers: {
 					'Cache-Control': 'no-cache',
 					Pragma: 'no-cache'
 				}
 			});
-			
+
 			let data = await response.json();
 			datos = data;
 			console.log(data);
@@ -140,27 +161,20 @@
 	}
 	// Función para ir a la página anterior
 	function goToPreviousPage() {
-    if (currentPage > 1) {
-      currentPage--;
-      getVehicles(currentPage);
-    }
-  }
+		getVehiclesTotal();
+		if (page > 1) {
+			page = page - 1;
+			getVehicles();
+		}
+	}
 
-  // Función para ir a la página siguiente
-  function goToNextPage() {
-    if (currentPage < totalPages) {
-      currentPage++;
-      getVehicles(currentPage);
-    }
-  }
-
-  // Función para ir a una página específica
-  function goToPage(page) {
-    if (page >= 1 && page <= totalPages) {
-      currentPage = page;
-      getVehicles();
-    }
-  }
+	// Función para ir a la página siguiente
+	function goToNextPage() {
+		if (page < totalPages) {
+			page = page + 1;
+			getVehicles();
+		}
+	}
 
 	//Post objeto
 	async function postVehicle() {
@@ -179,6 +193,7 @@
 			if (response.status == 201) {
 				showForm = false;
 				await getVehicles(); // Actualizar los datos después de la creación exitosa
+				alert("Entrada creada correctamente");
 			} else {
 				if (response.status == 400) {
 					errorMsg = 'Error en la estructura de los datos';
@@ -205,6 +220,7 @@
 			});
 
 			if (response.status == 200) {
+				alert("Entrada eliminada. "+geo+":"+year);
 				await getVehicles();
 			} else {
 				if (response.status == 400) {
@@ -230,6 +246,7 @@
 				method: 'DELETE'
 			});
 			if (response.status == 200) {
+				alert("Todas las entradas han sido eliminadas");
 				getVehicles();
 			} else {
 				if (response.status == 400) {
@@ -291,13 +308,26 @@
 						<td>
 							<button
 								style="background-color: #FF0000; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
-								on:click={() => deleteVehicle(dato.geo, dato.year)}>Eliminar</button
-							>
+								on:click={() => deleteVehicle(dato.geo, dato.year)}
+								>Eliminar
+							</button>
 						</td>
 					</tr>
 				{/each}
 			</tbody>
 		</table>
+		<div style="margin-top: 20px; display: flex; justify-content: space-between;">
+			<button
+				style="background-color: #0366d6; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
+				on:click={() => goToPreviousPage()}
+				>Anterior
+			</button>
+			<button
+				style="background-color: #0366d6; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
+				on:click={() => goToNextPage()}
+				> Siguiente
+			</button>
+		</div>
 
 		<!--Botón para crear entrada-->
 		<div style="margin-top: 20px; display: flex; justify-content: space-between;">
@@ -458,6 +488,12 @@
 		ERROR: {errorMsg}
 	{/if}
 {:else}
+	<button
+		style="background-color: #0366d6; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
+		on:click={() => getInitialData()}
+	>
+		Cargar datos
+	</button>
 	<p class="container">No hay datos disponibles</p>
 {/if}
 
