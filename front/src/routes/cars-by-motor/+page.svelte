@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { dev } from '$app/environment';
 
-	let API_ASB = 'api/v2/cars-by-motor';
+	let API_ASB = '/api/v2/cars-by-motor';
 
 	if (dev) {
 		API_ASB = 'http://localhost:8080/' + API_ASB;
