@@ -328,7 +328,7 @@ function API_ASC_v2(app, db_ASC) {
     db_ASC.insert(backupDatas)
 
     app.get(API_BASE + "/tourisms-per-age/docs", (req, res) => {
-        const documentationURL = 'https://documenter.getpostman.com/view/32972243/2sA2xpRTtt';
+        const documentationURL = 'https://documenter.getpostman.com/view/32972243/2sA35HVzdk';
 
         // Redirigir al portal de documentación
         res.redirect(documentationURL);
