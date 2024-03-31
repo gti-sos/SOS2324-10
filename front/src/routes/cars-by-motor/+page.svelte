@@ -27,7 +27,7 @@
     
     async function loadInitialData() {
 		try {
-			if (datos.length === 0) {
+			if (cars.length === 0) {
 				let response = await fetch(API_ASB + '/loadInitialData', {
 					method: 'GET'
 				});
