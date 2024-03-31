@@ -410,10 +410,7 @@ function API_ASB_v2 (app,db_ASB){
       const nuevosDatos = req.body;
 
       // Validar el JSON recibido
-      const expectedKeys = [
-        // 'dataflow', 'last_update', 
-        'freq', 'unit', 'motor_nrg', 'geo', 'time_period', 
-        'obs_value', 'obs_flag', 'millions_of_passenger_per_kilometres', 'road_deaths_per_million_inhabitants'];
+      const expectedKeys = ['freq', 'unit', 'motor_nrg', 'geo', 'time_period', 'obs_value', 'obs_flag', 'millions_of_passenger_per_kilometres', 'road_deaths_per_million_inhabitants'];
       const actualKeys = Object.keys(nuevosDatos);
       const isValidJson = expectedKeys.every(key => actualKeys.includes(key));
 

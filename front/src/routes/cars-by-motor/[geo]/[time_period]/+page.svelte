@@ -161,13 +161,13 @@
 											type="text"
 											bind:value={car[key]}
 											readonly
-											style="background-color: #f3e5f5; border: 1px solid #9c27b0; color: #673ab7;"
+											style="background-color: #d6ffc9; border: 1px solid #9c27b0; color: #000000;"
 										/>
 									{:else}
 										<input
 											type="text"
 											bind:value={car[key]}
-											style="background-color: #f3e5f5; border: 1px solid #9c27b0; color: #673ab7;"
+											style="background-color: #d6ffc9; border: 1px solid #9c27b0; color: #000000;"
 										/>
 									{/if}
 								</td>
@@ -179,7 +179,7 @@
 					<button
 						type="submit"
 						style="text-align:center ;background-color: #49b027; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
-						on:click={() => {
+						on:submit={() => {
 							showForm = false;
 							modifyCar();
 						}}

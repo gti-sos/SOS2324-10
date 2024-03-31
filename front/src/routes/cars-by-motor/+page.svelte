@@ -20,8 +20,8 @@
     let errorMsg = '';
     let successMsg = '';
 
-    onMount(()=>{
-        getCars();
+    onMount(async ()=>{
+       await getCars();
     })
 
     
@@ -214,11 +214,11 @@
                     </label>
                     <label>
                         Time Period:
-                        <input type="text" bind:value={newCar.time_period} style="margin-bottom: 10px;" required />
+                        <input type="number" bind:value={newCar.time_period} style="margin-bottom: 10px;" required />
                     </label>
                     <label>
                         Obs Value:
-                        <input type="text" bind:value={newCar.obs_value} style="margin-bottom: 10px;" required />
+                        <input type="number" bind:value={newCar.obs_value} style="margin-bottom: 10px;" required />
                     </label>
                     <label>
                         Obs Flag:
@@ -227,7 +227,7 @@
                     <label>
                         Millions of Passengers per Kilometre:
                         <input
-                            type="text"
+                            type="number"
                             bind:value={newCar.millions_of_passenger_per_kilometres}
                             style="margin-bottom: 10px;"
                             required
@@ -236,7 +236,7 @@
                     <label>
                         Road Deaths per Million Inhabitants:
                         <input
-                            type="text"
+                            type="number"
                             bind:value={newCar.road_deaths_per_million_inhabitants}
                             style="margin-bottom: 10px;"
                             required

@@ -13,12 +13,16 @@
 - **URL**: [SOS2324-10](http://sos2324-10.appspot.com)
 
 -  **APIs**:
-    - ASC: [API-ÁLVARO](http://sos2324-10.appspot.com/api/v1/tourisms-per-age/docs) (developed by Álvaro Súarez Carbonell)
-    - ASB: [API-ANTONIO](http://sos2324-10.appspot.com/api/v1/cars-by-motor/docs) (developed by Antonio Suero Baeza)
+    - ASC: [API-V1](http://sos2324-10.appspot.com/api/v1/tourisms-per-age/docs) (developed by Álvaro Súarez Carbonell)
+    - ASB: [API-V2](http://sos2324-10.appspot.com/api/v2/tourisms-per-age/docs) (developed by Álvaro Súarez Carbonell)
+    - ASB: [API-V1](http://sos2324-10.appspot.com/api/v1/cars-by-motor/docs) (developed by Antonio Suero Baeza)
+    - ASB: [API-V2](http://sos2324-10.appspot.com/api/v2/cars-by-motor/docs) (developed by Antonio Suero Baeza)
     - MRF: [API-V1](http://sos2324-10.appspot.com/api/v1/gdp-growth-rates/docs) (developed by Miguel Robledo Fernández)
     - MRF: [API-V2](http://sos2324-10.appspot.com/api/v2/gdp-growth-rates/docs) (developed by Miguel Robledo Fernández)
     - TLR: [API-TOMAS](https://sos2324-10.appspot.com/api/v1/vehicles-stock/docs) (developed by Tomás Lozano Romero)
 
 - **FRONT-END**:
     - MRF: [FrontEnd-MRF](http://sos2324-10.appspot.com/gdp-growth-rates) (developed by Miguel Robledo Fernández)
+    - ASB: [FrontEnd-MRF](http://sos2324-10.appspot.com/cars-by-motor) (developed by Antonio Suero Baeza)
+    - ASC: [FrontEnd-MRF](http://sos2324-10.appspot.com/tourisms-per-age) (developed by Álvaro Súarez Carbonell)
     
