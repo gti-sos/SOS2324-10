@@ -80,7 +80,7 @@
                                          }); 
             if(response.ok){
                 errorMsg = "Dato actualizado correctamente"
-                window.location.href = "http://localhost:5173/gdp-growth-rates";
+                window.location.href = "https://sos2324-10.appspot.com/gdp-growth-rates";
             }else if(!response.ok) {
                 if(response.status == 400){
                     errorMsg = "Todos los campos deben ser rellenados. El pais y el año deben coincidir con los del dato a actualizar";
