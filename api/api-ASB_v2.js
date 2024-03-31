@@ -1,7 +1,7 @@
 import bodyParser from "body-parser";
 import express from "express";
 const app = express();
-const API_BASE = "/api/v2"
+const API_BASE = "/api/v2";
 app.use(bodyParser.json());
 
 let backup_datos = [
