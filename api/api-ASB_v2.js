@@ -274,7 +274,7 @@ function API_ASB_v2 (app,db_ASB){
     //GET
 
     app.get(API_BASE + "/cars-by-motor/docs", (req, res) => {
-      const documentationURL = 'https://documenter.getpostman.com/view/33057699/2sA2xpRU3f';
+      const documentationURL = 'https://documenter.getpostman.com/view/33057699/2sA35HVzi5';
 
       // Redirigir al portal de documentación
       res.redirect(documentationURL);
