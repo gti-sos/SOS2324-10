@@ -151,7 +151,7 @@
 					<button
 						type="submit"
 						style="text-align:center ;background-color: #673ab7; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
-						on:click={() => {
+						on:submit={() => {
 							showForm = false;
 							putTourism();
 						}}
