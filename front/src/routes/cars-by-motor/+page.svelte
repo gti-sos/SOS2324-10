@@ -26,8 +26,8 @@
 	let errorMsg = '';
 	let successMsg = '';
 
-	onMount(async () => {
-		await getCars();
+	onMount(() => {
+		getCars();
 	});
 
 	async function loadInitialData() {
