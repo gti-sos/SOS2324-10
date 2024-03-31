@@ -3,10 +3,10 @@
 	import { dev } from '$app/environment';
 	import { page } from '$app/stores';
 
-	let API_ASB = 'api/v2/cars-by-motor';
+	let API_ASB = '/api/v2/cars-by-motor';
 
 	if (dev) {
-		API_ASB = 'http://localhost:8080/' + API_ASB;
+		API_ASB = 'http://localhost:8080' + API_ASB;
 	}
 	let showForm = false;
 	let car = {};
