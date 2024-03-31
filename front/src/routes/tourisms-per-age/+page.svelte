@@ -29,14 +29,15 @@
 
 	async function loadInitialData() {
 		try {
-			if (datos.length === 0) {
+			if (tourisms.length === 0) {
 				let response = await fetch(API_ASC +'/loadInitialData', {
 					method: 'GET'
 				});
 
 				if (response.ok) {
 					getTourisms();
-					alert('Datos Cargados Correctamente');
+					exitMsg = 'Datos Cargados Correctamente';
+
 				} else {
 					errMsg = 'La base de datos no está vacía';
 				}
