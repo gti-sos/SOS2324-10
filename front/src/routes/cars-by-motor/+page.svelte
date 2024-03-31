@@ -186,7 +186,7 @@
                                     style="background-color: #007bff; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
                                     on:click={() => modifyCar(car.geo, car.time_period)}>Modificar</button> -->
 								<a
-									href="/cars-by-motor/{car.geo}/{car.time_period}"
+									href="/{car.geo}/{car.time_period}"
 									style="background-color: #007bff; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer; text-decoration: none;"
 									>Modificar</a
 								>
