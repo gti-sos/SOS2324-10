@@ -1,26 +1,26 @@
 <script>
-    import {onMount} from "svelte";
-    import {dev} from "$app/environment";
-    import { page } from '$app/stores';
+	import { onMount } from 'svelte';
+	import { dev } from '$app/environment';
+	import { page } from '$app/stores';
 
-    let API_ASB = "api/v2/cars-by-motor";
+	let API_ASB = 'api/v2/cars-by-motor';
 
-    if(dev)
-        API_ASB = "http://localhost:8080/" + API_ASB;
+	if (dev) {
+		API_ASB = 'http://localhost:8080/' + API_ASB;
+	}
+	let showForm = false;
+	let car = {};
+	let cars = {};
+	let geo = $page.params.geo;
+	let time_period = $page.params.time_period;
+	let errorMsg = '';
+	let successMsg = '';
 
-    let showForm = false;
-    let car = {};
-    let cars = {};
-    let geo = $page.params.geo;
-    let time_period = $page.params.time_period;
-    let errorMsg = '';
-    let successMsg = '';
+	onMount(() => {
+		getCar(geo, time_period);
+	});
 
-    onMount(()=>{
-        getCar(geo,time_period);
-    })
-
-    async function getCar(geo, time_period) {
+	async function getCar(geo, time_period) {
 		try {
 			let response = await fetch(API_ASB + '/' + geo + '/' + time_period, {
 				method: 'GET'
@@ -47,7 +47,7 @@
 		}
 	}
 
-    async function modifyCar() {
+	async function modifyCar() {
 		try {
 			let response = await fetch(API_ASB + '/' + geo + '/' + time_period, {
 				method: 'PUT',
@@ -77,7 +77,7 @@
 		}
 	}
 
-    // async function modifyCar() {
+	// async function modifyCar() {
 	// 	try {
 	// 		let response = await fetch(
 	// 			API_ASB + '/' + geo +'/' + time_period,
@@ -90,8 +90,8 @@
 	// 			}
 	// 		);
 	// 		if (response.status == 200) {
-    //             cars = JSON.stringify(car);
-    //             showForm = false;
+	//             cars = JSON.stringify(car);
+	//             showForm = false;
 	// 			await getCar(geo,time_period);
 	// 			successMsg = 'Dato actualizado correctamente';
 	// 		} else {
@@ -104,7 +104,6 @@
 </script>
 
 <h2>Ubicación: {geo} Año:{time_period}</h2>
-
 
 {#if !showForm}
 	<!-- Vista de detalles del vehículo -->
@@ -200,8 +199,16 @@
 	</div>
 {/if}
 
+{#if errorMsg != ''}
+	<hr />
+	ERROR: {errorMsg}
+{:else if successMsg != ''}
+	<hr />
+	EXITO: {successMsg}
+{/if}
+
 <style>
-    .card {
+	.card {
 		background-color: #fff;
 		border: 1px solid #49b027;
 		border-radius: 5px;
@@ -221,32 +228,24 @@
 		padding: 8px;
 		text-align: left;
 	}
-    .container {
-        width: 80%;
-        margin: 50px auto;
-        background-color: #ffffff; 
-        border: 1px solid #a4caef; 
-        border-radius: 5px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        padding: 20px;
-    }
+	.container {
+		width: 80%;
+		margin: 50px auto;
+		background-color: #ffffff;
+		border: 1px solid #a4caef;
+		border-radius: 5px;
+		box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+		padding: 20px;
+	}
 
-    input[type="text"] {
-        width: 100%;
-        padding: 8px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-    }
+	input[type='text'] {
+		width: 100%;
+		padding: 8px;
+		border: 1px solid #ddd;
+		border-radius: 5px;
+	}
 
-    button[type="submit"] {
-        margin-top: 10px;
-    }
+	button[type='submit'] {
+		margin-top: 10px;
+	}
 </style>
-
-{#if errorMsg != ""}
-    <hr>ERROR: {errorMsg}
-{:else}
-    {#if successMsg != ""}
-        <hr>EXITO: {successMsg}
-    {/if}
-{/if}
