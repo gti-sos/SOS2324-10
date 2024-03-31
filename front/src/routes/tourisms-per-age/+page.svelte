@@ -30,7 +30,7 @@
 	async function loadInitialData() {
 		try {
 			if (datos.length === 0) {
-				let response = await fetch(API_ASC + '/loadInitialData', {
+				let response = await fetch(API_ASC +'/loadInitialData', {
 					method: 'GET'
 				});
 
