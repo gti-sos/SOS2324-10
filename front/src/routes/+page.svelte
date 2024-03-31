@@ -62,18 +62,22 @@
         <p>URL: <a href="https://sos2324-10.appspot.com/"></a></p>
         <h2>API:</h2>
         <ul>
-            <li>API Álvaro: <a href="https://sos2324-10.appspot.com/api/v1/tourisms-per-age">API-ASC</a> (developed by Álvaro Súarez Carbonell)</li>
+            <li>API Álvaro: <a href="https://sos2324-10.appspot.com/api/v1/tourisms-per-age">API-ASC-v1</a>, <a href="https://sos2324-10.appspot.com/api/v2/tourisms-per-age">API-ASC-v2</a> (developed by Álvaro Súarez Carbonell)</li>
             <li>API Tomás: <a href="https://sos2324-10.appspot.com/api/v1/vehicles-stock/docs"> API-TLR</a> , <a href="https://sos2324-10.appspot.com/api/v1/vehicles-stock"> FrontEnd-TLR</a> (developed by Tomás Lozano)</li>
             <li>API Miguel: <a href="http://sos2324-10.appspot.com/api/v1/gdp-growth-rates"> API-V1 </a>, <a href="http://sos2324-10.appspot.com/api/v2/gdp-growth-rates"> API-V2 </a> (developed by Miguel Robledo Fernández)</li>
-            <li>API Antonio: <a href="http://sos2324-10.appspot.com/api/v1/cars-by-motor"> API-ASB</a> (developed by Antonio Suero Baeza)</li>
+            <li>API Antonio: <a href="http://sos2324-10.appspot.com/api/v1/cars-by-motor"> API-ASB-v1</a>, <a href="http://sos2324-10.appspot.com/api/v2/cars-by-motor"> API-ASB-v2</a> (developed by Antonio Suero Baeza)</li>
         </ul>
         <h3>DOCS API:</h3>
         <ul>
             <li>MIGUEL: <a href="http://sos2324-10.appspot.com/api/v1/gdp-growth-rates/docs"> API-V1 </a>, <a href="http://sos2324-10.appspot.com/api/v2/gdp-growth-rates/docs"> API-V2 </a> (developed by Miguel Robledo Fernández)</li>
+            <li>ÁLVARO: <a href="http://sos2324-10.appspot.com/api/v1/tourisms-per-age/docs"> API-V1 </a>, <a href="http://sos2324-10.appspot.com/api/v2/tourisms-per-age/docs"> API-V2 </a> (developed by Álvaro Suárez Carbonell)</li>
+            <li>ANTONIO: <a href="http://sos2324-10.appspot.com/api/v1/cars-by-motor/docs"> API-V1 </a>, <a href="http://sos2324-10.appspot.com/api/v2/cars-by-motor/docs"> API-V2 </a> (developed by Antonio Suero Baeza)</li>
         </ul>
         <h3>FRONT-END:</h3>
         <ul>
             <li>MIGUEL:  <a href="http://sos2324-10.appspot.com/gdp-growth-rates"> FrontEnd </a> (developed by Miguel Robledo Fernández)</li>
+            <li>ÁLVARO:  <a href="http://sos2324-10.appspot.com/tourisms-per-age"> Front_ASC </a> (developed by Álvaro Suárez Carbonell)</li>
+            <li>ANTONIO:  <a href="http://sos2324-10.appspot.com/cars-by-motor"> Front_ASB </a> (developed by Antonio Suero Baeza)</li>
         </ul>
     </div>
 </body>
