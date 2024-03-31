@@ -27,6 +27,27 @@
 		getTourisms();
 	});
 
+	async function loadInitialData() {
+		try {
+			if (datos.length === 0) {
+				let response = await fetch(API_ASC + '/loadInitialData', {
+					method: 'GET'
+				});
+
+				if (response.ok) {
+					getTourisms();
+					alert('Datos Cargados Correctamente');
+				} else {
+					errMsg = 'La base de datos no está vacía';
+				}
+			} else {
+				errMsg = 'La base de datos no está vacía';
+			}
+		} catch (error) {
+			errMsg = error;
+		}
+	}
+
 	async function getTourisms() {
 		console.log(tourisms);
 		try {
@@ -65,7 +86,6 @@
 				showForm = false; // Cerrar el formulario después de crear la entrada
 				await getTourisms();
 				exitMsg = 'Dato creado correctamente';
-				
 			} else {
 				if (response.status == 400) {
 					errMsg = 'Todos los datos deben ser introducidos';
@@ -357,6 +377,12 @@
 		EXITO: {exitMsg}
 	{/if}
 {:else}
+	<button
+		style="background-color: #0366d6; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
+		on:click={() => loadInitialData()}
+	>
+		Cargar datos
+	</button>
 	<p class="container">No hay datos disponibles</p>
 {/if}
 
