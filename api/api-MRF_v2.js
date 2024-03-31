@@ -8,9 +8,14 @@ app.use(bodyParser.json());
 
 function backend_MRF_v2(app, db_MRF){
 
-    //REDIRECCIÓN A DOCUMENTACIÓN API
-    app.get(API_BASE + "/docs", (req, res) => {
+    //REDIRECCIÓN A DOCUMENTACIÓN API-V1
+    app.get("/api/v1/gdp-growth-rates" + "/docs", (req, res) => {
         res.redirect("https://documenter.getpostman.com/view/32965505/2sA2xiYCme");
+    });
+
+    //REDIRECCIÓN A DOCUMENTACIÓN API-V2
+    app.get(API_BASE + "/docs", (req, res) => {
+        res.redirect("https://documenter.getpostman.com/view/32965505/2sA35G52v3");
     });
 
 
