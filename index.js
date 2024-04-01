@@ -1,7 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 
-import {API_TLR} from "./api/api-TLR.js";
+import {API_TLR_v2} from "./api/api-TLR-v2.js";
 import {backend_MRF_v1} from "./api/api-MRF_v1.js";
 import {backend_MRF_v2} from "./api/api-MRF_v2.js";
 import {API_ASC_v1} from "./api/api-ASC_v1.js";
@@ -32,7 +32,7 @@ app.listen(PORT);
 app.use(bodyParser.json());
 
 
-API_TLR(app,db_TLR);
+API_TLR_v2(app,db_TLR);
 backend_MRF_v1(app, db_MRF);
 backend_MRF_v2(app, db_MRF);
 API_ASC_v1(app, db_ASC);

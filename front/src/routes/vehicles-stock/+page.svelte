@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 	import { dev } from '$app/environment';
 
-	let API_TLR = '/api/v1/vehicles-stock';
+	let API_TLR = '/api/v2/vehicles-stock';
 
 	if (dev) {
 		API_TLR = 'http://localhost:8080' + API_TLR;

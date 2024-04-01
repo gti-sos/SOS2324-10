@@ -1,7 +1,7 @@
 <script>
     //Librería para obtener recursos de la URL
     import { page } from '$app/stores';
-    let API_TLR = '/api/v1/vehicles-stock';
+    let API_TLR = '/api/v2/vehicles-stock';
     import { dev } from '$app/environment';
     import { onMount } from 'svelte';
 
