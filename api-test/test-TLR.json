@@ -1,10 +1,10 @@
 {
 	"info": {
-		"_postman_id": "1c44b0e3-ad2a-4b9a-af45-798fd5948246",
-		"name": "TLR WEB",
+		"_postman_id": "51abc8f6-7797-4c42-99d4-65ac771a2245",
+		"name": "TLR WEB v2",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "19421857",
-		"_collection_link": "https://warped-trinity-19905.postman.co/workspace/SOS2324-10~6041b4cf-1144-4aa6-8878-7c39fb610ff4/collection/19421857-1c44b0e3-ad2a-4b9a-af45-798fd5948246?action=share&source=collection_link&creator=19421857"
+		"_collection_link": "https://warped-trinity-19905.postman.co/workspace/SOS2324-10~6041b4cf-1144-4aa6-8878-7c39fb610ff4/collection/19421857-51abc8f6-7797-4c42-99d4-65ac771a2245?action=share&source=collection_link&creator=19421857"
 	},
 	"item": [
 		{
@@ -27,7 +27,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/vehicles-stock/loadInitialData",
+					"raw": "https://sos2324-10.appspot.com/api/v2/vehicles-stock/loadInitialData",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -36,7 +36,7 @@
 					],
 					"path": [
 						"api",
-						"v1",
+						"v2",
 						"vehicles-stock",
 						"loadInitialData"
 					]
@@ -67,7 +67,8 @@
 							"    pm.expect(responseData).to.be.an('array').and.to.have.lengthOf.at.least(1);",
 							"});"
 						],
-						"type": "text/javascript"
+						"type": "text/javascript",
+						"packages": {}
 					}
 				}
 			],
@@ -75,7 +76,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/vehicles-stock/",
+					"raw": "https://sos2324-10.appspot.com/api/v2/vehicles-stock/",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -84,7 +85,7 @@
 					],
 					"path": [
 						"api",
-						"v1",
+						"v2",
 						"vehicles-stock",
 						""
 					]
@@ -142,7 +143,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/vehicles-stock/search?geo=Albania",
+					"raw": "https://sos2324-10.appspot.com/api/v2/vehicles-stock/search?geo=Albania",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -151,7 +152,7 @@
 					],
 					"path": [
 						"api",
-						"v1",
+						"v2",
 						"vehicles-stock",
 						"search"
 					],
@@ -186,7 +187,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/vehicles-stock/Bulgaria/2018",
+					"raw": "https://sos2324-10.appspot.com/api/v2/vehicles-stock/Bulgaria/2018",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -195,7 +196,7 @@
 					],
 					"path": [
 						"api",
-						"v1",
+						"v2",
 						"vehicles-stock",
 						"Bulgaria",
 						"2018"
@@ -254,7 +255,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/vehicles-stock?page=1",
+					"raw": "https://sos2324-10.appspot.com/api/v2/vehicles-stock?page=1",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -263,7 +264,7 @@
 					],
 					"path": [
 						"api",
-						"v1",
+						"v2",
 						"vehicles-stock"
 					],
 					"query": [
@@ -296,7 +297,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/vehicles-stock/search?geo=Malasia",
+					"raw": "https://sos2324-10.appspot.com/api/v2/vehicles-stock/search?geo=Malasia",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -305,7 +306,7 @@
 					],
 					"path": [
 						"api",
-						"v1",
+						"v2",
 						"vehicles-stock",
 						"search"
 					],
@@ -348,7 +349,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/vehicles-stock/",
+					"raw": "https://sos2324-10.appspot.com/api/v2/vehicles-stock/",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -357,7 +358,7 @@
 					],
 					"path": [
 						"api",
-						"v1",
+						"v2",
 						"vehicles-stock",
 						""
 					]
@@ -394,7 +395,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/vehicles-stock/1",
+					"raw": "https://sos2324-10.appspot.com/api/v2/vehicles-stock/1",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -403,7 +404,7 @@
 					],
 					"path": [
 						"api",
-						"v1",
+						"v2",
 						"vehicles-stock",
 						"1"
 					]
@@ -440,7 +441,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/vehicles-stock/",
+					"raw": "https://sos2324-10.appspot.com/api/v2/vehicles-stock/",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -449,7 +450,7 @@
 					],
 					"path": [
 						"api",
-						"v1",
+						"v2",
 						"vehicles-stock",
 						""
 					]
@@ -486,7 +487,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/vehicles-stock",
+					"raw": "https://sos2324-10.appspot.com/api/v2/vehicles-stock/",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -495,8 +496,9 @@
 					],
 					"path": [
 						"api",
-						"v1",
-						"vehicles-stock"
+						"v2",
+						"vehicles-stock",
+						""
 					]
 				}
 			},
@@ -531,7 +533,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/vehicles-stock/Bulgaria/2018",
+					"raw": "https://sos2324-10.appspot.com/api/v2/vehicles-stock/Bulgaria/2018",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -540,7 +542,7 @@
 					],
 					"path": [
 						"api",
-						"v1",
+						"v2",
 						"vehicles-stock",
 						"Bulgaria",
 						"2018"
@@ -578,7 +580,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/vehicles-stock/Bulgaria/2050",
+					"raw": "https://sos2324-10.appspot.com/api/v2/vehicles-stock/Bulgaria/2050",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -587,7 +589,7 @@
 					],
 					"path": [
 						"api",
-						"v1",
+						"v2",
 						"vehicles-stock",
 						"Bulgaria",
 						"2050"
@@ -625,7 +627,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/vehicles-stock/",
+					"raw": "https://sos2324-10.appspot.com/api/v2/vehicles-stock/",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -634,7 +636,7 @@
 					],
 					"path": [
 						"api",
-						"v1",
+						"v2",
 						"vehicles-stock",
 						""
 					]
@@ -671,7 +673,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/vehicles-stock/Bulgaria/2018",
+					"raw": "https://sos2324-10.appspot.com/api/v2/vehicles-stock/Bulgaria/2018",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -680,7 +682,7 @@
 					],
 					"path": [
 						"api",
-						"v1",
+						"v2",
 						"vehicles-stock",
 						"Bulgaria",
 						"2018"
@@ -718,7 +720,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/vehicles-stock/Bulgaria/2018",
+					"raw": "https://sos2324-10.appspot.com/api/v2/vehicles-stock/Bulgaria/2018",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -727,7 +729,7 @@
 					],
 					"path": [
 						"api",
-						"v1",
+						"v2",
 						"vehicles-stock",
 						"Bulgaria",
 						"2018"
@@ -765,7 +767,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/vehicles-stock/Bulgaria/2018",
+					"raw": "https://sos2324-10.appspot.com/api/v2/vehicles-stock/Bulgaria/2018",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -774,7 +776,7 @@
 					],
 					"path": [
 						"api",
-						"v1",
+						"v2",
 						"vehicles-stock",
 						"Bulgaria",
 						"2018"
@@ -812,7 +814,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/vehicles-stock/",
+					"raw": "https://sos2324-10.appspot.com/api/v2/vehicles-stock/",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -821,7 +823,7 @@
 					],
 					"path": [
 						"api",
-						"v1",
+						"v2",
 						"vehicles-stock",
 						""
 					]

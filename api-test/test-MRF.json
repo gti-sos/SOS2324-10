@@ -27,7 +27,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/gdp-growth-rates/loadInitialData",
+					"raw": "https://sos2324-10.appspot.com/api/v2/gdp-growth-rates/loadInitialData",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -36,7 +36,7 @@
 					],
 					"path": [
 						"api",
-						"v1",
+						"v2",
 						"gdp-growth-rates",
 						"loadInitialData"
 					]
@@ -64,7 +64,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/gdp-growth-rates",
+					"raw": "https://sos2324-10.appspot.com/api/v2/gdp-growth-rates",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -73,7 +73,7 @@
 					],
 					"path": [
 						"api",
-						"v1",
+						"v2",
 						"gdp-growth-rates"
 					]
 				}
@@ -100,7 +100,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/gdp-growth-rates",
+					"raw": "https://sos2324-10.appspot.com/api/v2/gdp-growth-rates",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -109,7 +109,7 @@
 					],
 					"path": [
 						"api",
-						"v1",
+						"v2",
 						"gdp-growth-rates"
 					]
 				}
@@ -136,7 +136,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/gdp-growth-rates?geo=belgium&limit=1&offset=1",
+					"raw": "https://sos2324-10.appspot.com/api/v2/gdp-growth-rates?geo=belgium&limit=1&offset=1",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -145,7 +145,7 @@
 					],
 					"path": [
 						"api",
-						"v1",
+						"v2",
 						"gdp-growth-rates"
 					],
 					"query": [
@@ -186,7 +186,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/gdp-growth-rates?geo=letonia",
+					"raw": "https://sos2324-10.appspot.com/api/v2/gdp-growth-rates?geo=letonia",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -195,7 +195,7 @@
 					],
 					"path": [
 						"api",
-						"v1",
+						"v2",
 						"gdp-growth-rates"
 					],
 					"query": [
@@ -237,7 +237,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/gdp-growth-rates",
+					"raw": "https://sos2324-10.appspot.com/api/v2/gdp-growth-rates",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -246,7 +246,7 @@
 					],
 					"path": [
 						"api",
-						"v1",
+						"v2",
 						"gdp-growth-rates"
 					]
 				}
@@ -282,7 +282,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/gdp-growth-rates",
+					"raw": "https://sos2324-10.appspot.com/api/v2/gdp-growth-rates",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -291,7 +291,7 @@
 					],
 					"path": [
 						"api",
-						"v1",
+						"v2",
 						"gdp-growth-rates"
 					]
 				}
@@ -318,7 +318,7 @@
 				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/gdp-growth-rates/austria",
+					"raw": "https://sos2324-10.appspot.com/api/v2/gdp-growth-rates/austria",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -327,7 +327,7 @@
 					],
 					"path": [
 						"api",
-						"v1",
+						"v2",
 						"gdp-growth-rates",
 						"austria"
 					]
@@ -364,7 +364,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/gdp-growth-rates",
+					"raw": "https://sos2324-10.appspot.com/api/v2/gdp-growth-rates",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -373,7 +373,7 @@
 					],
 					"path": [
 						"api",
-						"v1",
+						"v2",
 						"gdp-growth-rates"
 					]
 				}
@@ -409,7 +409,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/gdp-growth-rates/belgium/2020",
+					"raw": "https://sos2324-10.appspot.com/api/v2/gdp-growth-rates/belgium/2020",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -418,7 +418,7 @@
 					],
 					"path": [
 						"api",
-						"v1",
+						"v2",
 						"gdp-growth-rates",
 						"belgium",
 						"2020"
@@ -456,7 +456,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/gdp-growth-rates/belgium/2020",
+					"raw": "https://sos2324-10.appspot.com/api/v2/gdp-growth-rates/belgium/2020",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -465,7 +465,7 @@
 					],
 					"path": [
 						"api",
-						"v1",
+						"v2",
 						"gdp-growth-rates",
 						"belgium",
 						"2020"
@@ -503,7 +503,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/gdp-growth-rates/belgium/2021",
+					"raw": "https://sos2324-10.appspot.com/api/v2/gdp-growth-rates/belgium/2021",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -512,7 +512,7 @@
 					],
 					"path": [
 						"api",
-						"v1",
+						"v2",
 						"gdp-growth-rates",
 						"belgium",
 						"2021"
@@ -550,7 +550,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/gdp-growth-rates",
+					"raw": "https://sos2324-10.appspot.com/api/v2/gdp-growth-rates",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -559,7 +559,7 @@
 					],
 					"path": [
 						"api",
-						"v1",
+						"v2",
 						"gdp-growth-rates"
 					]
 				}
@@ -586,7 +586,7 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/gdp-growth-rates/austria/2020",
+					"raw": "https://sos2324-10.appspot.com/api/v2/gdp-growth-rates/austria/2020",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -595,7 +595,7 @@
 					],
 					"path": [
 						"api",
-						"v1",
+						"v2",
 						"gdp-growth-rates",
 						"austria",
 						"2020"
@@ -624,7 +624,7 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/gdp-growth-rates/austria/asdafas",
+					"raw": "https://sos2324-10.appspot.com/api/v2/gdp-growth-rates/austria/asdafas",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -633,7 +633,7 @@
 					],
 					"path": [
 						"api",
-						"v1",
+						"v2",
 						"gdp-growth-rates",
 						"austria",
 						"asdafas"
@@ -662,7 +662,7 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/gdp-growth-rates/austria/2011",
+					"raw": "https://sos2324-10.appspot.com/api/v2/gdp-growth-rates/austria/2011",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -671,7 +671,7 @@
 					],
 					"path": [
 						"api",
-						"v1",
+						"v2",
 						"gdp-growth-rates",
 						"austria",
 						"2011"
@@ -700,7 +700,7 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "https://sos2324-10.appspot.com/api/v1/gdp-growth-rates",
+					"raw": "https://sos2324-10.appspot.com/api/v2/gdp-growth-rates",
 					"protocol": "https",
 					"host": [
 						"sos2324-10",
@@ -709,7 +709,7 @@
 					],
 					"path": [
 						"api",
-						"v1",
+						"v2",
 						"gdp-growth-rates"
 					]
 				}
