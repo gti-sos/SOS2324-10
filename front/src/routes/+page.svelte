@@ -63,14 +63,14 @@
         <h2>API:</h2>
         <ul>
             <li>API Álvaro: <a href="https://sos2324-10.appspot.com/api/v1/tourisms-per-age">API-ASC-v1</a>, <a href="https://sos2324-10.appspot.com/api/v2/tourisms-per-age">API-ASC-v2</a> (developed by Álvaro Súarez Carbonell)</li>
-            <li>API Tomás: <a href="https://sos2324-10.appspot.com/api/v1/vehicles-stock"> vehicles-stock-v1</a> (developed by Tomás Lozano)</li>
-            <li>API Miguel: <a href="http://sos2324-10.appspot.com/api/v1/gdp-growth-rates"> gdp-growth-rates-V1 </a>, <a href="http://sos2324-10.appspot.com/api/v2/gdp-growth-rates"> gdp-growth-rates-V2 </a> (developed by Miguel Robledo Fernández)</li>
+            <li>API Tomás: <a href="https://sos2324-10.appspot.com/api/v1/vehicles-stock"> API-TLR</a> (developed by Tomás Lozano)</li>
+            <li>API Miguel: <a href="http://sos2324-10.appspot.com/api/v1/gdp-growth-rates"> API-V1 </a>, <a href="http://sos2324-10.appspot.com/api/v2/gdp-growth-rates"> API-V2 </a> (developed by Miguel Robledo Fernández)</li>
             <li>API Antonio: <a href="http://sos2324-10.appspot.com/api/v1/cars-by-motor"> API-ASB-v1</a>, <a href="http://sos2324-10.appspot.com/api/v2/cars-by-motor"> API-ASB-v2</a> (developed by Antonio Suero Baeza)</li>
         </ul>
         <h3>DOCS API:</h3>
         <ul>
-            <li>MIGUEL: <a href="http://sos2324-10.appspot.com/api/v1/gdp-growth-rates/docs"> gdp-growth-rates-v1 </a>, <a href="http://sos2324-10.appspot.com/api/v2/gdp-growth-rates/docs"> gdp-growth-rates-V2 </a> (developed by Miguel Robledo Fernández)</li>
-            <li>TOMÁS: <a href="http://sos2324-10.appspot.com/api/v1/vehicles-stock/docs"> vehicles-stock </a>(developed by Tomás Lozano Romero)</li>
+            <li>MIGUEL: <a href="http://sos2324-10.appspot.com/api/v1/gdp-growth-rates/docs"> API-V1 </a>, <a href="http://sos2324-10.appspot.com/api/v2/gdp-growth-rates/docs"> API-V2 </a> (developed by Miguel Robledo Fernández)</li>
+            <li>TOMÁS: <a href="http://sos2324-10.appspot.com/api/v1/vehicles-stock/docs"> API_TLR </a>(developed by Tomás Lozano Romero)</li>
             <li>ÁLVARO: <a href="http://sos2324-10.appspot.com/api/v1/tourisms-per-age/docs"> API-V1 </a>, <a href="http://sos2324-10.appspot.com/api/v2/tourisms-per-age/docs"> API-V2 </a> (developed by Álvaro Suárez Carbonell)</li>
             <li>ANTONIO: <a href="http://sos2324-10.appspot.com/api/v1/cars-by-motor/docs"> API-V1 </a>, <a href="http://sos2324-10.appspot.com/api/v2/cars-by-motor/docs"> API-V2 </a> (developed by Antonio Suero Baeza)</li>
         </ul>
