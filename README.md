@@ -23,6 +23,6 @@
 
 - **FRONT-END**:
     - MRF: [FrontEnd-MRF](http://sos2324-10.appspot.com/gdp-growth-rates) (developed by Miguel Robledo Fernández)
-    - ASB: [FrontEnd-MRF](http://sos2324-10.appspot.com/cars-by-motor) (developed by Antonio Suero Baeza)
-    - ASC: [FrontEnd-MRF](http://sos2324-10.appspot.com/tourisms-per-age) (developed by Álvaro Súarez Carbonell)
+    - ASB: [FrontEnd-ASB](http://sos2324-10.appspot.com/cars-by-motor) (developed by Antonio Suero Baeza)
+    - ASC: [FrontEnd-ASC](http://sos2324-10.appspot.com/tourisms-per-age) (developed by Álvaro Súarez Carbonell)
     
