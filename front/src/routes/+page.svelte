@@ -78,8 +78,8 @@
         <ul>
             <li>MIGUEL:  <a href="http://sos2324-10.appspot.com/gdp-growth-rates"> FrontEnd </a> (developed by Miguel Robledo Fernández)</li>
             <li>TOMÁS:  <a href="http://sos2324-10.appspot.com/vehicles-stock"> Front_TLR </a> (developed by Tomás Lozano Romero)</li>
-            <li>ÁLVARO:  <a href="http://sos2324-10.appspot.com/tourisms-per-age"> Front_ASC </a> (developed by Álvaro Suárez Carbonell)</li>
-            <li>ANTONIO:  <a href="http://sos2324-10.appspot.com/cars-by-motor"> Front_ASB </a> (developed by Antonio Suero Baeza)</li>
+            <li>ÁLVARO:  <a href="http://sos2324-10.appspot.com/tourisms-per-age"> tourisms-per-age </a> (developed by Álvaro Suárez Carbonell)</li>
+            <li>ANTONIO:  <a href="http://sos2324-10.appspot.com/cars-by-motor"> cars-by-motor </a> (developed by Antonio Suero Baeza)</li>
         </ul>
     </div>
 </body>
