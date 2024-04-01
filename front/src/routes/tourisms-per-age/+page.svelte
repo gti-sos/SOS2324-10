@@ -188,7 +188,7 @@
 		<table>
 			<thead>
 				<tr>
-					<th>vista_elemento</th>
+					
 					<!-- <th>id</th> -->
 					<!-- Aquí colocamos primero la columna del ID -->
 					{#each Object.keys(tourisms[0]) as key}
@@ -197,6 +197,7 @@
 							<th>{key}</th>
 						{/if}
 					{/each}
+					<th>vista</th>
 					<!-- Nueva columna para el botón de eliminar -->
 					<th>eliminar</th>
 				</tr>
@@ -204,15 +205,6 @@
 			<tbody>
 				{#each tourisms as dato}
 					<tr>
-						<td>
-							<!-- Botón de ver detalles -->
-							<a
-								href="/tourisms-per-age/{dato.geo}/{dato.time_period}"
-								style="text-decoration: none; background-color: #4CAF50; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer; display: inline-block;"
-							>
-								Vista detallada
-							</a>
-						</td>
 						<!-- <td>{dato.id}</td> -->
 						{#each Object.entries(dato) as [key, value]}
 							<!-- Usamos Object.entries para mantener el orden de las propiedades -->
@@ -234,6 +226,15 @@
 								{/if}
 							</td>
 						{/each} -->
+						<td>
+							<!-- Botón de ver detalles -->
+							<a
+								href="/tourisms-per-age/{dato.geo}/{dato.time_period}"
+								style="text-decoration: none; background-color: #4CAF50; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer; display: inline-block;"
+							>
+								Detalles
+							</a>
+						</td>	
 						<td>
 							<button
 								style="background-color: #d32f2f; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
