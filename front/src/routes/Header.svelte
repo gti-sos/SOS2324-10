@@ -1,9 +1,9 @@
 <nav class="container">
     <a href="/" class="nav-link">Inicio</a>
-    <a href="/vehicles-stock" class="nav-link">TLR_Front</a>
-    <a href="/gdp-growth-rates" class="nav-link">MRF_Front</a>
-    <a href="/cars-by-motor" class="nav-link">ASB_Front</a>
-    <a href="/tourisms-per-age" class="nav-link">ASC_Front</a>
+    <a href="/vehicles-stock" class="nav-link"> vehicles-stock</a>
+    <a href="/gdp-growth-rates" class="nav-link"> gdp-growth-rates</a>
+    <a href="/cars-by-motor" class="nav-link"> cars-by-motor</a>
+    <a href="/tourisms-per-age" class="nav-link"> tourisms-per-age</a>
 </nav>
 
 <style>
