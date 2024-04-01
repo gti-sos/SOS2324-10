@@ -129,7 +129,7 @@ function backend_MRF_v2(app, db_MRF){
                     return res.sendStatus(404, "Not Found");
                 }
 
-                res.status(200).send(filteredData);
+                res.status(200).send(filteredData[0]);
             });
     });
 
