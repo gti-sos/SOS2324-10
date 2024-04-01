@@ -59,7 +59,6 @@
 				newData = JSON.stringify(tourism);
 				showForm = false;
 				exitMsg = 'Dato modificado correctamente';
-				await getTourism(geo, time_period);
 			} else {
 				if (response.status == 400) {
 					errMsg = 'No se puede cambiar pais ni año';
@@ -76,13 +75,13 @@
 	}
 </script>
 
-<h2>Detalles en {geo}:{time_period}</h2>
+<div class="container">
+	<div class="card">
+		<h2 style="color: #673ab7; text-align: center;">Detalles en {geo}:{time_period}</h2>
 
-{#if !showForm}
-	<!-- Vista de detalles del vehículo -->
-	{#if Object.keys(tourism).length > 0}
-		<div class="container">
-			<div class="card">
+		{#if !showForm}
+			<!-- Vista de detalles del vehículo -->
+			{#if Object.keys(tourism).length > 0}
 				<table>
 					<tbody>
 						{#each Object.entries(tourism) as [key, value]}
@@ -99,11 +98,9 @@
 						{/each}
 					</tbody>
 				</table>
-				<div
-					style="text-align:center ;margin-top: 20px; display: flex; justify-content: space-between;"
-				>
+				<div style="text-align:center; margin-top: 20px;">
 					<button
-						style="background-color: #8bc34a; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+						style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
 						on:click={() => {
 							showForm = true;
 						}}
@@ -111,16 +108,11 @@
 						Modificar Entrada
 					</button>
 				</div>
-			</div>
-		</div>
-	{:else}
-		<p class="container">No hay datos disponibles</p>
-	{/if}
-{:else}
-	<!-- Formulario para modificar la entrada -->
-	<div class="container">
-		<div class="card">
-			<h2 style="color: #673ab7;">Modificar Entrada</h2>
+			{:else}
+				<p style="text-align: center;">No hay datos disponibles</p>
+			{/if}
+		{:else}
+			<!-- Formulario para modificar la entrada -->
 			<form on:submit|preventDefault={putTourism}>
 				<table>
 					<tbody>
@@ -133,13 +125,13 @@
 											type="text"
 											bind:value={tourism[key]}
 											readonly
-											style="background-color: #f3e5f5; border: 1px solid #9c27b0; color: #673ab7;"
+											style="background-color: #f2f2f2; border: 1px solid #ddd; color: #333; padding: 8px; border-radius: 4px; width: 100%;"
 										/>
 									{:else}
 										<input
 											type="text"
 											bind:value={tourism[key]}
-											style="background-color: #f3e5f5; border: 1px solid #9c27b0; color: #673ab7;"
+											style="background-color: #f2f2f2; border: 1px solid #ddd; color: #333; padding: 8px; border-radius: 4px; width: 100%;"
 										/>
 									{/if}
 								</td>
@@ -147,19 +139,15 @@
 						{/each}
 					</tbody>
 				</table>
-				<div style="margin-top: 20px; display: flex; justify-content: space-between;">
+				<div style="text-align: center; margin-top: 20px;">
 					<button
 						type="submit"
-						style="text-align:center ;background-color: #673ab7; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
-						on:submit={() => {
-							showForm = false;
-							putTourism();
-						}}
+						style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
 					>
 						Guardar Cambios
 					</button>
 					<button
-						style="background-color: #ef5350; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+						style="background-color: #f44336; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-left: 20px;"
 						on:click={() => {
 							showForm = false;
 						}}
@@ -168,76 +156,70 @@
 					</button>
 				</div>
 			</form>
-		</div>
+		{/if}
 	</div>
-{/if}
+</div>
 
 {#if errMsg != ''}
-	<hr />
-	ERROR: {errMsg}
+	<hr style="border-color: #673ab7; margin-top: 20px; margin-bottom: 20px;" />
+	<p style="color: red; text-align: center;">ERROR: {errMsg}</p>
 {:else if exitMsg != ''}
-	<hr />
-	EXITO: {exitMsg}
+	<hr style="border-color: #673ab7; margin-top: 20px; margin-bottom: 20px;" />
+	<p style="color: green; text-align: center;">EXITO: {exitMsg}</p>
 {/if}
 
 <style>
+	body {
+		font-family: Arial, sans-serif;
+		background-color: #f9f9f9;
+	}
+
+	.container {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 100vh;
+	}
+
 	.card {
 		background-color: #fff;
-		border: 1px solid #9c27b0;
-		border-radius: 5px;
-		box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+		border-radius: 10px;
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 		padding: 20px;
 		max-width: 600px;
-		margin: 0 auto;
+		width: 100%;
 	}
 
 	table {
 		width: 100%;
 		border-collapse: collapse;
+		margin-bottom: 20px;
 	}
 
 	td {
-		border: 1px solid #ddd;
-		padding: 8px;
-		text-align: left;
+		padding: 10px;
+		border-bottom: 1px solid #ddd;
 	}
 
-	th {
-		background-color: #f2f2f2;
-	}
-
-	tr:nth-child(even) {
-		background-color: #f2f2f2;
-	}
-
-	tr:hover {
-		background-color: #e2e2e2;
+	.attribute {
+		font-weight: bold;
+		color: #673ab7;
 	}
 
 	.value {
 		width: 50%;
 	}
 
-	h2 {
-		text-align: center;
-	}
-
 	input[type='text'] {
-		width: 100%;
-		padding: 12px 20px;
-		margin: 8px 0;
-		box-sizing: border-box;
-		border: 1px solid #ccc;
+		padding: 8px;
+		border: 1px solid #ddd;
 		border-radius: 4px;
-		resize: vertical;
+		width: 100%;
+		box-sizing: border-box;
 	}
 
 	input[type='text']:focus {
-		border: 3px solid #555;
-	}
-
-	.error {
-		color: red;
-		font-weight: bold;
+		outline: none;
+		border-color: #673ab7;
 	}
 </style>
