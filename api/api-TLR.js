@@ -146,7 +146,7 @@ function API_TLR(app, db_TLR) {
           return res.sendStatus(404, "Not Found");
         }
 
-        res.status(200).send(filteredData);
+        res.status(200).send(filteredData[0]);
       });
   });
 
