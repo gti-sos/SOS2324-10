@@ -24,12 +24,16 @@
     async function getVehicle(geo, year) {
         try {
             let response = await fetch(API_TLR + '/' + geo + '/' + year, {
-                method: 'GET'
+                method: 'GET',
+                headers: {
+					'Content-Type': 'application/json'
+				}
             });
-
+            console.log("URL Accedida: " +API_TLR + '/' + geo + '/' + year);
             if (response.status == 200) {
                 let res = await response.json();
-                dato = res[0];
+                dato = res;
+                console.log("Dato: "+ dato);
             } else {
                 if (response.status == 400) {
                 errorMsg = 'Error en la estructura de los datos';
