@@ -267,6 +267,7 @@
 </script>
 
 <!--Estilo y formato de la tabla-->
+<title> vehicles-stock</title>
 {#if datos && datos.length > 0}<!---->
 	<div class="container">
 		<div style="margin-bottom: 20px; display: flex; justify-content: space-between;">

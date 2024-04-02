@@ -1,4 +1,4 @@
-  {
+{
   "dependencies": {
     "@sveltestrap/sveltestrap": "^6.2.7",
     "body-parser": "^1.20.2",
@@ -18,11 +18,11 @@
   "main": "index.js",
   "scripts": {
     "start": "node index",
-    "test": "npx newman run ./api-test/test-TLR.json && npx newman run ./api-test/test-MRF.json && npx newman run ./api-test/test-ASC.json -e ./api-test/environment.json && npx newman run ./api-test/test-ASB.json -e ./api-test/environment.json ",
-    "test-TLR": "newman run ./api-test/test-TLR.json",
-    "test-MRF": "newman run ./api-test/test-MRF.json",
-    "test-ASC": "newman run ./api-test/test-ASC.json -e ./api-test/environment.json",
-    "test-ASB": "newman run ./api-test/test-ASB.json -e ./api-test/environment.json"
+    "test": "npx newman run ./tests/api/test-TLR.json && npx newman run ./tests/api/test-MRF.json && npx newman run ./tests/api/test-ASC.json -e ./tests/api/environment.json && npx newman run ./tests/api/test-ASB.json -e ./tests/api/environment.json ",
+    "test-TLR": "newman run ./tests/api/test-TLR.json",
+    "test-MRF": "newman run ./tests/api/test-MRF.json",
+    "test-ASC": "newman run ./tests/api/test-ASC.json -e ./tests/api/environment.json",
+    "test-ASB": "newman run ./tests/api/test-ASB.json -e ./tests/api/environment.json"
   },
   "author": "Tomas",
   "license": "GPL-3.0",
@@ -34,5 +34,9 @@
     "url": "https://github.com/gti-sos/SOS2324-10/issues"
   },
   "homepage": "https://github.com/gti-sos/SOS2324-10#readme",
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "@playwright/test": "^1.42.1",
+    "@types/node": "^20.12.2"
+  }
 }
