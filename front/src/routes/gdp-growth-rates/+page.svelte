@@ -10,6 +10,7 @@
 
     let gdp = [];
     let showForm = false;
+    let showFilter = false;
     let newGdp = {geo: "", time_period: "", dataflow: "", last_update: "",
             frequency: "", unit: "", na_g: "", obs_value: "", growth_rate_2030: "",
             growth_rate_2040: ""};
@@ -21,7 +22,9 @@
     let totalItems = 0;
     const pageSize = 10;
 
+
     onMount(async ()=>{
+       await getInitialGDP();
        await getGDP();
     })
 
@@ -235,80 +238,193 @@
 
 
 {#if gdp && gdp.length > 0}
+    <!---->
     <div class="container">
+        <div style="margin-bottom: 20px; display: flex; justify-content: space-between;">
+            <button
+                style="background-color: #0366d6; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+                on:click={() => {
+                    showFilter = true;
+                }}
+            >Filtros</button>
+        </div>
         <table>
             <thead>
                 <tr>
-                    <th>Geo</th>
-                    <th>Time Period</th>
-                    <th>Frequency</th>
-                    <th>Unit</th>
-                    <th>NA item</th>
-                    <th>Obs Value</th>
-                    <th>Growth Rate 2030</th>
-                    <th>Growth Rate 2040</th>
-                    <th>Actions</th>
+                    <th>Vista detallada</th>
+                    {#each Object.keys(gdp[0]) as key}
+                        <th>{key}</th>
+                    {/each}
+                    <!-- Nueva columna para el botón de eliminar -->
+                    <th>Eliminar dato</th>
                 </tr>
             </thead>
             <tbody>
-                {#each gdp as g, index}
+                {#each gdp as dato}
                     <tr>
-                        <td><a href="/gdp-growth-rates/{g.geo}/{g.time_period}">{g.geo}</a></td>
-                        <td>{g.time_period}</td>
-                        <td>{g.frequency}</td>
-                        <td>{g.unit}</td>
-                        <td>{g.na_item}</td>
-                        <td>{g.obs_value}</td>
-                        <td>{g.growth_rate_2030}</td>
-                        <td>{g.growth_rate_2040}</td>
-                        <td><button class="delete-button" on:click={() => deleteGDP(g.geo, g.time_period)}>Borrar dato</button></td>
+                        <td>
+                            <!-- Botón de eliminar -->
+                            <a
+                                href="/vehicles-stock/{dato.geo}/{dato.year}"
+                                style="text-decoration: none; background-color: #666666; color: white; padding: 5px 10px; border-radius: 5px; cursor: pointer; display: inline-block;"
+                            >
+                                Ver detalles
+                            </a>
+                        </td>
+                        {#each Object.values(dato) as value}
+                            <td>{value}</td>
+                        {/each}
+                        <!---->
+                        <td>
+                            <button
+                                style="background-color: #FF0000; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
+                                on:click={() => deleteGDP(dato.geo, dato.time_period)}
+                                >Eliminar
+                            </button>
+                        </td>
                     </tr>
                 {/each}
             </tbody>
         </table>
+        <div style="margin-top: 20px; display: flex; justify-content: space-between;">
+            <button
+                style="background-color: #0366d6; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
+                on:click={() => prevPage()}
+                >Anterior
+            </button>
+            <button
+                style="background-color: #0366d6; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
+                on:click={() => nextPage()}
+                > Siguiente
+            </button>
+        </div>
 
-       
+        <!--Botón para crear entrada-->
+        <div style="margin-top: 20px; display: flex; justify-content: space-between;">
+            <button
+                style="background-color: #0366d6; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+                on:click={() => {showForm = true;}}
+            >Crear Entrada</button>
+            <!---->
+            <button
+                style="background-color: #FF0000; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+                on:click={() => {deleteGDPAll();}}
+            >Eliminar Todos</button>
+        </div>
     </div>
-
+    <!---->
+    <!-- Popup para crear nuevo objeto -->
     {#if showForm}
         <div class="modal">
             <div class="modal-content">
-                <span class="close" on:click={() => { showForm = false; }}>&times;</span>
+                <span
+                    class="close"
+                    on:click={() => {showForm = false;}}
+                >&times;</span>
                 <h2 style="color: #0366d6;">Crear Nueva Entrada</h2>
                 <form on:submit|preventDefault={createGDP}>
                     <label>
+                        frequency:<!---->
+                        <input type="text" bind:value={newGdp.frequency} style="margin-bottom: 10px;" required />
+                    </label>
+                    <label>
+                        unit:
+                        <input type="text" bind:value={newGdp.unit} style="margin-bottom: 10px;" required />
+                    </label>
+                    <label>
+                        na_item:
+                        <input type="text" bind:value={newGdp.na_item} style="margin-bottom: 10px;" required />
+                    </label>
+                    <label
+                        ><!---->
                         Geo:
                         <input type="text" bind:value={newGdp.geo} style="margin-bottom: 10px;" required />
                     </label>
                     <label>
-                        Time Period:
+                        time_period:
                         <input type="number" bind:value={newGdp.time_period} style="margin-bottom: 10px;" required />
                     </label>
                     <label>
-                        Frequency:
-                        <input type="text" bind:value={newGdp.frequency} style="margin-bottom: 10px;" required />
+                        Obs Value:
+                        <input
+                            type="number"
+                            bind:value={newGdp.obs_value}
+                            style="margin-bottom: 10px;"
+                            required
+                        />
+                    </label>
+                    <label>
+                        growth_rate_2030:
+                        <input
+                            type="number"
+                            bind:value={newGdp.growth_rate_2030}
+                            style="margin-bottom: 10px;"
+                            required
+                        />
+                    </label>
+                    <label
+                        ><!---->
+                        growth_rate_2040:
+                        <input
+                            type="number"
+                            bind:value={newGdp.growth_rate_2040}
+                            style="margin-bottom: 10px;"
+                            required
+                        />
+                    </label>
+                    <button
+                        type="submit"
+                        style="background-color: #0366d6; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+                        >Crear</button
+                    >
+                </form>
+            </div>
+        </div>
+    {/if}
+    <!-- Botón desplegable de filtro -->
+    {#if showFilter}
+        <div class="modal">
+            <div class="modal-content">
+                <span
+                    class="close"
+                    on:click={() => {showFilter = false;}}
+                >&times;</span>
+                <h2 style="color: #0366d6;">Aplicar filtros</h2>
+                <form on:submit|preventDefault={getGDP}>
+                    <label>
+                        Frequency:<!---->
+                        <input type="text" bind:value={newGdp.frequency} style="margin-bottom: 10px;" />
                     </label>
                     <label>
                         Unit:
-                        <input type="text" bind:value={newGdp.unit} style="margin-bottom: 10px;" required />
+                        <input type="text" bind:value={newGdp.unit} style="margin-bottom: 10px;" />
                     </label>
                     <label>
-                        NA item:
-                        <input type="text" bind:value={newGdp.na_item} style="margin-bottom: 10px;" required />
+                        NA Item:
+                        <input type="text" bind:value={newGdp.na_item} style="margin-bottom: 10px;" />
+                    </label>
+                    <label
+                        ><!---->
+                        Geo:
+                        <input type="text" bind:value={newGdp.geo} style="margin-bottom: 10px;" />
+                    </label>
+                    <label>
+                        Time Period:
+                        <input type="number" bind:value={newGdp.time_period} style="margin-bottom: 10px;" />
                     </label>
                     <label>
                         Obs Value:
-                        <input type="number" bind:value={newGdp.obs_value} style="margin-bottom: 10px;" required />
+                        <input type="number" bind:value={newGdp.obs_value} style="margin-bottom: 10px;"/>
                     </label>
                     <label>
                         Growth Rate 2030:
-                        <input type="number" bind:value={newGdp.growth_rate_2030} style="margin-bottom: 10px;" required />
+                        <input type="number" bind:value={newGdp.growth_rate_2030} style="margin-bottom: 10px;"/>
                     </label>
-                    <label>
+                    <label><!---->
                         Growth Rate 2040:
-                        <input type="number" bind:value={newGdp.growth_rate_2040} style="margin-bottom: 10px;" required />
+                        <input type="number" bind:value={newGdp.growth_rate_2040} style="margin-bottom: 10px;" />
                     </label>
-                    <button type="submit" style="background-color: #0366d6; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Crear</button>
+                    <button type="submit" style="background-color: #0366d6; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;" >Filtrar</button>
                 </form>
             </div>
         </div>
@@ -329,8 +445,17 @@
    
 
 {:else}
-	<p class="container">No hay datos disponibles</p>
+<div style="justify-content: center; text-align: center; margin-top: 20px">
+    <button
+    style=" background-color: #0366d6; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer; "
+    on:click={() => getInitialData()}>
+    Cargar datos
+</button>
+</div>
+<p class="container">No hay datos disponibles</p>
 {/if}
+
+<title> gdp-growth-rates </title>
 
    <!-- Botones fuera de la tabla -->
 <div style="margin-top: 20px; display: flex; justify-content: space-between;">
@@ -347,31 +472,5 @@
 
 
 <style>
-    /* Estilos CSS para la tabla */
-    .table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    .table th, .table td {
-        border: 1px solid #ddd;
-        padding: 8px;
-        text-align: left;
-    }
-    .table th {
-        background-color: #f2f2f2;
-    }
-    .table tr:nth-child(even) {
-        background-color: #f9f9f9;
-    }
-    .table tr:hover {
-        background-color: #f2f2f2;
-    }
-    .delete-button {
-        background-color: #f44336;
-        color: white;
-        border: none;
-        padding: 5px 10px;
-        cursor: pointer;
-        border-radius: 5px;
-    }
+    @import 'styles.css';
 </style>
