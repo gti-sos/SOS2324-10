@@ -88,3 +88,37 @@ input[type='text']:focus,
 input[type='number']:focus {
     border: 3px solid #555;
 }
+
+.search-section {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* Align inputs and button vertically */
+}
+
+.search-section input {
+    flex: 1; /* Inputs will take up remaining space */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right: 10px; /* Add some spacing between inputs */
+}
+
+.search-button {
+    background-color: #0366d6;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.load-button {
+    /* Style for the button to load test data */
+    background-color: #0366d6;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
