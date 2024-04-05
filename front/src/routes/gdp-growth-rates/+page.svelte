@@ -227,9 +227,10 @@
 </script>
 
 
+<title> gdp-growth-rates </title>
 
 {#if gdp && gdp.length > 0}
-    <title> gdp-growth-rates </title>
+    
     <!---->
     <div class="container">
 
