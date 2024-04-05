@@ -330,36 +330,36 @@
                 <form on:submit|preventDefault={createGDP}>
                     <label>
                         Frecuencia:<!---->
-                        <input type="text" bind:value={newGdp.frequency} style="margin-bottom: 10px;" required />
+                        <input type="text" id=frequency placeholder=frequency bind:value={newGdp.frequency} style="margin-bottom: 10px;" required />
                     </label>
                     <label>
                         Unidad:
-                        <input type="text" bind:value={newGdp.unit} style="margin-bottom: 10px;" required />
+                        <input type="text" id=unit placeholder=unit bind:value={newGdp.unit} style="margin-bottom: 10px;" required />
                     </label>
                     <label>
                         NA:
-                        <input type="text" bind:value={newGdp.na_item} style="margin-bottom: 10px;" required />
+                        <input type="text" id=na_item placeholder=na_item bind:value={newGdp.na_item} style="margin-bottom: 10px;" required />
                     </label>
                     <label
                         ><!---->
                         País:
-                        <input type="text" bind:value={newGdp.geo} style="margin-bottom: 10px;" required />
+                        <input type="text" id=geo placeholder=geo bind:value={newGdp.geo} style="margin-bottom: 10px;" required />
                     </label>
                     <label>
                         Año:
-                        <input type="number" bind:value={newGdp.time_period} style="margin-bottom: 10px;" required />
+                        <input type="number" id=time_period placeholder=time_period bind:value={newGdp.time_period} style="margin-bottom: 10px;" required />
                     </label>
                     <label>
                         Valor Obs:
-                        <input type="number" bind:value={newGdp.obs_value} style="margin-bottom: 10px;" required />
+                        <input type="number" id=obs_value placeholder=frequency bind:value={newGdp.obs_value} style="margin-bottom: 10px;" required />
                     </label>
                     <label> 
                         Crecimiento 2030:
-                        <input type="number" bind:value={newGdp.growth_rate_2030} style="margin-bottom: 10px;" required />
+                        <input type="number" id=growth_rate_2030 placeholder=growth_rate_2030 bind:value={newGdp.growth_rate_2030} style="margin-bottom: 10px;" required />
                     </label>
                     <label><!---->
                         Crecimiento 2040:
-                        <input type="number" bind:value={newGdp.growth_rate_2040} style="margin-bottom: 10px;" required />
+                        <input type="number" id=growth_rate_2040 placeholder=growth_rate_2040 bind:value={newGdp.growth_rate_2040} style="margin-bottom: 10px;" required />
                     </label>
                     <button type="submit" style="background-color: #0366d6; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Crear</button>
                 </form>
@@ -367,14 +367,16 @@
         </div>
     {/if} 
 
-    <!--Exito o error-->
-    {#if errorMsg != ""}
-        <hr>ERROR: {errorMsg}
-    {:else}
-        {#if exitoMsg != ""}
-            <hr>EXITO: {exitoMsg}
+    <div class=salida>
+        <!--Exito o error-->
+        {#if errorMsg != ""}
+            <hr>ERROR: {errorMsg}
+        {:else}
+            {#if exitoMsg != ""}
+                <hr>EXITO: {exitoMsg}
+            {/if}
         {/if}
-    {/if}
+    </div>  
 
    
 
