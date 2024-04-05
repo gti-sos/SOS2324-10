@@ -19,9 +19,22 @@
 		gdp: '',
 		volgdp: ''
 	};
+	let filters = {
+		frequency: '',
+		unit: '',
+		age: '',
+		geo: '',
+		time_period: '',
+		obs_value: '',
+		gdp: '',
+		volgdp: ''
+	};
+	let showFilter = false;
 	let showForm = false;
 	let errMsg = '';
 	let exitMsg = '';
+	let from = '';
+	let to = '';
 
 	onMount(() => {
 		getTourisms();
@@ -37,7 +50,6 @@
 				if (response.ok) {
 					getTourisms();
 					exitMsg = 'Datos Cargados Correctamente';
-
 				} else {
 					errMsg = 'La base de datos no está vacía';
 				}
@@ -149,6 +161,52 @@
 		}
 	}
 
+	async function searchListings() {
+		try {
+			// Construye la URL de búsqueda a partir de los filtros proporcionados
+			let searchParams = new URLSearchParams();
+			for (const key in filters) {
+				if (filters[key] !== '') {
+					searchParams.append(key, filters[key]);
+				}
+			}
+			let searchUrl = `${API_ASC}?${searchParams.toString()}`;
+			console.log(searchUrl);
+			// Realiza la petición GET a la API con la URL de búsqueda generada
+			let response = await fetch(searchUrl, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+
+			// Manejo de la respuesta de la API
+			let status = response.status;
+			console.log(`Response status: ${status}`);
+
+			if (response.ok) {
+				// Actualiza los datos después de una búsqueda exitosa
+				exitMsg = 'Mostrando los datos solicitados';
+				showFilter = false;
+				let data = await response.json();
+				tourisms = data;
+				console.log(data);
+			} else {
+				// Manejo de errores
+				if (response.status == 404) {
+					errMsg = 'No se encontraron datos';
+				} else {
+					errMsg = `Error ${response.status}: ${response.statusText}`;
+				}
+			}
+		} catch (error) {
+			errMsg = error;
+			console.log(error);
+		}
+	}
+	
+	
+
 	// function showDetails(index) {
 	// 	selectedTourismIndex = index;
 	// }
@@ -188,7 +246,6 @@
 		<table>
 			<thead>
 				<tr>
-					
 					<!-- <th>id</th> -->
 					<!-- Aquí colocamos primero la columna del ID -->
 					{#each Object.keys(tourisms[0]) as key}
@@ -234,7 +291,7 @@
 							>
 								Detalles
 							</a>
-						</td>	
+						</td>
 						<td>
 							<button
 								style="background-color: #d32f2f; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
@@ -259,6 +316,12 @@
 				on:click={() => {
 					deleteTourismAll();
 				}}>Eliminar Todos</button
+			>
+			<button
+				style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+				on:click={() => {
+					showFilter = true;
+				}}>Búsqueda Filtrada</button
 			>
 		</div>
 	</div>
@@ -371,6 +434,59 @@
 			</div>
 		</div>
 	{/if}
+	{#if showFilter}
+		<div class="modal">
+			<div class="modal-content">
+				<span
+					class="close"
+					on:click={() => {
+						showFilter = false;
+					}}>&times;</span
+				>
+				<h2 style="color: #6d7fcc;">Búsqueda Filtrada</h2>
+				<form on:submit|preventDefault={searchListings}>
+					<label>
+						Frequency:
+						<input type="text" bind:value={filters.frequency} style="margin-bottom: 10px;" />
+					</label>
+					<label>
+						Unit:
+						<input type="text" bind:value={filters.unit} style="margin-bottom: 10px;" />
+					</label>
+					<label>
+						Age:
+						<input type="text" bind:value={filters.age} style="margin-bottom: 10px;" />
+					</label>
+					<label>
+						Geo:
+						<input type="text" bind:value={filters.geo} style="margin-bottom: 10px;" />
+					</label>
+					<label>
+						Time Period:
+						<input type="text" bind:value={filters.time_period} style="margin-bottom: 10px;" />
+					</label>
+					<label>
+						Obs Value:
+						<input type="text" bind:value={filters.obs_value} style="margin-bottom: 10px;" />
+					</label>
+					<label>
+						GDP:
+						<input type="text" bind:value={filters.gdp} style="margin-bottom: 10px;" />
+					</label>
+					<label>
+						Volgdp:
+						<input type="text" bind:value={filters.volgdp} style="margin-bottom: 10px;" />
+					</label>
+					<button
+						type="submit"
+						style="background-color: #6d7fcc; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+						>Buscar</button
+					>
+				</form>
+			</div>
+		</div>
+	{/if}
+
 	{#if errMsg != ''}
 		<hr />
 		ERROR: {errMsg}
