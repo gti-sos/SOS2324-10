@@ -10,11 +10,19 @@
 
     let gdp = [];
     let showForm = false;
-    let newGdp = {geo: "", time_period: "", dataflow: "", last_update: "",
-            frequency: "", unit: "", na_g: "", obs_value: "", growth_rate_2030: "",
+    let showFilter = false;
+    let newGdp = {geo: "", time_period: "",
+            frequency: "", unit: "", na_item: "", obs_value: "", growth_rate_2030: "",
+            growth_rate_2040: ""};
+    let filteredGdp = {geo: "", time_period: "",
+            frequency: "", unit: "", na_item: "", obs_value: "", growth_rate_2030: "",
             growth_rate_2040: ""};
     let errorMsg = '';
     let exitoMsg = '';
+
+    /**Rango*/
+    let from = "";
+    let to = "";
 
     /**Paginacion*/
     let currentPage = 1;
@@ -92,6 +100,83 @@
         }
     }
 
+    // ------------------------------------------- FILTRO ----------------------------------------------------------
+    async function getFilter() {
+    try {
+        let searchParams = new URLSearchParams();
+        
+        // Agregar los parámetros de búsqueda solo si tienen un valor
+        for (const key in filteredGdp) {
+            if (filteredGdp[key] !== '') {
+                searchParams.append(key, filteredGdp[key]);
+            }
+        }
+
+        if (from !== '' && !isNaN(from)) {
+            searchParams.append('from', from);
+        }
+        if (to !== '' && !isNaN(to)) {
+            searchParams.append('to', to);
+        }
+
+        // Construir la URL de búsqueda solo si hay parámetros de búsqueda
+        let searchUrl = `${API_MRF}/search`;
+        if (searchParams.toString() !== '') {
+            searchUrl += `?${searchParams.toString()}`;
+        }
+
+         // Agregar paginación a la URL de búsqueda
+        searchUrl += `&limit=${pageSize}&offset=${(currentPage - 1) * pageSize}`;
+
+        console.log(searchUrl);
+
+        // Realizar la petición GET a la API con la URL de búsqueda generada
+        let response = await fetch(searchUrl, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        console.log(`Response status: ${response.status}`);
+
+        if (response.ok) {
+            // Actualizar los datos después de una búsqueda exitosa
+            let data = await response.json();
+            gdp = data;
+            showFilter = false;
+        } else {
+            // Manejo de errores
+            if (response.status == 400) {
+                errorMsg = 'Estructura de datos incorrecta';
+            } else if (response.status == 404) {
+                errorMsg = 'Dato no encontrado';
+            }
+        }
+    } catch (error) {
+        errorMsg = error;
+        console.error(error);
+    }
+}
+
+    async function cleanFilter(){
+            filteredGdp.frequency= "",
+            filteredGdp.unit= "",
+            filteredGdp.na_item= "",
+            filteredGdp.geo= "",
+            filteredGdp.time_period= "",
+            filteredGdp.obs_value= "",
+            filteredGdp.growth_rate_2030= "",
+            filteredGdp.growth_rate_2040= "",
+            from ="",
+            to = "",
+            exitoMsg = "Filtros limpiados correctamente";
+            errorMsg = "";
+            exitoMsg = "";
+            getGDP();
+    };  
+
+    /**
     async function searchGDP() {
         const country = document.getElementById('countryInput').value.trim();
         const from = document.getElementById('fromInput').value.trim();
@@ -132,7 +217,7 @@
             errorMsg = e;
         }
     }
-
+    */
 
     async function createGDP(){
         try{
@@ -234,15 +319,28 @@
     <!---->
     <div class="container">
 
-        <!-- Botón para realizar la búsqueda -->
-        <div class="search-section">
-            <div style="margin-bottom: 20px; display: flex; justify-content: space-between;">
-                <input type="text" id="fromInput" placeholder="From">
-                <input type="text" id="toInput" placeholder="To">
-                <input type="text" id="countryInput" placeholder="País">
-                <button on:click={() => {searchGDP();}}>Buscar</button>
-            </div>
-        </div>
+        
+        <div style="margin-bottom: 20px; display: flex; justify-content: space-between;">
+			
+            <!-- Botón para realizar la búsqueda -->
+            <button
+				style="background-color: #0366d6; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+				on:click={() => {
+					showFilter = true;
+				}}
+				>Filtros
+			</button>
+
+            <!-- Botón para limpiar la búsqueda -->
+            <button
+				style="background-color: #0366d6; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+				on:click={() => {
+					cleanFilter()
+				}}
+				>Borrar filtros
+			</button>
+		</div>
+      
 
         <!-- Lista de objetos-->
         <table>
@@ -367,6 +465,69 @@
         </div>
     {/if} 
 
+
+    {#if showFilter}
+		<div class="modal">
+			<div class="modal-content">
+				<span
+					class="close"
+					on:click={() => {
+						showFilter = false;
+					}}>&times;</span
+				>
+				<h2 style="color: #0366d6;">Aplicar filtros</h2>
+				<form on:submit|preventDefault={getFilter}>
+					<label>
+                        Frecuencia:<!---->
+                        <input type="text" id=frequency placeholder="frequency" bind:value={filteredGdp.frequency} style="margin-bottom: 10px;"  />
+                    </label>
+                    <label>
+                        Unidad:
+                        <input type="text" id=unit placeholder="unit" bind:value={filteredGdp.unit} style="margin-bottom: 10px;"  />
+                    </label>
+                    <label>
+                        NA:
+                        <input type="text" id=na_item placeholder="na_item" bind:value={filteredGdp.na_item} style="margin-bottom: 10px;"  />
+                    </label>
+                    <label
+                        ><!---->
+                        País:
+                        <input type="text" id=geo placeholder="geo" bind:value={filteredGdp.geo} style="margin-bottom: 10px;"  />
+                    </label>
+                    <label>
+                        Año:
+                        <input type="number" id=time_period placeholder="time_period" bind:value={filteredGdp.time_period} style="margin-bottom: 10px;"  />
+                    </label>
+                    <label>
+                        Valor Obs:
+                        <input type="number" id=obs_value placeholder="frequency" bind:value={filteredGdp.obs_value} style="margin-bottom: 10px;"  />
+                    </label>
+                    <label> 
+                        Crecimiento 2030:
+                        <input type="number" id=growth_rate_2030 placeholder="growth_rate_2030" bind:value={filteredGdp.growth_rate_2030} style="margin-bottom: 10px;"  />
+                    </label>
+                    <label><!---->
+                        Crecimiento 2040:
+                        <input type="number" id=growth_rate_2040 placeholder="growth_rate_2040" bind:value={filteredGdp.growth_rate_2040} style="margin-bottom: 10px;"  />
+                    </label>
+                    <label><!---->
+                        Desde (Año):
+                        <input type="number" id=from placeholder="desde" bind:value={from} style="margin-bottom: 10px;"  />
+                    </label>
+                    <label><!---->
+                        Hasta (Año):
+                        <input type="number" id=to placeholder="hasta" bind:value={to} style="margin-bottom: 10px;"  />
+                    </label>
+					<button
+						type="submit"
+						style="background-color: #0366d6; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+						>Filtrar</button
+					>
+				</form>
+			</div>
+		</div>
+	{/if}
+
     <div class=salida>
         <!--Exito o error-->
         {#if errorMsg != ""}
@@ -381,11 +542,13 @@
    
 
 {:else}
-    <button
-    style=" background-color: #0366d6; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer; "
-    on:click={() => getInitialGDP()}>
-    Cargar datos de prueba
-    </button>
+    <div style="justify-content: center; text-align: center; margin-top: 20px">
+        <button
+        style=" background-color: #0366d6; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer; "
+        on:click={() => getInitialGDP()}>
+        Cargar datos de prueba
+        </button>
+    </div>
     <p class="container">No hay datos disponibles</p>
 {/if}
 
