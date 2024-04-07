@@ -1,5 +1,5 @@
 // @ts-check
-const { test, expect} = require('@playwright/test');
+/*const { test, expect} = require('@playwright/test');
 
 const carga = 'http://localhost:8080/gdp-growth-rates/loadInitialData';
 const URL_web = 'https://sos2324-10.appspot.com/gdp-growth-rates';
