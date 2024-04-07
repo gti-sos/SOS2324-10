@@ -164,6 +164,7 @@
 				await getCars();
 				successMsg = 'Todos los datos fueron eliminados';
 				errorMsg = '';
+				cars = [];
 			} else {
 				if (response.status == 404) {
 					errorMsg = 'No existen datos en la base de datos';
