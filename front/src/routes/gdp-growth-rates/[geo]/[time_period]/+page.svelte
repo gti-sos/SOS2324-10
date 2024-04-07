@@ -3,17 +3,21 @@
     import { page } from '$app/stores'; 
     import { dev } from "$app/environment";
     import { onMount } from 'svelte';
-    import { Button, Col, Row, Input } from '@sveltestrap/sveltestrap';
-
 
     let API_MRF = "/api/v2/gdp-growth-rates"; 
     if(dev)
         API_MRF = "http://localhost:8080" + API_MRF;
+
+    let exitoMsg = '';
     let errorMsg = '';
     let dato = {};
+    let nuevoDato = {};
+    let showForm = false;
+
     let geo = $page.params.geo;
     let time_period = $page.params.time_period;
 
+    /**
     let formData = {
         frequency: '',
         unit: '',
@@ -22,12 +26,13 @@
         obs_value: 0,
         growth_rate_2030: 0,
         growth_rate_2040: 0
-    };
+    };*/
 
-    onMount(
-        fetchGeoDetails
-    );
+    onMount(async () => {
+        await getGDP(geo, time_period);
+    });
 
+    /**
     async function fetchGeoDetails() {
         try {
             const response = await fetch(API_MRF+`/${geo}/${time_period}`,{
@@ -41,16 +46,21 @@
             console.error('Error al obtener los detalles de la geo:', error);
         }
     }
-    /**
+    */
+   
     async function getGDP(geo, time_period) {
         try {
             let response = await fetch(API_MRF + '/' + geo + '/' + time_period, {
-                method: 'GET'
+                method: 'GET',
+                headers: {
+					'Content-Type': 'application/json'
+				}
             });
-
+            console.log("URL Accedida: " +API_MRF + '/' + geo + '/' + time_period);
             if (response.status == 200) {
                 let res = await response.json();
-                dato = res[0];
+                dato = res;
+                console.log("Dato: "+ dato);
             } else {
                 if (response.status == 400) {
                 errorMsg = 'Error en la estructura de los datos';
@@ -67,7 +77,7 @@
         } catch (e) {
             errorMsg = e;
         }
-    }**/
+    }
 
     async function updateGeoDetails() {
         try {
@@ -76,62 +86,119 @@
                                         headers: {
                                         "Content-Type": "application/json"
                                         },
-                                        body: JSON.stringify(formData)
+                                        body: JSON.stringify(dato)
                                          }); 
             if(response.ok){
-                errorMsg = "Dato actualizado correctamente"
-                window.location.href = "https://sos2324-10.appspot.com/gdp-growth-rates";
+                nuevoDato = JSON.stringify(dato);
+                exitoMsg = "Dato actualizado correctamente"
+                showForm = false;
+               await getGDP(geo, time_period);
             }else if(!response.ok) {
                 if(response.status == 400){
                     errorMsg = "Todos los campos deben ser rellenados. El pais y el año deben coincidir con los del dato a actualizar";
                 } else if(response.status == 405) {
                     errorMsg = "Método no permitido";
+                } else if (response.status == 409) {
+                    errorMsg = "Ya existe una entrada con ese país y año";
+                } else if(response.status == 404){
+				    errorMsg = "Dato no encontrado";
                 }
             }
         } catch (error) {
-            console.error('Error al actualizar los detalles de la geo:', error);
+            errorMsg = error;
         }
     }
 </script>
 
 <h1>Modificar datos de {geo} en el año {time_period}</h1>
-
-<Row>
-    <Col md="6">
-        <Input label="Frecuencia" bind:value="{formData.frequency}" placeholder="Ingrese la frecuencia" />
-    </Col>
-    <Col md="6">
-        <Input label="Unidad" bind:value="{formData.unit}" placeholder="Ingrese la unidad" />
-    </Col>
-</Row>
-<Row>
-    <Col md="6">
-        <Input label="PIB" bind:value="{formData.na_item}" placeholder="Ingrese el PIB" />
-    </Col>
-    <Col md="6">
-        <Input label="País" bind:value="{formData.geo}" placeholder="Ingrese el país" />
-    </Col>
-</Row>
-<Row>
-    <Col md="6">
-        <Input type="number" label="Año" bind:value="{formData.time_period}" placeholder="Ingrese el año" />
-    </Col>
-    <Col md="6">
-        <Input type="number" step="0.01" label="Porcentaje de incremento" bind:value="{formData.obs_value}" placeholder="Ingrese el porcentaje de incremento" />
-    </Col>
-</Row>
-<Row>
-    <Col md="6">
-        <Input type="number" label="Previsión 2030" bind:value="{formData.growth_rate_2030}" placeholder="Ingrese la previsión para 2030" />
-    </Col>
-    <Col md="6">
-        <Input type="number" label="Previsión 2040" bind:value="{formData.growth_rate_2040}" placeholder="Ingrese la previsión para 2040" />
-    </Col>
-</Row>
-<Button color="primary" on:click="{updateGeoDetails}">Guardar cambios</Button>
-
-
-
-{#if errorMsg != ""}
-<hr>ERROR: {errorMsg}
+{#if !showForm}
+    <!-- Vista de detalles del vehículo -->
+    {#if Object.keys(dato).length > 0}
+        <div class="container">
+            <div class="card">
+                <table>
+                    <thead>
+                        <th> Atributos </th>
+                        <th> Valor </th>
+                    </thead>
+                    <tbody>
+                        {#each Object.entries(dato) as [key, value]}
+                            <tr>
+                                <td class="attribute">{key}:</td>
+                                <td class="value">
+                                    {#if typeof value === 'object'}
+                                        {JSON.stringify(value)}
+                                    {:else}
+                                        {value}
+                                    {/if}
+                                </td>
+                            </tr>
+                        {/each}
+                    </tbody>
+                </table>
+                <div style="text-align:center ;margin-top: 20px; display: flex; justify-content: space-between;">
+                    <button
+                        style="background-color: #0366d6; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+                        
+						on:click={() => {  showForm = true; }}
+                    >
+                        Modificar dato
+                    </button>
+                </div>
+            </div>
+        </div>
+    {:else}
+        <p class="container">No hay datos disponibles</p>
+    {/if}
+{:else}
+    <!-- Formulario para modificar la entrada -->
+    <div class="container">
+        <div class="card">
+            <h2>Modificar dato</h2>
+            <form on:submit|preventDefault={updateGeoDetails}>
+				<table>
+					<tbody>
+						{#each Object.entries(dato) as [key, value]}
+							<tr>
+								<td class="attribute">{key}:</td>
+								<td class="value">
+									<input type="text" bind:value={dato[key]} />
+								</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+				<div style="margin-top: 20px; display: flex; justify-content: space-between;">
+					<button
+						type="submit"
+						style="text-align:center ;background-color: #0366d6; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+						on:click={() => { showForm = false; updateGeoDetails(); }}
+					>
+						Guardar Cambios
+					</button>
+					<button
+						style="background-color: #dc3545; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+						on:click={() => { showForm = false; }}
+					>
+						Cancelar
+					</button>
+				</div>
+			</form>
+			
+        </div>
+    </div>
 {/if}
+
+<!--Exito o error-->
+{#if errorMsg != ""}
+    <hr>ERROR: {errorMsg}
+{:else}
+    {#if exitoMsg != ""}
+        <hr>EXITO: {exitoMsg}
+    {/if}
+{/if} 
+
+
+<style>
+    @import 'styles_2.css';
+</style>

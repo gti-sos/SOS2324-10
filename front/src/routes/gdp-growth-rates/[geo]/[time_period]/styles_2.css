@@ -1,0 +1,63 @@
+.card {
+    background-color: #ffffff;
+    border: 1px solid #a4caef;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2; /* Gris claro */
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2; /* Gris claro */
+}
+
+tr:hover {
+    background-color: #e2e2e2; /* Gris más claro */
+}
+
+.value {
+    width: 50%; /* Ancho de la columna de valores */
+}
+
+/* Estilo para los títulos */
+h2 {
+    text-align: center;
+    color: #0366d6; /* Azul */
+}
+
+/* Estilos para los inputs del formulario */
+input[type='text'] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+}
+
+input[type='text']:focus {
+    border: 3px solid #555;
+}
+
+/* Estilo para los mensajes de error */
+.error {
+    color: red;
+    font-weight: bold;
+}
