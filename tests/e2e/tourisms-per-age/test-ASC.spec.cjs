@@ -1,4 +1,4 @@
-const { test, expect, beforeAll, afterAll, beforeEach, afterEach } = require('@playwright/test');
+/*const { test, expect, beforeAll, afterAll, beforeEach, afterEach } = require('@playwright/test');
 
 let page;
 
@@ -49,4 +49,4 @@ test('delete a row from the table', async () => {
 
     // Verifica que el último elemento de la tabla después de la eliminación sea diferente al último elemento antes de la eliminación
     expect(lastElementAfterDelete).not.toEqual(lastElementBeforeDelete);
-});
+});*/

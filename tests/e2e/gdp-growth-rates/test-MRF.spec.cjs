@@ -1,4 +1,5 @@
 // @ts-check
+
 const { test, expect } = require('@playwright/test');
 
 test('Carga página principal', async ({ page }) => {

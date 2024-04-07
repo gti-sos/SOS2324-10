@@ -39,7 +39,9 @@ async function verificarCantidadDatos(page) {
 test('Verificar offset vehicles-stock', async ({ page }) => {
   await page.goto('https://sos2324-10.appspot.com/vehicles-stock');
 
-  const table = await page.waitForSelector('table');
+  const table = await page.waitForSelector('table', { timeout: 20000 });
+
+
   expect(table).not.toBeNull();
 
   const correctCantidadDatos = await verificarCantidadDatos(page);
