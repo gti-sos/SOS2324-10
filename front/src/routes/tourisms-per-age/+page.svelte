@@ -33,11 +33,14 @@
 	let showForm = false;
 	let errMsg = '';
 	let exitMsg = '';
-	let from = '';
-	let to = '';
 
-	onMount(() => {
-		getTourisms();
+	let page = 1;
+	let totalDatos = 0;
+	let totalPages = 1;
+
+	onMount(async () => {
+		await getTourisms();
+		await getTourismsTotal();
 	});
 
 	async function loadInitialData() {
@@ -60,30 +63,6 @@
 			errMsg = error;
 		}
 	}
-
-	async function getTourisms() {
-		console.log(tourisms);
-		try {
-			let response = await fetch(API_ASC, {
-				method: 'GET'
-			});
-			if (response.ok) {
-				let data = await response.json();
-				tourisms = data;
-				console.log(data);
-				errMsg = '';
-			} else {
-				if (response.status == 404) {
-					errMsg = 'No hay datos en la base de datos';
-				} else {
-					errMsg = `Error ${response.status}: ${response.statusText}`;
-				}
-			}
-		} catch (e) {
-			errMsg = e;
-		}
-	}
-
 	async function createTourism() {
 		try {
 			await getTourisms();
@@ -112,6 +91,59 @@
 			errMsg = e;
 		}
 	}
+	async function getTourismsTotal() {
+		try {
+			let response = await fetch(API_ASC + '?limit=100', {
+				method: 'GET'
+			});
+			let data = await response.json();
+			totalDatos = data.length;
+			totalPages = Math.ceil(totalDatos / 10);
+		} catch (e) {
+			errMsg = e;
+		}
+	}
+
+	function goToPageAnt() {
+		if (page > 1) {
+			page = page - 1;
+			getTourisms();
+		}
+	}
+
+	function goToPageSig() {
+		if (page < totalPages) {
+			page = page + 1;
+			getTourisms();
+		}
+	}
+
+	async function getTourisms() {
+		await getTourismsTotal();
+		try {
+			let response = await fetch(API_ASC + '?page=' + page, {
+				method: 'GET',
+				headers: {
+					'Cache-Control': 'no-cache',
+					Pragma: 'no-cache'
+				}
+			});
+			if (response.ok) {
+				let data = await response.json();
+				tourisms = data;
+				console.log(data);
+				errMsg = '';
+			} else {
+				if (response.status == 404) {
+					errMsg = 'No hay datos en la base de datos';
+				} else {
+					errMsg = `Error ${response.status}: ${response.statusText}`;
+				}
+			}
+		} catch (e) {
+			errMsg = e;
+		}
+	}
 
 	async function deleteTourismAll() {
 		try {
@@ -123,6 +155,7 @@
 				await getTourisms();
 				exitMsg = 'Todos los datos fueron eliminados';
 				errMsg = '';
+				tourisms = [];
 			} else {
 				if (response.status == 404) {
 					errMsg = 'No existen datos en la base de datos';
@@ -204,8 +237,6 @@
 			console.log(error);
 		}
 	}
-	
-	
 
 	// function showDetails(index) {
 	// 	selectedTourismIndex = index;
@@ -243,6 +274,11 @@
 <!-- Estilo y formato de la tabla -->
 {#if tourisms && tourisms.length > 0}<!---->
 	<div class="container">
+		<div style="margin-bottom: 20px; display: flex; justify-content: space-between;">
+			<button disabled={page === 1} on:click={() => goToPageAnt()}>Anterior</button>
+			<span>Página {page}</span>
+			<button disabled={tourisms.length < 10} on:click={() => goToPageSig()}>Siguiente</button>
+		</div>
 		<table>
 			<thead>
 				<tr>
@@ -463,19 +499,19 @@
 					</label>
 					<label>
 						Time Period:
-						<input type="text" bind:value={filters.time_period} style="margin-bottom: 10px;" />
+						<input type="number" bind:value={filters.time_period} style="margin-bottom: 10px;" />
 					</label>
 					<label>
 						Obs Value:
-						<input type="text" bind:value={filters.obs_value} style="margin-bottom: 10px;" />
+						<input type="number" bind:value={filters.obs_value} style="margin-bottom: 10px;" />
 					</label>
 					<label>
 						GDP:
-						<input type="text" bind:value={filters.gdp} style="margin-bottom: 10px;" />
+						<input type="number" bind:value={filters.gdp} style="margin-bottom: 10px;" />
 					</label>
 					<label>
 						Volgdp:
-						<input type="text" bind:value={filters.volgdp} style="margin-bottom: 10px;" />
+						<input type="number" bind:value={filters.volgdp} style="margin-bottom: 10px;" />
 					</label>
 					<button
 						type="submit"
