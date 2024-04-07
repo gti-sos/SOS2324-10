@@ -350,7 +350,7 @@ function API_ASC_v2(app, db_ASC) {
 
         // Paginación
         const page = queryParams.page || 1; // Página predeterminada: 1
-        const limit = queryParams.limit || 40; // Límite predeterminado: 10
+        const limit = queryParams.limit || 10; // Límite predeterminado: 10
         const skip = (page - 1) * limit; // Calcular el número de documentos a saltar
 
         // Objeto para almacenar parámetros de consulta parseados

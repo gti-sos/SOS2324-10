@@ -79,7 +79,7 @@ function backend_MRF_v2(app, db_MRF){
                         if (countError) {
                             res.sendStatus(500);
                         } else {
-                            // Enviar resultados paginados y el total de resultados
+                            
                             res.status(200).json({ data: results, total: totalCount });
                         }
                     });
@@ -87,6 +87,78 @@ function backend_MRF_v2(app, db_MRF){
             });
         
     });
+
+    app.get(API_BASE + "/search", (req, res) => {
+        const queryParams = req.query;
+        const limit = parseInt(queryParams.limit) || 10; // Tamaño predeterminado de la página
+        const offset = parseInt(queryParams.offset) || 0; // Desplazamiento predeterminado
+        delete queryParams.limit;
+        delete queryParams.offset;
+    
+        // Convertir los atributos numéricos a enteros si están presentes
+        const numericAttributes = ["time_period", "obs_value", "growth_rate_2030", "growth_rate_2040"];
+        numericAttributes.forEach(attr => {
+            if (queryParams[attr]) {
+                queryParams[attr] = parseInt(queryParams[attr]);
+                if (isNaN(queryParams[attr])) {
+                    return res.sendStatus(400);
+                }
+            }
+        });
+
+        if (queryParams.from && queryParams.to) {
+            queryParams.time_period = { $gte: parseInt(queryParams.from), $lte: parseInt(queryParams.to) };
+            delete queryParams.from;
+            delete queryParams.to;
+        }
+    
+        // Consultar la base de datos con el filtro construido y la paginación
+        db_MRF.find(queryParams, { _id: 0, id: 0 })
+            .skip(offset)
+            .limit(limit)
+            .exec((error, results) => {
+            if (error) {
+                res.sendStatus(500);
+            } else if (results.length === 0) {
+                res.sendStatus(404);
+            } else {
+                return res.send(results);
+            }
+        });
+    });
+    
+    /**
+    app.get(API_BASE + "/search", (req, res) => {
+        const queryParams = req.query;
+    
+        // Convertir los atributos numéricos a enteros si están presentes
+        const numericAttributes = ["time_period", "obs_value", "growth_rate_2030", "growth_rate_2040"];
+        numericAttributes.forEach(attr => {
+          if (queryParams[attr]) {
+            queryParams[attr] = parseInt(queryParams[attr]);
+            if (isNaN(queryParams[attr])) {
+              return res.sendStatus(400);
+            }
+          }
+        });
+    
+        // Consultar la base de datos con el filtro construido
+        db_MRF.find(queryParams, { _id: 0, id: 0 }, (err, filteredData) => {
+          if (err) {
+            return res.sendStatus(500);
+          }
+    
+          if (filteredData.length === 0) {
+            return res.sendStatus(404);
+          }else{
+            return res.send(filteredData);
+          }
+    
+          
+        });
+    });*/
+    
+    
 
     app.get(API_BASE + "/:geo", (req, res) => {
         const geo = req.params.geo;
