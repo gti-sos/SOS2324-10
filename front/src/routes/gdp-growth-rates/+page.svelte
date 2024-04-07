@@ -449,7 +449,7 @@
                     </label>
                     <label>
                         Valor Obs:
-                        <input type="number" id=obs_value placeholder="frequency" bind:value={newGdp.obs_value} style="margin-bottom: 10px;" required />
+                        <input type="number" id=obs_value placeholder="valor_obs" bind:value={newGdp.obs_value} style="margin-bottom: 10px;" required />
                     </label>
                     <label> 
                         Crecimiento 2030:
