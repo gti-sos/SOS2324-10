@@ -40,11 +40,7 @@
   "homepage": "https://github.com/gti-sos/SOS2324-10#readme",
   "type": "module",
   "devDependencies": {
-<<<<<<< HEAD
     "@playwright/test": "^1.42.1",
-=======
-    "@playwright/test": "^1.43.0",
->>>>>>> dd0e486 (mod)
     "@types/node": "^20.12.2"
   }
 }
