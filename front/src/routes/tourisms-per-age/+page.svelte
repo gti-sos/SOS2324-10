@@ -271,6 +271,8 @@
 	// }
 </script>
 
+<title> tourisms-per-age </title>
+
 <!-- Estilo y formato de la tabla -->
 {#if tourisms && tourisms.length > 0}<!---->
 	<div class="container">
@@ -297,7 +299,7 @@
 			</thead>
 			<tbody>
 				{#each tourisms as dato}
-					<tr>
+					<tr class="prueba">
 						<!-- <td>{dato.id}</td> -->
 						{#each Object.entries(dato) as [key, value]}
 							<!-- Usamos Object.entries para mantener el orden de las propiedades -->
@@ -349,6 +351,7 @@
 			>
 			<button
 				style="background-color: #d32f2f; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+				id="deleteAllButton"
 				on:click={() => {
 					deleteTourismAll();
 				}}>Eliminar Todos</button
