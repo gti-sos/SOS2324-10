@@ -1,26 +1,29 @@
 // @ts-check
-/*const { test, expect} = require('@playwright/test');
+const { test, expect} = require('@playwright/test');
 
 const carga = 'http://localhost:8080/gdp-growth-rates/loadInitialData';
 const URL_web = 'https://sos2324-10.appspot.com/gdp-growth-rates';
-const URL_test = 'http://localhost:8080/gdp-growth-rates';
+
 
 //Cargar página
 test('Carga página principal', async ({ page }) => {
   test.setTimeout(60000);
-
-  await page.goto(URL_test);
+  await page.goto(carga);
+  await page.goto(URL_web);
+ 
 
   await expect(page).toHaveTitle('gdp-growth-rates');
 
-  await expect(page).toHaveURL(URL_test);
+  await expect(page).toHaveURL(URL_web);
 });
 
 
 //Lista de todos los recursos
 test('Listar todos los elementos correctamente', async ({ page }) => {
   test.setTimeout(60000);
-  await page.goto(URL_test);
+  await page.goto(carga);
+  await page.goto(URL_web);
+  
 
   await page.click('button:has-text("Cargar datos de prueba")');
 
@@ -36,11 +39,13 @@ test('Listar todos los elementos correctamente', async ({ page }) => {
   }
 });
 
-
+/*
 //Crear nuevo dato
 test('Crear nuevo dato', async ({ page }) => {
   test.setTimeout(90000);
-  await page.goto(URL_test);
+  await page.goto(carga);
+  await page.goto(URL_web);
+  
 
   await page.click('button:has-text("Crear Entrada")');
 
@@ -58,12 +63,14 @@ test('Crear nuevo dato', async ({ page }) => {
 
   await expect(page.getByText('EXITO: Dato creado correctamente')).toBeVisible();
 });
-
+*/
 
 //Eliminar dato
 test('Eliminar dato', async ({ page }) => {
   test.setTimeout(60000);
-  await page.goto(URL_test);
+  await page.goto(carga);
+  await page.goto(URL_web);
+  
 
   await page.click('tbody tr:first-child button:has-text("Eliminar")');
 
@@ -74,17 +81,19 @@ test('Eliminar dato', async ({ page }) => {
 //Eliminar todos los datos
 test('Eliminar todos los datos', async ({ page }) => {
   test.setTimeout(60000);
-  await page.goto(URL_test);
+  await page.goto(carga);
+  await page.goto(URL_web);
 
   await page.click('button:has-text("Eliminar Todos")');
 
   await expect(page.getByText('EXITO: Todos los datos fueron eliminados')).toBeVisible();
 });
 
-/**
+/*
 test('Paginacion correcta', async ({ page }) => {
   test.setTimeout(80000);
-  await page.goto(URL_test);
+  await page.goto(carga);
+  await page.goto(URL_web);
   await page.waitForLoadState('load');
   await page.waitForTimeout(1000);
 
