@@ -40,8 +40,13 @@
 
 	let showSearchForm = false;
 
-	onMount(() => {
-		getCars();
+	let page = 1;
+	let totalPages = 1;
+	let totalDatos = 0;
+
+	onMount(async () => {
+		await getCars();
+		await getCarsTotal();
 	});
 
 	async function loadInitialData() {
@@ -64,11 +69,29 @@
 			errorMsg = error;
 		}
 	}
-	async function getCars() {
-		console.log(cars);
+
+	async function getCarsTotal() {
 		try {
-			let response = await fetch(API_ASB, {
+			let response = await fetch(API_ASB + '?limit=100', {
 				method: 'GET'
+			});
+			let dataT = await response.json();
+			totalDatos = dataT.length;
+			totalPages = Math.ceil(totalDatos / 10);
+		} catch (e) {
+			errorMsg = e;
+		}
+	}
+
+	async function getCars() {
+		await getCarsTotal();
+		try {
+			let response = await fetch(API_ASB + '?page=' + page, {
+				method: 'GET',
+				headers: {
+					'Cache-Control': 'no-cache',
+					Pragma: 'no-cache'
+				}
 			});
 			if (response.ok) {
 				let data = await response.json();
@@ -84,6 +107,23 @@
 			}
 		} catch (e) {
 			errorMsg = e;
+		}
+	}
+
+	// Función para ir a la página anterior
+	function prevPage() {
+		getCarsTotal();
+		if (page > 1) {
+			page--;
+			getCars();
+		}
+	}
+
+	// Función para ir a la página siguiente
+	function nextPage() {
+		if (page < totalPages) {
+			page++;
+			getCars();
 		}
 	}
 
@@ -209,6 +249,20 @@
 </script>
 
 {#if cars && cars.length > 0}
+	<div style="margin-top: 20px; display: flex; justify-content: space-between;">
+		<button
+			style="background-color: #A9CCE3; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
+			on:click={() => prevPage()}
+			>Anterior
+		</button>
+		<span>Página {page}</span>
+		<button
+			style="background-color: #A9CCE3; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
+			on:click={() => nextPage()}
+		>
+			Siguiente
+		</button>
+	</div>
 	<div class="container">
 		<div style="margin-bottom: 20px; display: flex; justify-content: space-between;">
 			<div style="margin-bottom: 20px; display: flex; justify-content: space-between;">
@@ -222,86 +276,97 @@
 				</button>
 			</div>
 			{#if showSearchForm}
-			{#if showSearchForm}
-			<div class="search-form-container">
-				<div class="search-form">
-					<!-- Formulario de búsqueda -->
-					<form on:submit|preventDefault={searchCars}>
-						<label>
-							Freq:
-							<input type="text" bind:value={searchCriteria.freq} style="margin-bottom: 10px;" />
-						</label>
-						<label>
-							Unit:
-							<input type="text" bind:value={searchCriteria.unit} style="margin-bottom: 10px;" />
-						</label>
-						<label>
-							Motor NRG:
-							<input
-								type="text"
-								bind:value={searchCriteria.motor_nrg}
-								style="margin-bottom: 10px;"
-							/>
-						</label>
-						<label>
-							Geo:
-							<input type="text" bind:value={searchCriteria.geo} style="margin-bottom: 10px;" />
-						</label>
-						<label>
-							Time Period:
-							<input
-								type="number"
-								bind:value={searchCriteria.time_period}
-								style="margin-bottom: 10px;"
-							/>
-						</label>
-						<label>
-							Obs Value:
-							<input
-								type="number"
-								bind:value={searchCriteria.obs_value}
-								style="margin-bottom: 10px;"
-							/>
-						</label>
-						<label>
-							Obs Flag:
-							<input
-								type="text"
-								bind:value={searchCriteria.obs_flag}
-								style="margin-bottom: 10px;"
-							/>
-						</label>
-						<label>
-							Millions of Passengers per Kilometre:
-							<input
-								type="number"
-								bind:value={searchCriteria.millions_of_passenger_per_kilometres}
-								style="margin-bottom: 10px;"
-							/>
-						</label>
-						<label>
-							Road Deaths per Million Inhabitants:
-							<input
-								type="number"
-								bind:value={searchCriteria.road_deaths_per_million_inhabitants}
-								style="margin-bottom: 10px;"
-							/>
-						</label>
-						<button
-							style="background-color: #FFB728; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
-							type="submit">Aplicar</button
-						>
-						<button style="background-color: #E55454; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;" 
-							class="close-button" on:click={() => showSearchForm = false}>
-							<span class="material-icons">X</span>
-						</button>
-					</form>
-				</div>
-				<!-- Controlador de eventos para cerrar el formulario cuando se hace clic fuera de él -->
-				<div class="overlay" on:click={() => showSearchForm = false}></div>
-			</div>
-		{/if}
-		
+				{#if showSearchForm}
+					<div class="search-form-container">
+						<div class="search-form">
+							<!-- Formulario de búsqueda -->
+							<form on:submit|preventDefault={searchCars}>
+								<label>
+									Freq:
+									<input
+										type="text"
+										bind:value={searchCriteria.freq}
+										style="margin-bottom: 10px;"
+									/>
+								</label>
+								<label>
+									Unit:
+									<input
+										type="text"
+										bind:value={searchCriteria.unit}
+										style="margin-bottom: 10px;"
+									/>
+								</label>
+								<label>
+									Motor NRG:
+									<input
+										type="text"
+										bind:value={searchCriteria.motor_nrg}
+										style="margin-bottom: 10px;"
+									/>
+								</label>
+								<label>
+									Geo:
+									<input type="text" bind:value={searchCriteria.geo} style="margin-bottom: 10px;" />
+								</label>
+								<label>
+									Time Period:
+									<input
+										type="number"
+										bind:value={searchCriteria.time_period}
+										style="margin-bottom: 10px;"
+									/>
+								</label>
+								<label>
+									Obs Value:
+									<input
+										type="number"
+										bind:value={searchCriteria.obs_value}
+										style="margin-bottom: 10px;"
+									/>
+								</label>
+								<label>
+									Obs Flag:
+									<input
+										type="text"
+										bind:value={searchCriteria.obs_flag}
+										style="margin-bottom: 10px;"
+									/>
+								</label>
+								<label>
+									Millions of Passengers per Kilometre:
+									<input
+										type="number"
+										bind:value={searchCriteria.millions_of_passenger_per_kilometres}
+										style="margin-bottom: 10px;"
+									/>
+								</label>
+								<label>
+									Road Deaths per Million Inhabitants:
+									<input
+										type="number"
+										bind:value={searchCriteria.road_deaths_per_million_inhabitants}
+										style="margin-bottom: 10px;"
+									/>
+								</label>
+								<button
+									style="background-color: #FFB728; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
+									type="submit">Aplicar</button
+								>
+								<button
+									style="background-color: #E55454; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
+									class="close-button"
+									on:click={() => (showSearchForm = false)}
+								>
+									<span class="material-icons">X</span>
+								</button>
+							</form>
+						</div>
+						<!-- Controlador de eventos para cerrar el formulario cuando se hace clic fuera de él -->
+						<div class="overlay" on:click={() => (showSearchForm = false)}></div>
+					</div>
+				{/if}
+
 				<!-- <div>
 					<form on:submit|preventDefault={searchCars}>
 						<label>
@@ -537,61 +602,61 @@
 
 <style>
 	/* Estilo para el formulario de búsqueda */
-    .search-form {
-        position: absolute; /* Posición absoluta para que el formulario sea flotante */
-        top: 50%; /* Centrar verticalmente */
-        left: 50%; /* Centrar horizontalmente */
-        transform: translate(-50%, -50%); /* Centrar el formulario */
-        background-color: #f8f9fa; /* Color de fondo */
-        padding: 20px; /* Espaciado interno */
-        border-radius: 8px; /* Bordes redondeados */
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra */
-        z-index: 1000; /* Asegurar que esté en la parte superior */
-        width: 300px; /* Ancho del formulario */
-    }
+	.search-form {
+		position: absolute; /* Posición absoluta para que el formulario sea flotante */
+		top: 50%; /* Centrar verticalmente */
+		left: 50%; /* Centrar horizontalmente */
+		transform: translate(-50%, -50%); /* Centrar el formulario */
+		background-color: #f8f9fa; /* Color de fondo */
+		padding: 20px; /* Espaciado interno */
+		border-radius: 8px; /* Bordes redondeados */
+		box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra */
+		z-index: 1000; /* Asegurar que esté en la parte superior */
+		width: 300px; /* Ancho del formulario */
+	}
 
-    /* Estilo para el botón de cierre */
-    .close-button {
-        position: absolute; /* Posición absoluta */
-        top: 10px; /* Alineación desde arriba */
-        right: 10px; /* Alineación desde la derecha */
-        background: none; /* Fondo transparente */
-        border: none; /* Sin borde */
-        cursor: pointer; /* Cursor de puntero */
-        font-size: 20px; /* Tamaño del ícono */
-        color: #495057; /* Color del icono */
-    }
+	/* Estilo para el botón de cierre */
+	.close-button {
+		position: absolute; /* Posición absoluta */
+		top: 10px; /* Alineación desde arriba */
+		right: 10px; /* Alineación desde la derecha */
+		background: none; /* Fondo transparente */
+		border: none; /* Sin borde */
+		cursor: pointer; /* Cursor de puntero */
+		font-size: 20px; /* Tamaño del ícono */
+		color: #495057; /* Color del icono */
+	}
 
-    /* Estilo para el botón de búsqueda */
-    .search-button {
-        display: block; /* Mostrar como bloque */
-        width: 100%; /* Ancho completo */
-        padding: 10px 0; /* Espaciado interno arriba y abajo */
-        margin-top: 20px; /* Espacio superior */
-        background-color: #007bff; /* Color de fondo */
-        color: #fff; /* Color del texto */
-        border: none; /* Sin borde */
-        border-radius: 4px; /* Bordes redondeados */
-        cursor: pointer; /* Cursor de puntero */
-        font-size: 16px; /* Tamaño de fuente */
-        transition: background-color 0.3s; /* Transición suave */
-    }
+	/* Estilo para el botón de búsqueda */
+	.search-button {
+		display: block; /* Mostrar como bloque */
+		width: 100%; /* Ancho completo */
+		padding: 10px 0; /* Espaciado interno arriba y abajo */
+		margin-top: 20px; /* Espacio superior */
+		background-color: #007bff; /* Color de fondo */
+		color: #fff; /* Color del texto */
+		border: none; /* Sin borde */
+		border-radius: 4px; /* Bordes redondeados */
+		cursor: pointer; /* Cursor de puntero */
+		font-size: 16px; /* Tamaño de fuente */
+		transition: background-color 0.3s; /* Transición suave */
+	}
 
-    /* Estilo para el botón de búsqueda al pasar el ratón por encima */
-    .search-button:hover {
-        background-color: #0056b3; /* Cambio de color al pasar el ratón por encima */
-    }
+	/* Estilo para el botón de búsqueda al pasar el ratón por encima */
+	.search-button:hover {
+		background-color: #0056b3; /* Cambio de color al pasar el ratón por encima */
+	}
 
-    /* Estilo para los campos de entrada */
-    input[type="text"],
-    input[type="number"] {
-        width: calc(100% - 20px); /* Ancho completo menos el espacio del borde */
-        padding: 10px; /* Espaciado interno */
-        margin: 10px 0; /* Margen superior e inferior */
-        border: 1px solid #ced4da; /* Borde */
-        border-radius: 4px; /* Bordes redondeados */
-        font-size: 14px; /* Tamaño de fuente */
-    }
+	/* Estilo para los campos de entrada */
+	input[type='text'],
+	input[type='number'] {
+		width: calc(100% - 20px); /* Ancho completo menos el espacio del borde */
+		padding: 10px; /* Espaciado interno */
+		margin: 10px 0; /* Margen superior e inferior */
+		border: 1px solid #ced4da; /* Borde */
+		border-radius: 4px; /* Bordes redondeados */
+		font-size: 14px; /* Tamaño de fuente */
+	}
 	.search-button {
 		background-color: transparent;
 		border: none;

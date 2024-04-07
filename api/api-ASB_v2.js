@@ -284,7 +284,7 @@ function API_ASB_v2 (app,db_ASB){
       const queryParams = req.query; // Obtener los parámetros de consulta de la solicitud
 
       //Parseo
-      const numericAttributes = ["pgeo", "limit", "offset"]; // Añadir cualquier parámetro numérico adicional aquí
+      const numericAttributes = ["page", "limit", "offset"]; // Añadir cualquier parámetro numérico adicional aquí
       numericAttributes.forEach(attr => {
           if (queryParams[attr]) {
               queryParams[attr] = parseInt(queryParams[attr]);
@@ -295,9 +295,9 @@ function API_ASB_v2 (app,db_ASB){
       });
 
       // Paginación
-      const pgeo = queryParams.pgeo || 1; // Página predeterminada: 1
-      const limit = queryParams.limit || 20; // Límite predeterminado: 10
-      const offset = (pgeo - 1) * limit; // Calcular el número de documentos a saltar
+      const page = queryParams.page || 1; // Página predeterminada: 1
+      const limit = queryParams.limit || 10; // Límite predeterminado: 10
+      const offset = (page - 1) * limit; // Calcular el número de documentos a saltar
 
       // Objeto para almacenar parámetros de consulta parseados
       const parsedQueryParams = {};
@@ -319,7 +319,7 @@ function API_ASB_v2 (app,db_ASB){
       };
 
       // Eliminar parámetros de paginación de queryParams
-      delete queryParams.pgeo;
+      delete queryParams.page;
       delete queryParams.limit;
       delete queryParams.offset;
 
