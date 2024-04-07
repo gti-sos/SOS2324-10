@@ -19,12 +19,28 @@
 		gdp: '',
 		volgdp: ''
 	};
+	let filters = {
+		frequency: '',
+		unit: '',
+		age: '',
+		geo: '',
+		time_period: '',
+		obs_value: '',
+		gdp: '',
+		volgdp: ''
+	};
+	let showFilter = false;
 	let showForm = false;
 	let errMsg = '';
 	let exitMsg = '';
 
-	onMount(() => {
-		getTourisms();
+	let page = 1;
+	let totalDatos = 0;
+	let totalPages = 1;
+
+	onMount(async () => {
+		await getTourisms();
+		await getTourismsTotal();
 	});
 
 	async function loadInitialData() {
@@ -37,7 +53,6 @@
 				if (response.ok) {
 					getTourisms();
 					exitMsg = 'Datos Cargados Correctamente';
-
 				} else {
 					errMsg = 'La base de datos no está vacía';
 				}
@@ -48,30 +63,6 @@
 			errMsg = error;
 		}
 	}
-
-	async function getTourisms() {
-		console.log(tourisms);
-		try {
-			let response = await fetch(API_ASC, {
-				method: 'GET'
-			});
-			if (response.ok) {
-				let data = await response.json();
-				tourisms = data;
-				console.log(data);
-				errMsg = '';
-			} else {
-				if (response.status == 404) {
-					errMsg = 'No hay datos en la base de datos';
-				} else {
-					errMsg = `Error ${response.status}: ${response.statusText}`;
-				}
-			}
-		} catch (e) {
-			errMsg = e;
-		}
-	}
-
 	async function createTourism() {
 		try {
 			await getTourisms();
@@ -100,6 +91,59 @@
 			errMsg = e;
 		}
 	}
+	async function getTourismsTotal() {
+		try {
+			let response = await fetch(API_ASC + '?limit=100', {
+				method: 'GET'
+			});
+			let data = await response.json();
+			totalDatos = data.length;
+			totalPages = Math.ceil(totalDatos / 10);
+		} catch (e) {
+			errMsg = e;
+		}
+	}
+
+	function goToPageAnt() {
+		if (page > 1) {
+			page = page - 1;
+			getTourisms();
+		}
+	}
+
+	function goToPageSig() {
+		if (page < totalPages) {
+			page = page + 1;
+			getTourisms();
+		}
+	}
+
+	async function getTourisms() {
+		await getTourismsTotal();
+		try {
+			let response = await fetch(API_ASC + '?page=' + page, {
+				method: 'GET',
+				headers: {
+					'Cache-Control': 'no-cache',
+					Pragma: 'no-cache'
+				}
+			});
+			if (response.ok) {
+				let data = await response.json();
+				tourisms = data;
+				console.log(data);
+				errMsg = '';
+			} else {
+				if (response.status == 404) {
+					errMsg = 'No hay datos en la base de datos';
+				} else {
+					errMsg = `Error ${response.status}: ${response.statusText}`;
+				}
+			}
+		} catch (e) {
+			errMsg = e;
+		}
+	}
 
 	async function deleteTourismAll() {
 		try {
@@ -111,6 +155,7 @@
 				await getTourisms();
 				exitMsg = 'Todos los datos fueron eliminados';
 				errMsg = '';
+				tourisms = [];
 			} else {
 				if (response.status == 404) {
 					errMsg = 'No existen datos en la base de datos';
@@ -149,6 +194,50 @@
 		}
 	}
 
+	async function searchListings() {
+		try {
+			// Construye la URL de búsqueda a partir de los filtros proporcionados
+			let searchParams = new URLSearchParams();
+			for (const key in filters) {
+				if (filters[key] !== '') {
+					searchParams.append(key, filters[key]);
+				}
+			}
+			let searchUrl = `${API_ASC}?${searchParams.toString()}`;
+			console.log(searchUrl);
+			// Realiza la petición GET a la API con la URL de búsqueda generada
+			let response = await fetch(searchUrl, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+
+			// Manejo de la respuesta de la API
+			let status = response.status;
+			console.log(`Response status: ${status}`);
+
+			if (response.ok) {
+				// Actualiza los datos después de una búsqueda exitosa
+				exitMsg = 'Mostrando los datos solicitados';
+				showFilter = false;
+				let data = await response.json();
+				tourisms = data;
+				console.log(data);
+			} else {
+				// Manejo de errores
+				if (response.status == 404) {
+					errMsg = 'No se encontraron datos';
+				} else {
+					errMsg = `Error ${response.status}: ${response.statusText}`;
+				}
+			}
+		} catch (error) {
+			errMsg = error;
+			console.log(error);
+		}
+	}
+
 	// function showDetails(index) {
 	// 	selectedTourismIndex = index;
 	// }
@@ -182,13 +271,19 @@
 	// }
 </script>
 
+<title> tourisms-per-age </title>
+
 <!-- Estilo y formato de la tabla -->
 {#if tourisms && tourisms.length > 0}<!---->
 	<div class="container">
+		<div style="margin-bottom: 20px; display: flex; justify-content: space-between;">
+			<button disabled={page === 1} on:click={() => goToPageAnt()}>Anterior</button>
+			<span>Página {page}</span>
+			<button disabled={tourisms.length < 10} on:click={() => goToPageSig()}>Siguiente</button>
+		</div>
 		<table>
 			<thead>
 				<tr>
-					
 					<!-- <th>id</th> -->
 					<!-- Aquí colocamos primero la columna del ID -->
 					{#each Object.keys(tourisms[0]) as key}
@@ -204,7 +299,7 @@
 			</thead>
 			<tbody>
 				{#each tourisms as dato}
-					<tr>
+					<tr class="prueba">
 						<!-- <td>{dato.id}</td> -->
 						{#each Object.entries(dato) as [key, value]}
 							<!-- Usamos Object.entries para mantener el orden de las propiedades -->
@@ -234,7 +329,7 @@
 							>
 								Detalles
 							</a>
-						</td>	
+						</td>
 						<td>
 							<button
 								style="background-color: #d32f2f; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
@@ -256,9 +351,16 @@
 			>
 			<button
 				style="background-color: #d32f2f; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+				id="deleteAllButton"
 				on:click={() => {
 					deleteTourismAll();
 				}}>Eliminar Todos</button
+			>
+			<button
+				style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+				on:click={() => {
+					showFilter = true;
+				}}>Búsqueda Filtrada</button
 			>
 		</div>
 	</div>
@@ -371,6 +473,59 @@
 			</div>
 		</div>
 	{/if}
+	{#if showFilter}
+		<div class="modal">
+			<div class="modal-content">
+				<span
+					class="close"
+					on:click={() => {
+						showFilter = false;
+					}}>&times;</span
+				>
+				<h2 style="color: #6d7fcc;">Búsqueda Filtrada</h2>
+				<form on:submit|preventDefault={searchListings}>
+					<label>
+						Frequency:
+						<input type="text" bind:value={filters.frequency} style="margin-bottom: 10px;" />
+					</label>
+					<label>
+						Unit:
+						<input type="text" bind:value={filters.unit} style="margin-bottom: 10px;" />
+					</label>
+					<label>
+						Age:
+						<input type="text" bind:value={filters.age} style="margin-bottom: 10px;" />
+					</label>
+					<label>
+						Geo:
+						<input type="text" bind:value={filters.geo} style="margin-bottom: 10px;" />
+					</label>
+					<label>
+						Time Period:
+						<input type="number" bind:value={filters.time_period} style="margin-bottom: 10px;" />
+					</label>
+					<label>
+						Obs Value:
+						<input type="number" bind:value={filters.obs_value} style="margin-bottom: 10px;" />
+					</label>
+					<label>
+						GDP:
+						<input type="number" bind:value={filters.gdp} style="margin-bottom: 10px;" />
+					</label>
+					<label>
+						Volgdp:
+						<input type="number" bind:value={filters.volgdp} style="margin-bottom: 10px;" />
+					</label>
+					<button
+						type="submit"
+						style="background-color: #6d7fcc; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+						>Buscar</button
+					>
+				</form>
+			</div>
+		</div>
+	{/if}
+
 	{#if errMsg != ''}
 		<hr />
 		ERROR: {errMsg}

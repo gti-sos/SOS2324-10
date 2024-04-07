@@ -10,7 +10,7 @@ let backup_datos = [
     last_update: '16/01/24 23:00:00',
     freq: 'A',
     unit: 'NR',
-    motor_nrg: 'ALT',
+    motor_nrg: 'GAS',
     geo: 'AT',
     time_period: 2015,
     obs_value: 10125,
@@ -23,7 +23,7 @@ let backup_datos = [
     last_update: '16/01/24 23:00:00',
     freq: 'A',
     unit: 'NR',
-    motor_nrg: 'ALT',
+    motor_nrg: 'DIE',
     geo: 'AT',
     time_period: 2016,
     obs_value: 14459,
@@ -49,7 +49,7 @@ let backup_datos = [
     last_update: '16/01/24 23:00:00',
     freq: 'A',
     unit: 'NR',
-    motor_nrg: 'ALT',
+    motor_nrg: 'PET',
     geo: 'BE',
     time_period: 2013,
     obs_value: 18859,
@@ -75,7 +75,7 @@ let backup_datos = [
     last_update: '16/01/24 23:00:00',
     freq: 'A',
     unit: 'NR',
-    motor_nrg: 'ALT',
+    motor_nrg: 'ELC_PET_HYB',
     geo: 'BG',
     time_period: 2021,
     obs_value: 374094,
@@ -88,7 +88,7 @@ let backup_datos = [
     last_update: '16/01/24 23:00:00',
     freq: 'A',
     unit: 'NR',
-    motor_nrg: 'ALT',
+    motor_nrg: 'ELC_PET_PI',
     geo: 'CZ',
     time_period: 2016,
     obs_value: 15885,
@@ -101,7 +101,7 @@ let backup_datos = [
     last_update: '16/01/24 23:00:00',
     freq: 'A',
     unit: 'NR',
-    motor_nrg: 'ALT',
+    motor_nrg: 'DIE',
     geo: 'CZ',
     time_period: 2017,
     obs_value: 18321,
@@ -114,7 +114,7 @@ let backup_datos = [
     last_update: '16/01/24 23:00:00',
     freq: 'A',
     unit: 'NR',
-    motor_nrg: 'ALT',
+    motor_nrg: 'DIE',
     geo: 'CZ',
     time_period: 2018,
     obs_value: 128315,
@@ -127,7 +127,7 @@ let backup_datos = [
     last_update: '16/01/24 23:00:00',
     freq: 'A',
     unit: 'NR',
-    motor_nrg: 'ALT',
+    motor_nrg: 'GAS',
     geo: 'DE',
     time_period: 2020,
     obs_value: 749305,
@@ -153,7 +153,7 @@ let backup_datos = [
     last_update: '16/01/24 23:00:00',
     freq: 'A',
     unit: 'NR',
-    motor_nrg: 'ALT',
+    motor_nrg: 'GAS',
     geo: 'DE',
     time_period: 2022,
     obs_value: 1431375,
@@ -166,7 +166,7 @@ let backup_datos = [
     last_update: '16/01/24 23:00:00',
     freq: 'A',
     unit: 'NR',
-    motor_nrg: 'ALT',
+    motor_nrg: 'PET',
     geo: 'DK',
     time_period: 2020,
     obs_value: 32140,
@@ -192,7 +192,7 @@ let backup_datos = [
     last_update: '16/01/24 23:00:00',
     freq: 'A',
     unit: 'NR',
-    motor_nrg: 'ALT',
+    motor_nrg: 'PET',
     geo: 'DK',
     time_period: 2022,
     obs_value: 112952,
@@ -218,7 +218,7 @@ let backup_datos = [
     last_update: '16/01/24 23:00:00',
     freq: 'A',
     unit: 'NR',
-    motor_nrg: 'ALT',
+    motor_nrg: 'LPG',
     geo: 'ES',
     time_period: 2015,
     obs_value: 13290,
@@ -231,7 +231,7 @@ let backup_datos = [
     last_update: '16/01/24 23:00:00',
     freq: 'A',
     unit: 'NR',
-    motor_nrg: 'ALT',
+    motor_nrg: 'LPG',
     geo: 'FI',
     time_period: 2018,
     obs_value: 12688,
@@ -257,7 +257,7 @@ let backup_datos = [
     last_update: '16/01/24 23:00:00',
     freq: 'A',
     unit: 'NR',
-    motor_nrg: 'ALT',
+    motor_nrg: 'LPG',
     geo: 'FI',
     time_period: 2020,
     obs_value: 27694,
@@ -284,7 +284,7 @@ function API_ASB_v2 (app,db_ASB){
       const queryParams = req.query; // Obtener los parámetros de consulta de la solicitud
 
       //Parseo
-      const numericAttributes = ["pgeo", "limit", "offset"]; // Añadir cualquier parámetro numérico adicional aquí
+      const numericAttributes = ["page", "limit", "offset"]; // Añadir cualquier parámetro numérico adicional aquí
       numericAttributes.forEach(attr => {
           if (queryParams[attr]) {
               queryParams[attr] = parseInt(queryParams[attr]);
@@ -295,9 +295,9 @@ function API_ASB_v2 (app,db_ASB){
       });
 
       // Paginación
-      const pgeo = queryParams.pgeo || 1; // Página predeterminada: 1
-      const limit = queryParams.limit || 20; // Límite predeterminado: 10
-      const offset = (pgeo - 1) * limit; // Calcular el número de documentos a saltar
+      const page = queryParams.page || 1; // Página predeterminada: 1
+      const limit = queryParams.limit || 10; // Límite predeterminado: 10
+      const offset = (page - 1) * limit; // Calcular el número de documentos a saltar
 
       // Objeto para almacenar parámetros de consulta parseados
       const parsedQueryParams = {};
@@ -319,7 +319,7 @@ function API_ASB_v2 (app,db_ASB){
       };
 
       // Eliminar parámetros de paginación de queryParams
-      delete queryParams.pgeo;
+      delete queryParams.page;
       delete queryParams.limit;
       delete queryParams.offset;
 
