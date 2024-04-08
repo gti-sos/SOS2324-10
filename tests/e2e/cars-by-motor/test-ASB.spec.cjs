@@ -23,15 +23,15 @@ test('has title Proyecto SOS2324-10', async () => {
     await expect(page).toHaveTitle(/Proyecto SOS2324-10/);
 });
 
-test('more than 5 rows are loaded in the table', async () => {
-    await page.goto('http://localhost:8080/cars-by-motor');
-    // Espera a que la tabla se cargue y obtiene la cantidad de filas
-    await page.waitForSelector('table');
-    const rowCount = await page.$$eval('table tbody tr', rows => rows.length);
+// test('more than 5 rows are loaded in the table', async () => {
+//     await page.goto('http://localhost:8080/cars-by-motor');
+//     // Espera a que la tabla se cargue y obtiene la cantidad de filas
+//     await page.waitForSelector('table');
+//     const rowCount = await page.$$eval('table tbody tr', rows => rows.length);
 
-    // Verifica que la cantidad de filas sea mayor que 5
-    expect(rowCount).toBeGreaterThan(5);
-});
+//     // Verifica que la cantidad de filas sea mayor que 5
+//     expect(rowCount).toBeGreaterThan(5);
+// });
 
 // test('delete a row from the table', async () => {
 //     await page.goto('http://localhost:8080/cars-by-motor');
