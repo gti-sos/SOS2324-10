@@ -40,9 +40,11 @@
 
 	let showSearchForm = false;
 
+	let currentPage = 1;
+    let totalDatos = 0;
+    const pageSize = 10;
 	let page = 1;
 	let totalPages = 1;
-	let totalDatos = 0;
 
 	onMount(async () => {
 		await getCars();
@@ -86,13 +88,11 @@
 	async function getCars() {
 		await getCarsTotal();
 		try {
-			let response = await fetch(API_ASB + '?page=' + page, {
-				method: 'GET',
-				headers: {
-					'Cache-Control': 'no-cache',
-					Pragma: 'no-cache'
-				}
-			});
+			let offset = (currentPage - 1) * pageSize;
+            let response = await fetch(`${API_ASB}?limit=${pageSize}&offset=${offset}`
+            ,{
+                                      method: "GET"
+            });
 			if (response.ok) {
 				let data = await response.json();
 				cars = data;
@@ -110,22 +110,35 @@
 		}
 	}
 
-	// Función para ir a la página anterior
-	function prevPage() {
-		getCarsTotal();
-		if (page > 1) {
-			page--;
-			getCars();
-		}
-	}
+	// // Función para ir a la página anterior
+	// function prevPage() {
+	// 	getCarsTotal();
+	// 	if (page > 1) {
+	// 		page--;
+	// 		getCars();
+	// 	}
+	// }
 
-	// Función para ir a la página siguiente
-	function nextPage() {
-		if (page < totalPages) {
-			page++;
-			getCars();
-		}
-	}
+	// // Función para ir a la página siguiente
+	// function nextPage() {
+	// 	if (page < totalPages) {
+	// 		page++;
+	// 		getCars();
+	// 	}
+	// }
+	async function nextPage() {
+        if ((currentPage * pageSize) < totalItems) {
+            currentPage++;
+            getCars();
+        }
+    }
+
+    async function prevPage() {
+        if (currentPage > 1) {
+            currentPage--;
+            getCars();
+        }
+    }
 
 	async function createCar() {
 		try {
