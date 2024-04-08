@@ -1,6 +1,6 @@
 // @ts-check
 
-const { test, expect} = require('@playwright/test');
+const { test, expect } = require('@playwright/test');
 
 const carga = 'http://localhost:8080/gdp-growth-rates/loadInitialData';
 const URL_web = 'https://sos2324-10.appspot.com/gdp-growth-rates';
@@ -11,20 +11,20 @@ test('Carga página principal', async ({ page }) => {
   test.setTimeout(60000);
   //await page.goto(carga);
   await page.goto(URL_web);
- 
+
 
   await expect(page).toHaveTitle('gdp-growth-rates');
 
   await expect(page).toHaveURL(URL_web);
 });
 
-/**
+
 //Lista de todos los recursos
 test('Listar todos los elementos correctamente', async ({ page }) => {
   test.setTimeout(60000);
   //await page.goto(carga);
   await page.goto(URL_web);
-  
+
 
   await page.click('button:has-text("Cargar datos de prueba")');
 
@@ -40,11 +40,11 @@ test('Listar todos los elementos correctamente', async ({ page }) => {
   }
 });
 
-/*
+
 //Crear nuevo dato
 test('Crear nuevo dato', async ({ page }) => {
   test.setTimeout(90000);
-  await page.goto(carga);
+  //await page.goto(carga);
   await page.goto(URL_web);
   
 
@@ -71,14 +71,12 @@ test('Eliminar dato', async ({ page }) => {
   test.setTimeout(60000);
   //await page.goto(carga);
   await page.goto(URL_web);
-  
-
   await page.click('tbody tr:first-child button:has-text("Eliminar")');
 
   await expect(page.getByText('EXITO: Dato eliminado correctamente')).toBeVisible();
 });
 
-
+/*
 //Eliminar todos los datos
 test('Eliminar todos los datos', async ({ page }) => {
   test.setTimeout(60000);
@@ -88,7 +86,7 @@ test('Eliminar todos los datos', async ({ page }) => {
   await page.click('button:has-text("Eliminar Todos")');
 
   await expect(page.getByText('EXITO: Todos los datos fueron eliminados')).toBeVisible();
-});
+});*/
 
 /*
 test('Paginacion correcta', async ({ page }) => {
