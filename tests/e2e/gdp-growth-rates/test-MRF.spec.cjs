@@ -1,5 +1,5 @@
 // @ts-check
-/*
+
 const { test, expect} = require('@playwright/test');
 
 const carga = 'http://localhost:8080/gdp-growth-rates/loadInitialData';
@@ -18,7 +18,7 @@ test('Carga página principal', async ({ page }) => {
   await expect(page).toHaveURL(URL_web);
 });
 
-
+/**
 //Lista de todos los recursos
 test('Listar todos los elementos correctamente', async ({ page }) => {
   test.setTimeout(60000);
