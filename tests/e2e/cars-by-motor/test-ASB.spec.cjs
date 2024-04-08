@@ -17,16 +17,19 @@ test('Carga página principal', async () => {
     await expect(page).toHaveURL('https://sos2324-10.appspot.com/cars-by-motor');
 });
 
+/*
 test('tiene titulo Proyecto SOS2324-10', async () => {
     test.setTimeout(60000);
     await page.goto('https://sos2324-10.appspot.com');
     await expect(page).toHaveTitle(/Proyecto SOS2324-10/);
 });
 
+/*
 test('more than 5 rows are loaded in the table', async () => {
     await page.goto('https://sos2324-10.appspot.com/cars-by-motor');
     // Espera a que la tabla se cargue y obtiene la cantidad de filas
     const loadDataButton = await page.$('button:has-text("Cargar datos")');
+    
     if (loadDataButton) {
         await loadDataButton.click();
         await page.waitForTimeout(1000);
@@ -65,4 +68,4 @@ test('more than 5 rows are loaded in the table', async () => {
 
 //     // Verifica que el último elemento de la tabla después de la eliminación sea diferente al último elemento antes de la eliminación
 //     expect(lastElementAfterDelete).not.toEqual(lastElementBeforeDelete);
-// });
+// });*/

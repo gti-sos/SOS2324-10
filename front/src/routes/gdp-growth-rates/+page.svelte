@@ -257,17 +257,23 @@
             let response = await fetch(API_MRF,{
                                     method: "DELETE"
                         });
-            
-            if(response.ok){
-                await getGDP();
-                exitoMsg = "Todos los datos fueron eliminados"
-                errorMsg = "";
-            }else{
-                if(reponse.status == 404){
-                    errorMsg = "No existen datos en la base de datos";
-                }
-                
-            }
+
+                        if (response.status == 200) {
+                            await getGDP();
+                            alert('Todas las entradas han sido eliminadas');
+                            gdp = [];
+                        } else {
+                            if (response.status == 400) {
+                                errorMsg = 'Error en la estructura de los datos';
+                                alert(errorMsg);
+                            } else if (response.status == 409) {
+                                errorMsg = 'Ya existe una entrada con ese país y año';
+                                alert(errorMsg);
+                            } else if (response.status == 404) {
+                                errorMsg = 'Dato no encontrado';
+                                alert(errorMsg);
+                            }
+                        }
         } catch(e){
             errorMsg = e;
         }

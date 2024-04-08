@@ -41,6 +41,7 @@ test('Listar todos los elementos correctamente', async ({ page }) => {
 });
 
 /*
+
 //Crear nuevo dato
 test('Crear nuevo dato', async ({ page }) => {
   test.setTimeout(90000);
@@ -64,8 +65,8 @@ test('Crear nuevo dato', async ({ page }) => {
 
   await expect(page.getByText('EXITO: Dato creado correctamente')).toBeVisible();
 });
-*/
-/*
+
+
 //Eliminar dato
 test('Eliminar dato', async ({ page }) => {
   test.setTimeout(60000);
