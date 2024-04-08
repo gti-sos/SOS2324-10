@@ -46,7 +46,6 @@ function API_TLR_v1(app, db_TLR) {
     const documentationURL = 'https://documenter.getpostman.com/view/19421857/2sA35MzJvc';
 
     // Redirigir al portal de documentación
-    
     res.redirect(documentationURL);
   });
 
