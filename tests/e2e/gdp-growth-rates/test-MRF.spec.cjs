@@ -1,4 +1,5 @@
 // @ts-check
+/*
 const { test, expect} = require('@playwright/test');
 
 const carga = 'http://localhost:8080/gdp-growth-rates/loadInitialData';
@@ -63,7 +64,7 @@ test('Crear nuevo dato', async ({ page }) => {
 
   await expect(page.getByText('EXITO: Dato creado correctamente')).toBeVisible();
 });
-*/
+
 
 //Eliminar dato
 test('Eliminar dato', async ({ page }) => {

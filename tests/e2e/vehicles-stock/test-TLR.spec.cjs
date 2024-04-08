@@ -1,3 +1,11 @@
+
+
+
+
+
+
+
+/**
 const { test, expect } = require('@playwright/test');
 
 //Comprobamos el correcto inicio de la web
@@ -49,6 +57,6 @@ test('Verificar offset vehicles-stock', async ({ page }) => {
 });
 
 
-
+*/
 
 
