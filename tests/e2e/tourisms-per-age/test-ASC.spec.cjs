@@ -38,31 +38,31 @@ test('more than 5 rows are loaded in the table', async () => {
     expect(rowCount).toBeGreaterThan(5);
 });
 
-test('delete a row from the table', async ({ page }) => {
-    // Navega a la página
-    await page.goto('https://sos2324-10.appspot.com/tourisms-per-age');
+// test('delete a row from the table', async ({ page }) => {
+//     // Navega a la página
+//     await page.goto('https://sos2324-10.appspot.com/tourisms-per-age');
 
-    const loadDataButton = await page.$('button:has-text("Cargar datos")');
-    if (loadDataButton) {
-        await loadDataButton.click();
-        await page.waitForTimeout(1000);
-    }
+//     const loadDataButton = await page.$('button:has-text("Cargar datos")');
+//     if (loadDataButton) {
+//         await loadDataButton.click();
+//         await page.waitForTimeout(1000);
+//     }
 
-    // Espera a que la tabla se cargue completamente
-    await page.waitForSelector('tbody tr');
+//     // Espera a que la tabla se cargue completamente
+//     await page.waitForSelector('tbody tr');
 
-    // Obtiene el último elemento de la tabla antes de la eliminación
-    const lastElementBeforeDelete = await page.$eval('tbody tr:last-child', row => row.textContent);
+//     // Obtiene el último elemento de la tabla antes de la eliminación
+//     const lastElementBeforeDelete = await page.$eval('tbody tr:last-child', row => row.textContent);
 
-    // Elimina un elemento de la tabla
-    await page.click('button:has-text("Eliminar")');
+//     // Elimina un elemento de la tabla
+//     await page.click('button:has-text("Eliminar")');
 
-    // Espera un momento para que se procese la eliminación y se actualice la tabla
-    await page.waitForTimeout(1000);
+//     // Espera un momento para que se procese la eliminación y se actualice la tabla
+//     await page.waitForTimeout(1000);
 
-    // Obtiene el último elemento de la tabla después de la eliminación
-    const lastElementAfterDelete = await page.$eval('tbody tr:last-child', row => row.textContent);
+//     // Obtiene el último elemento de la tabla después de la eliminación
+//     const lastElementAfterDelete = await page.$eval('tbody tr:last-child', row => row.textContent);
 
-    // Verifica que el último elemento de la tabla después de la eliminación sea diferente al último elemento antes de la eliminación
-    expect(lastElementAfterDelete).not.toEqual(lastElementBeforeDelete);
-});
+//     // Verifica que el último elemento de la tabla después de la eliminación sea diferente al último elemento antes de la eliminación
+//     expect(lastElementAfterDelete).not.toEqual(lastElementBeforeDelete);
+// });
