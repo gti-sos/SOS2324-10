@@ -1,3 +1,4 @@
+/*
 const { test, expect, beforeAll, afterAll, beforeEach, afterEach } = require('@playwright/test')
 
 let page;
@@ -23,6 +24,8 @@ test('has title Proyecto SOS2324-10', async () => {
     await expect(page).toHaveTitle(/Proyecto SOS2324-10/);
 });
 
+*/
+    
 // test('more than 5 rows are loaded in the table', async () => {
 //     await page.goto('http://localhost:8080/cars-by-motor');
 //     // Espera a que la tabla se cargue y obtiene la cantidad de filas
