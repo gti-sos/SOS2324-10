@@ -1,4 +1,4 @@
-/*const { test, expect, beforeAll, afterAll, beforeEach, afterEach } = require('@playwright/test');
+const { test, expect, beforeAll, afterAll, beforeEach, afterEach } = require('@playwright/test');
 
 let page;
 
@@ -12,19 +12,19 @@ afterAll(async () => {
 
 
 test('Carga página principal', async () => {
-    await page.goto('http://localhost:8080/tourisms-per-age');
+    await page.goto('https://sos2324-10.appspot.com/tourisms-per-age');
     await expect(page).toHaveTitle('tourisms-per-age');
-    await expect(page).toHaveURL('http://localhost:8080/tourisms-per-age');
+    await expect(page).toHaveURL('https://sos2324-10.appspot.com/tourisms-per-age');
 });
 
 test('has title Proyecto SOS2324-10', async () => {
     test.setTimeout(60000);
-    await page.goto('http://localhost:8080');
+    await page.goto('https://sos2324-10.appspot.com');
     await expect(page).toHaveTitle(/Proyecto SOS2324-10/);
 });
 
 test('more than 5 rows are loaded in the table', async () => {
-    await page.goto('http://localhost:8080/tourisms-per-age');
+    await page.goto('https://sos2324-10.appspot.com/tourisms-per-age');
     // Espera a que la tabla se cargue y obtiene la cantidad de filas
     await page.waitForSelector('table');
     const rowCount = await page.$$eval('table tbody tr', rows => rows.length);
@@ -33,8 +33,13 @@ test('more than 5 rows are loaded in the table', async () => {
     expect(rowCount).toBeGreaterThan(5);
 });
 
-test('delete a row from the table', async () => {
-    await page.goto('http://localhost:8080/tourisms-per-age');
+test('delete a row from the table', async ({ page }) => {
+    // Navega a la página
+    await page.goto('https://sos2324-10.appspot.com/tourisms-per-age');
+
+    // Espera a que la tabla se cargue completamente
+    await page.waitForSelector('tbody tr');
+
     // Obtiene el último elemento de la tabla antes de la eliminación
     const lastElementBeforeDelete = await page.$eval('tbody tr:last-child', row => row.textContent);
 
@@ -49,4 +54,4 @@ test('delete a row from the table', async () => {
 
     // Verifica que el último elemento de la tabla después de la eliminación sea diferente al último elemento antes de la eliminación
     expect(lastElementAfterDelete).not.toEqual(lastElementBeforeDelete);
-});*/
+});
