@@ -26,6 +26,11 @@ test('tiene titulo Proyecto SOS2324-10', async () => {
 test('more than 5 rows are loaded in the table', async () => {
     await page.goto('https://sos2324-10.appspot.com/tourisms-per-age');
     // Espera a que la tabla se cargue y obtiene la cantidad de filas
+    const loadDataButton = await page.$('button:has-text("Cargar datos")');
+    if (loadDataButton) {
+        await loadDataButton.click();
+        await page.waitForTimeout(1000);
+    }
     await page.waitForSelector('table');
     const rowCount = await page.$$eval('table tbody tr', rows => rows.length);
 
@@ -36,6 +41,12 @@ test('more than 5 rows are loaded in the table', async () => {
 test('delete a row from the table', async ({ page }) => {
     // Navega a la página
     await page.goto('https://sos2324-10.appspot.com/tourisms-per-age');
+
+    const loadDataButton = await page.$('button:has-text("Cargar datos")');
+    if (loadDataButton) {
+        await loadDataButton.click();
+        await page.waitForTimeout(1000);
+    }
 
     // Espera a que la tabla se cargue completamente
     await page.waitForSelector('tbody tr');
