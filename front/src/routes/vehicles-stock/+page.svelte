@@ -15,6 +15,7 @@
 	let page = 1;
 	let totalPages = 1;
 	let totalDatos = 0;
+	let pageSize = 10;
 	let selectedFilter = {
 		freq: '',
 		vehicle: '',
@@ -85,7 +86,9 @@
 					searchParams.append(key, selectedFilter[key]);
 				}
 			}
-			let searchUrl = `${API_TLR}/search?${searchParams.toString()}` + '&page=' + page;
+			let searchUrl =
+				`${API_TLR}/search?${searchParams.toString()}` +
+				`&limit=${pageSize}&offset=${(page - 1) * pageSize}`;
 			console.log(searchUrl);
 			// Realiza la petición GET a la API con la URL de búsqueda generada
 			let response = await fetch(searchUrl, {
@@ -143,18 +146,27 @@
 
 	async function getVehicles() {
 		await getVehiclesTotal();
+
 		try {
-			let response = await fetch(API_TLR + '?page=' + page, {
+			let offset = (page - 1) * pageSize;
+			let response = await fetch(`${API_TLR}?limit=${pageSize}&offset=${offset}`, {
 				method: 'GET',
 				headers: {
 					'Cache-Control': 'no-cache',
 					Pragma: 'no-cache'
 				}
 			});
-
-			let data = await response.json();
-			datos = data;
-			console.log(data);
+			if (response.ok) {
+				let data = await response.json();
+				datos = data;
+				console.log(data);
+			} else {
+				if (response.status == 404) {
+					errorMsg = 'No hay datos en la base de datos';
+				} else {
+					errorMsg = `Error ${response.status}: ${response.statusText}`;
+				}
+			}
 		} catch (e) {
 			errorMsg = e;
 		}
@@ -170,7 +182,7 @@
 
 	// Función para ir a la página siguiente
 	function goToNextPage() {
-		if (page < totalPages) {
+		if (page * pageSize < totalDatos) {
 			page = page + 1;
 			getVehicles();
 		}
