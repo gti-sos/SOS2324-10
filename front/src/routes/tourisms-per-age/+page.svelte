@@ -93,12 +93,13 @@
 	}
 	async function getTourismsTotal() {
 		try {
-			let response = await fetch(API_ASC + '?limit=100', {
+			let response = await fetch(API_ASC, {
 				method: 'GET'
 			});
 			let data = await response.json();
 			totalDatos = data.length;
 			totalPages = Math.ceil(totalDatos / 10);
+			exitMsg = '';
 		} catch (e) {
 			errMsg = e;
 		}
