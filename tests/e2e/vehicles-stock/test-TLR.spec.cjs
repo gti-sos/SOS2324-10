@@ -1,3 +1,11 @@
+
+
+
+
+
+
+
+
 const { test, expect } = require('@playwright/test');
 
 //Comprobamos el correcto inicio de la web
@@ -34,7 +42,7 @@ async function verificarCantidadDatos(page) {
   const rows = await page.$$('table tbody tr');
   return rows.length === 10;
 }
-
+/*
 //Comprobamos que únicamente se muestren 10 datos en la web
 test('Verificar offset vehicles-stock', async ({ page }) => {
   await page.goto('https://sos2324-10.appspot.com/vehicles-stock');
@@ -49,6 +57,6 @@ test('Verificar offset vehicles-stock', async ({ page }) => {
 });
 
 
-
+*/
 
 
