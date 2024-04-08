@@ -22,7 +22,7 @@ test('tiene titulo Proyecto SOS2324-10', async () => {
     await page.goto('https://sos2324-10.appspot.com');
     await expect(page).toHaveTitle(/Proyecto SOS2324-10/);
 });
-/** 
+/*
 test('more than 5 rows are loaded in the table', async () => {
     await page.goto('https://sos2324-10.appspot.com/tourisms-per-age');
     // Espera a que la tabla se cargue y obtiene la cantidad de filas
@@ -65,4 +65,5 @@ test('more than 5 rows are loaded in the table', async () => {
 
 //     // Verifica que el último elemento de la tabla después de la eliminación sea diferente al último elemento antes de la eliminación
 //     expect(lastElementAfterDelete).not.toEqual(lastElementBeforeDelete);
-// });*/
+// });
+*/

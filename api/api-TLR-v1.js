@@ -37,13 +37,13 @@ app.use(bodyParser.json());
 
 // API Tomás
 
-function API_TLR(app, db_TLR) {
+function API_TLR_v1(app, db_TLR) {
 
   //Agregamos todos los elementos al inicio
   db_TLR.insert(initialDatos);
 
   app.get('/api/v1/vehicles-stock/docs', (req, res) => {
-    const documentationURL = 'https://documenter.getpostman.com/view/19421857/2sA2xiYCmf';
+    const documentationURL = 'https://documenter.getpostman.com/view/19421857/2sA35MzJvc';
 
     // Redirigir al portal de documentación
     res.redirect(documentationURL);
@@ -582,4 +582,4 @@ function API_TLR(app, db_TLR) {
 };
 
 
-export { API_TLR };
+export { API_TLR_v1 };

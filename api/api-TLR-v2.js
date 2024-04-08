@@ -122,20 +122,26 @@ function API_TLR_v2(app, db_TLR) {
   app.get(API_BASE + "/vehicles-stock/", (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
-    const offset = (page - 1) * limit;
+    const offset = parseInt(req.query.offset);
+    console.log("Limit :" + limit + "  Offset: "+offset)
 
     db_TLR.find({}, { _id: 0, id: 0 })
       .sort({ id: 1 }) // Ordenar por ID
-      .skip(offset) // Saltar los documentos anteriores según el offset
-      .limit(limit) // Limitar el número de documentos devueltos
+      .skip(parseInt(offset)) // Saltar los documentos anteriores según el offset
+      .limit(parseInt(limit)) // Limitar el número de documentos devueltos
       .exec((error, datos) => {
         if (error) {
           res.sendStatus(500);
         } else {
-          res.send(datos);
+          // Utilizar un conjunto para almacenar objetos únicos
+          const uniqueData = new Set(datos.map(JSON.stringify));
+          // Convertir los objetos únicos de nuevo a objetos JSON
+          const uniqueJSON = Array.from(uniqueData).map(JSON.parse);
+          res.send(uniqueJSON);
         }
       });
-  });
+});
+
 
 
 
