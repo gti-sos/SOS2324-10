@@ -85,9 +85,9 @@ function API_TLR_v2(app, db_TLR) {
     });
 
     // Paginación
-    const limit = parseInt(queryParams.limit) || 10; // Por defecto 10 registros por página
+    
     const page = parseInt(queryParams.page) || 1; // Por defecto, página 1
-
+    const limit = parseInt(req.query.limit);
     // Eliminar parámetros de paginación de los criterios de búsqueda
     delete queryParams.limit;
     delete queryParams.offset;
@@ -120,13 +120,11 @@ function API_TLR_v2(app, db_TLR) {
 
   //GET datos completo
   app.get(API_BASE + "/vehicles-stock/", (req, res) => {
-    const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
-    const offset = parseInt(req.query.offset);
+    const offset = parseInt(req.query.offset) || 0;
     console.log("Limit :" + limit + "  Offset: "+offset)
 
     db_TLR.find({}, { _id: 0, id: 0 })
-      .sort({ id: 1 }) // Ordenar por ID
       .skip(parseInt(offset)) // Saltar los documentos anteriores según el offset
       .limit(parseInt(limit)) // Limitar el número de documentos devueltos
       .exec((error, datos) => {

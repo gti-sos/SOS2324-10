@@ -175,15 +175,15 @@
 	function goToPreviousPage() {
 		getVehiclesTotal();
 		if (page > 1) {
-			page = page - 1;
+			page --;
 			getVehicles();
 		}
 	}
 
 	// Función para ir a la página siguiente
 	function goToNextPage() {
-		if (page * pageSize < totalDatos) {
-			page = page + 1;
+		if ((page * pageSize) < totalDatos) {
+			page ++;
 			getVehicles();
 		}
 	}
