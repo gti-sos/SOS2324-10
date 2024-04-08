@@ -14,7 +14,7 @@ test('Carga de vehicles-stock', async ({ page }) => {
   await expect(page).toHaveTitle('vehicles-stock');
   await expect(page).toHaveURL('https://sos2324-10.appspot.com/vehicles-stock');
 });
-/**
+
 //Comprobamos el correcto funcionamiento de la paginación
 test('Paginación de vehicles-stock', async ({ page }) => {
   await page.goto('https://sos2324-10.appspot.com/vehicles-stock');
@@ -42,7 +42,7 @@ async function verificarCantidadDatos(page) {
   const rows = await page.$$('table tbody tr');
   return rows.length === 10;
 }
-
+/*
 //Comprobamos que únicamente se muestren 10 datos en la web
 test('Verificar offset vehicles-stock', async ({ page }) => {
   await page.goto('https://sos2324-10.appspot.com/vehicles-stock');
