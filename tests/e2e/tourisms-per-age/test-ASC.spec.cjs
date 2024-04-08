@@ -17,7 +17,7 @@ test('Carga página principal', async () => {
     await expect(page).toHaveURL('https://sos2324-10.appspot.com/tourisms-per-age');
 });
 
-test('has title Proyecto SOS2324-10', async () => {
+test('tiene titulo Proyecto SOS2324-10', async () => {
     test.setTimeout(60000);
     await page.goto('https://sos2324-10.appspot.com');
     await expect(page).toHaveTitle(/Proyecto SOS2324-10/);
