@@ -8,7 +8,7 @@ const URL_web = 'https://sos2324-10.appspot.com/gdp-growth-rates';
 //Cargar página
 test('Carga página principal', async ({ page }) => {
   test.setTimeout(60000);
-  await page.goto(carga);
+  //await page.goto(carga);
   await page.goto(URL_web);
  
 
@@ -21,7 +21,7 @@ test('Carga página principal', async ({ page }) => {
 //Lista de todos los recursos
 test('Listar todos los elementos correctamente', async ({ page }) => {
   test.setTimeout(60000);
-  await page.goto(carga);
+  //await page.goto(carga);
   await page.goto(URL_web);
   
 
@@ -68,7 +68,7 @@ test('Crear nuevo dato', async ({ page }) => {
 //Eliminar dato
 test('Eliminar dato', async ({ page }) => {
   test.setTimeout(60000);
-  await page.goto(carga);
+  //await page.goto(carga);
   await page.goto(URL_web);
   
 
@@ -81,7 +81,7 @@ test('Eliminar dato', async ({ page }) => {
 //Eliminar todos los datos
 test('Eliminar todos los datos', async ({ page }) => {
   test.setTimeout(60000);
-  await page.goto(carga);
+  //await page.goto(carga);
   await page.goto(URL_web);
 
   await page.click('button:has-text("Eliminar Todos")');
