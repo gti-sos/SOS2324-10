@@ -290,6 +290,7 @@
 			}
 		} catch (error) {
 			errorMsg = error;
+			
 		}
 	}
 </script>
