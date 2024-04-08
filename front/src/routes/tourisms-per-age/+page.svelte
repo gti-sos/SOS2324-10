@@ -99,6 +99,7 @@
 			let data = await response.json();
 			totalDatos = data.length;
 			totalPages = Math.ceil(totalDatos / 10);
+			exitMsg = '';
 		} catch (e) {
 			errMsg = e;
 		}

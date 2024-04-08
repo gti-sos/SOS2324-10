@@ -2,13 +2,13 @@ const { test, expect, beforeAll, afterAll, beforeEach, afterEach } = require('@p
 
 let page;
 
-// beforeAll(async ({ browser }) => {
-//     page = await browser.newPage();
-// });
+beforeAll(async ({ browser }) => {
+    page = await browser.newPage();
+});
 
-// afterAll(async () => {
-//     await page.close();
-// });
+afterAll(async () => {
+    await page.close();
+});
 
 
 test('Carga página principal', async () => {
