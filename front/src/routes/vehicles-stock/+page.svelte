@@ -282,320 +282,333 @@
 	}
 </script>
 
-<!--Estilo y formato de la tabla-->
-<title> vehicles-stock</title>
-{#if datos && datos.length > 0}<!---->
-	<div class="container">
-		<div style="margin-bottom: 20px; display: flex; justify-content: space-between;">
-			<button
-				style="background-color: #0366d6; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
-				on:click={() => {
-					showFilter = true;
-				}}
-				>Filtros
-			</button>
-		</div>
-		<table>
-			<thead>
-				<tr>
-					<th>Vista detallada</th>
-					{#each Object.keys(datos[0]) as key}
-						<th>{key}</th>
-					{/each}
-					<!-- Nueva columna para el botón de eliminar -->
-					<th>Eliminar dato</th>
-				</tr>
-			</thead>
-			<tbody>
-				{#each datos as dato}
+<body>
+	<!--Estilo y formato de la tabla-->
+	<title> vehicles-stock</title>
+	{#if datos && datos.length > 0}<!---->
+		<div class="container">
+			<div style="margin-bottom: 20px; display: flex; justify-content: space-between;">
+				<button
+					style="background-color: #0366d6; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+					on:click={() => {
+						showFilter = true;
+					}}
+					>Filtros
+				</button>
+			</div>
+			<table>
+				<thead>
 					<tr>
-						<td>
-							<!-- Botón de eliminar -->
-							<a
-								href="/vehicles-stock/{dato.geo}/{dato.year}"
-								style="text-decoration: none; background-color: #666666; color: white; padding: 5px 10px; border-radius: 5px; cursor: pointer; display: inline-block;"
-							>
-								Ver detalles
-							</a>
-						</td>
-						{#each Object.values(dato) as value}
-							<td>{value}</td>
+						<th>Vista detallada</th>
+						{#each Object.keys(datos[0]) as key}
+							<th>{key}</th>
 						{/each}
-						<!---->
-						<td>
-							<button
-								style="background-color: #FF0000; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
-								on:click={() => deleteVehicle(dato.geo, dato.year)}
-								>Eliminar
-							</button>
-						</td>
+						<!-- Nueva columna para el botón de eliminar -->
+						<th>Eliminar dato</th>
 					</tr>
-				{/each}
-			</tbody>
-		</table>
-		<div style="margin-top: 20px; display: flex; justify-content: space-between;">
-			<button
-				style="background-color: #0366d6; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
-				on:click={() => goToPreviousPage()}
-				>Anterior
-			</button>
-			<button
-				style="background-color: #0366d6; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
-				on:click={() => goToNextPage()}
-			>
-				Siguiente
-			</button>
-		</div>
+				</thead>
+				<tbody>
+					{#each datos as dato}
+						<tr>
+							<td>
+								<!-- Botón de eliminar -->
+								<a
+									href="/vehicles-stock/{dato.geo}/{dato.year}"
+									style="text-decoration: none; background-color: #666666; color: white; padding: 5px 10px; border-radius: 5px; cursor: pointer; display: inline-block;"
+								>
+									Ver detalles
+								</a>
+							</td>
+							{#each Object.values(dato) as value}
+								<td>{value}</td>
+							{/each}
+							<!---->
+							<td>
+								<button
+									style="background-color: #FF0000; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
+									on:click={() => deleteVehicle(dato.geo, dato.year)}
+									>Eliminar
+								</button>
+							</td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
+			<div style="margin-top: 20px; display: flex; justify-content: space-between;">
+				<button
+					style="background-color: #0366d6; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
+					on:click={() => goToPreviousPage()}
+					>Anterior
+				</button>
+				<button
+					style="background-color: #0366d6; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
+					on:click={() => goToNextPage()}
+				>
+					Siguiente
+				</button>
+			</div>
 
-		<!--Botón para crear entrada-->
-		<div style="margin-top: 20px; display: flex; justify-content: space-between;">
-			<button
-				style="background-color: #0366d6; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
-				on:click={() => {
-					showForm = true;
-				}}>Crear Entrada</button
-			>
-			<!---->
-			<button
-				style="background-color: #FF0000; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
-				on:click={() => {
-					deleteALL();
-				}}>Eliminar Todos</button
-			>
-		</div>
-	</div>
-	<!---->
-	<!-- Popup para crear nuevo objeto -->
-	{#if showForm}
-		<div class="modal">
-			<div
-				class="modal-content"
-				style="background-color: #f2f2f2; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); padding: 20px;"
-			>
-				<span
-					class="close"
+			<!--Botón para crear entrada-->
+			<div style="margin-top: 20px; display: flex; justify-content: space-between;">
+				<button
+					style="background-color: #0366d6; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
 					on:click={() => {
-						showForm = false;
-					}}>&times;</span
+						showForm = true;
+					}}>Crear Entrada</button
 				>
-				<h2 style="color: #0366d6; text-align: center;">Crear Nueva Entrada</h2>
-				<form on:submit|preventDefault={postVehicle}>
-					<div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
-						<div style="width: calc(50% - 10px); margin-bottom: 10px;">
-							<label for="freq">Freq:</label>
-							<input
-								type="text"
-								id="freq"
-								bind:value={newDato.freq}
-								style="width: calc(100% - 25px); padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
-								required
-							/>
-						</div>
-						<div style="width: calc(50% - 10px); margin-bottom: 10px;">
-							<label for="vehicle">Vehicle:</label>
-							<input
-								type="text"
-								id="vehicle"
-								bind:value={newDato.vehicle}
-								style="width: calc(100% - 25px); padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
-								required
-							/>
-						</div>
-						<div style="width: calc(50% - 10px); margin-bottom: 10px;">
-							<label for="unit">Unit:</label>
-							<input
-								type="text"
-								id="unit"
-								bind:value={newDato.unit}
-								style="width: calc(100% - 25px); padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
-								required
-							/>
-						</div>
-						<div style="width: calc(50% - 10px); margin-bottom: 10px;">
-							<label for="geo">Geo:</label>
-							<input
-								type="text"
-								id="geo"
-								bind:value={newDato.geo}
-								style="width: calc(100% - 25px); padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
-								required
-							/>
-						</div>
-						<div style="width: calc(50% - 10px); margin-bottom: 10px;">
-							<label for="year">Year:</label>
-							<input
-								type="number"
-								id="year"
-								bind:value={newDato.year}
-								style="width: calc(100% - 25px); padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
-								required
-							/>
-						</div>
-						<div style="width: calc(50% - 10px); margin-bottom: 10px;">
-							<label for="obs_value">Obs Value:</label>
-							<input
-								type="number"
-								id="obs_value"
-								bind:value={newDato.obs_value}
-								style="width: calc(100% - 25px); padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
-								required
-							/>
-						</div>
-						<div style="width: calc(50% - 10px); margin-bottom: 10px;">
-							<label for="flights_passangers">Flights Passangers:</label>
-							<input
-								type="number"
-								id="flights_passangers"
-								bind:value={newDato.flights_passangers}
-								style="width: calc(100% - 25px); padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
-								required
-							/>
-						</div>
-						<div style="width: calc(50% - 10px); margin-bottom: 10px;">
-							<label for="cars_deaths">Cars Deaths:</label>
-							<input
-								type="number"
-								id="cars_deaths"
-								bind:value={newDato.cars_deaths}
-								style="width: calc(100% - 25px); padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
-								required
-							/>
-						</div>
-					</div>
-					<div style="text-align: center; margin-top: 20px;">
-						<button
-							type="submit"
-							style="background-color: #0366d6; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
-							>Crear</button
-						>
-					</div>
-				</form>
+				<!---->
+				<button
+					style="background-color: #FF0000; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+					on:click={() => {
+						deleteALL();
+					}}>Eliminar Todos</button
+				>
 			</div>
 		</div>
-	{/if}
-	<!-- Botón desplegable de filtro -->
-	{#if showFilter}
-		<div class="modal">
-			<div
-				class="modal-content"
-				style="background-color: #f2f2f2; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); padding: 20px;"
-			>
-				<span
-					class="close"
-					on:click={() => {
-						showFilter = false;
-					}}>&times;</span
+		<!---->
+		<!-- Popup para crear nuevo objeto -->
+		{#if showForm}
+			<div class="modal">
+				<div
+					class="modal-content"
+					style="background-color: #f2f2f2; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); padding: 20px;"
 				>
-				<h2 style="color: #0366d6; text-align: center;">Aplicar filtros</h2>
-				<form on:submit|preventDefault={getVehiclesFilter}>
-					<div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
-						<div style="width: calc(50% - 10px); margin-bottom: 10px;">
-							<label for="freq">Freq:</label>
-							<input
-								type="text"
-								id="freq"
-								bind:value={selectedFilter.freq}
-								style="width: calc(100% - 25px); padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
-							/>
+					<span
+						class="close"
+						on:click={() => {
+							showForm = false;
+						}}>&times;</span
+					>
+					<h2 style="color: #0366d6; text-align: center;">Crear Nueva Entrada</h2>
+					<form on:submit|preventDefault={postVehicle}>
+						<div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
+							<div style="width: calc(50% - 10px); margin-bottom: 10px;">
+								<label for="freq">Freq:</label>
+								<input
+									type="text"
+									id="freq"
+									bind:value={newDato.freq}
+									style="width: calc(100% - 25px); padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
+									required
+								/>
+							</div>
+							<div style="width: calc(50% - 10px); margin-bottom: 10px;">
+								<label for="vehicle">Vehicle:</label>
+								<input
+									type="text"
+									id="vehicle"
+									bind:value={newDato.vehicle}
+									style="width: calc(100% - 25px); padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
+									required
+								/>
+							</div>
+							<div style="width: calc(50% - 10px); margin-bottom: 10px;">
+								<label for="unit">Unit:</label>
+								<input
+									type="text"
+									id="unit"
+									bind:value={newDato.unit}
+									style="width: calc(100% - 25px); padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
+									required
+								/>
+							</div>
+							<div style="width: calc(50% - 10px); margin-bottom: 10px;">
+								<label for="geo">Geo:</label>
+								<input
+									type="text"
+									id="geo"
+									bind:value={newDato.geo}
+									style="width: calc(100% - 25px); padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
+									required
+								/>
+							</div>
+							<div style="width: calc(50% - 10px); margin-bottom: 10px;">
+								<label for="year">Year:</label>
+								<input
+									type="number"
+									id="year"
+									bind:value={newDato.year}
+									style="width: calc(100% - 25px); padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
+									required
+								/>
+							</div>
+							<div style="width: calc(50% - 10px); margin-bottom: 10px;">
+								<label for="obs_value">Obs Value:</label>
+								<input
+									type="number"
+									id="obs_value"
+									bind:value={newDato.obs_value}
+									style="width: calc(100% - 25px); padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
+									required
+								/>
+							</div>
+							<div style="width: calc(50% - 10px); margin-bottom: 10px;">
+								<label for="flights_passangers">Flights Passangers:</label>
+								<input
+									type="number"
+									id="flights_passangers"
+									bind:value={newDato.flights_passangers}
+									style="width: calc(100% - 25px); padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
+									required
+								/>
+							</div>
+							<div style="width: calc(50% - 10px); margin-bottom: 10px;">
+								<label for="cars_deaths">Cars Deaths:</label>
+								<input
+									type="number"
+									id="cars_deaths"
+									bind:value={newDato.cars_deaths}
+									style="width: calc(100% - 25px); padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
+									required
+								/>
+							</div>
 						</div>
-						<div style="width: calc(50% - 10px); margin-bottom: 10px;">
-							<label for="vehicle">Vehicle:</label>
-							<input
-								type="text"
-								id="vehicle"
-								bind:value={selectedFilter.vehicle}
-								style="width: calc(100% - 25px); padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
-							/>
+						<div style="text-align: center; margin-top: 20px;">
+							<button
+								type="submit"
+								style="background-color: #0366d6; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"
+								>Crear</button
+							>
 						</div>
-						<div style="width: calc(50% - 10px); margin-bottom: 10px;">
-							<label for="unit">Unit:</label>
-							<input
-								type="text"
-								id="unit"
-								bind:value={selectedFilter.unit}
-								style="width: calc(100% - 25px); padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
-							/>
-						</div>
-						<div style="width: calc(50% - 10px); margin-bottom: 10px;">
-							<label for="geo">Geo:</label>
-							<input
-								type="text"
-								id="geo"
-								bind:value={selectedFilter.geo}
-								style="width: calc(100% - 25px); padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
-							/>
-						</div>
-						<div style="width: calc(50% - 10px); margin-bottom: 10px;">
-							<label for="year">Year:</label>
-							<input
-								type="number"
-								id="year"
-								bind:value={selectedFilter.year}
-								style="width: calc(100% - 25px); padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
-							/>
-						</div>
-						<div style="width: calc(50% - 10px); margin-bottom: 10px;">
-							<label for="obs_value">Obs Value:</label>
-							<input
-								type="number"
-								id="obs_value"
-								bind:value={selectedFilter.obs_value}
-								style="width: calc(100% - 25px); padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
-							/>
-						</div>
-						<div style="width: calc(50% - 10px); margin-bottom: 10px;">
-							<label for="flights_passangers">Flights Passangers:</label>
-							<input
-								type="number"
-								id="flights_passangers"
-								bind:value={selectedFilter.flights_passangers}
-								style="width: calc(100% - 25px); padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
-							/>
-						</div>
-						<div style="width: calc(50% - 10px); margin-bottom: 10px;">
-							<label for="cars_deaths">Cars Deaths:</label>
-							<input
-								type="number"
-								id="cars_deaths"
-								bind:value={selectedFilter.cars_deaths}
-								style="width: calc(100% - 25px); padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
-							/>
-						</div>
-					</div>
-					<div style="text-align: center; margin-top: 20px;">
-						<button
-							type="submit"
-							onclick={() => {
-								showFilter = false;
-							}}>Filtrar</button
-						>
-						<button
-							style="background-color: #FF6347; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;"
-							on:click={() => {
-								showFilter = false;
-							}}>Eliminar Filtros</button
-						>
-					</div>
-				</form>
+					</form>
+				</div>
 			</div>
+		{/if}
+		<!-- Botón desplegable de filtro -->
+		{#if showFilter}
+			<div class="modal">
+				<div
+					class="modal-content"
+					style="background-color: #f2f2f2; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); padding: 20px;"
+				>
+					<span
+						class="close"
+						on:click={() => {
+							showFilter = false;
+						}}>&times;</span
+					>
+					<h2 style="color: #0366d6; text-align: center;">Aplicar filtros</h2>
+					<form on:submit|preventDefault={getVehiclesFilter}>
+						<div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
+							<div style="width: calc(50% - 10px); margin-bottom: 10px;">
+								<label for="freq">Freq:</label>
+								<input
+									type="text"
+									id="freq"
+									bind:value={selectedFilter.freq}
+									style="width: calc(100% - 25px); padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
+								/>
+							</div>
+							<div style="width: calc(50% - 10px); margin-bottom: 10px;">
+								<label for="vehicle">Vehicle:</label>
+								<input
+									type="text"
+									id="vehicle"
+									bind:value={selectedFilter.vehicle}
+									style="width: calc(100% - 25px); padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
+								/>
+							</div>
+							<div style="width: calc(50% - 10px); margin-bottom: 10px;">
+								<label for="unit">Unit:</label>
+								<input
+									type="text"
+									id="unit"
+									bind:value={selectedFilter.unit}
+									style="width: calc(100% - 25px); padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
+								/>
+							</div>
+							<div style="width: calc(50% - 10px); margin-bottom: 10px;">
+								<label for="geo">Geo:</label>
+								<input
+									type="text"
+									id="geo"
+									bind:value={selectedFilter.geo}
+									style="width: calc(100% - 25px); padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
+								/>
+							</div>
+							<div style="width: calc(50% - 10px); margin-bottom: 10px;">
+								<label for="year">Year:</label>
+								<input
+									type="number"
+									id="year"
+									bind:value={selectedFilter.year}
+									style="width: calc(100% - 25px); padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
+								/>
+							</div>
+							<div style="width: calc(50% - 10px); margin-bottom: 10px;">
+								<label for="obs_value">Obs Value:</label>
+								<input
+									type="number"
+									id="obs_value"
+									bind:value={selectedFilter.obs_value}
+									style="width: calc(100% - 25px); padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
+								/>
+							</div>
+							<div style="width: calc(50% - 10px); margin-bottom: 10px;">
+								<label for="flights_passangers">Flights Passangers:</label>
+								<input
+									type="number"
+									id="flights_passangers"
+									bind:value={selectedFilter.flights_passangers}
+									style="width: calc(100% - 25px); padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
+								/>
+							</div>
+							<div style="width: calc(50% - 10px); margin-bottom: 10px;">
+								<label for="cars_deaths">Cars Deaths:</label>
+								<input
+									type="number"
+									id="cars_deaths"
+									bind:value={selectedFilter.cars_deaths}
+									style="width: calc(100% - 25px); padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
+								/>
+							</div>
+						</div>
+						<div style="text-align: center; margin-top: 20px;">
+							<button
+								style=" background-color: #0366d6; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; "
+								type="submit"
+								onclick={() => {
+									showFilter = false;
+								}}>Filtrar</button
+							>
+							<button
+								style="background-color: #FF6347; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;"
+								on:click={() => {
+									limpiarFiltros();
+									showFilter = false;
+								}}>Eliminar Filtros</button
+							>
+						</div>
+					</form>
+				</div>
+			</div>
+		{/if}
+		{#if errorMsg != ''}
+			ERROR: {errorMsg}
+		{/if}
+	{:else}
+		<div style="justify-content: center; text-align: center; margin-top: 20px">
+			<button
+				style=" background-color: #0366d6; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer; "
+				on:click={() => getInitialData()}
+			>
+				Cargar datos
+			</button>
 		</div>
+		<p class="container">No hay datos disponibles</p>
 	{/if}
-	{#if errorMsg != ''}
-		ERROR: {errorMsg}
-	{/if}
-{:else}
-	<div style="justify-content: center; text-align: center; margin-top: 20px">
-		<button
-			style=" background-color: #0366d6; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer; "
-			on:click={() => getInitialData()}
-		>
-			Cargar datos
-		</button>
-	</div>
-	<p class="container">No hay datos disponibles</p>
-{/if}
+</body>
 
 <style>
+	body {
+		font-family: Arial, sans-serif;
+		line-height: 1.6;
+		margin: 0;
+		padding: 0;
+		background-color: #f3f7ff; /* Azul claro */
+		color: #333;
+	}
+
 	.container {
 		width: 80%;
 		margin: 50px auto;

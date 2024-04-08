@@ -1,6 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 
+import {API_TLR_v1} from "./api/api-TLR-v1.js";
 import {API_TLR_v2} from "./api/api-TLR-v2.js";
 import {backend_MRF_v1} from "./api/api-MRF_v1.js";
 import {backend_MRF_v2} from "./api/api-MRF_v2.js";
@@ -31,7 +32,7 @@ app.use(cors());
 app.listen(PORT);
 app.use(bodyParser.json());
 
-
+API_TLR_v1(app,db_TLR);
 API_TLR_v2(app,db_TLR);
 backend_MRF_v1(app, db_MRF);
 backend_MRF_v2(app, db_MRF);
