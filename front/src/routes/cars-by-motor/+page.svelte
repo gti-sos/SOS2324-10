@@ -40,15 +40,18 @@
 
 	let showSearchForm = false;
 
-	let currentPage = 1;
-    let totalDatos = 0;
-    const pageSize = 10;
 	let page = 1;
 	let totalPages = 1;
+	let totalDatos = 0;
+
+	 //offset
+	 let currentPage = 0;
+    //limit
+    const pageSize = 10;
 
 	onMount(async () => {
 		await getCars();
-		await getCarsTotal();
+		// await getCarsTotal();
 	});
 
 	async function loadInitialData() {
@@ -72,27 +75,29 @@
 		}
 	}
 
-	async function getCarsTotal() {
-		try {
-			let response = await fetch(API_ASB + '?limit=100', {
-				method: 'GET'
-			});
-			let dataT = await response.json();
-			totalDatos = dataT.length;
-			totalPages = Math.ceil(totalDatos / 10);
-		} catch (e) {
-			errorMsg = e;
-		}
-	}
+	// async function getCarsTotal() {
+	// 	try {
+	// 		let response = await fetch(API_ASB + '?limit=100', {
+	// 			method: 'GET'
+	// 		});
+	// 		let dataT = await response.json();
+	// 		totalDatos = dataT.length;
+	// 		totalPages = Math.ceil(totalDatos / 10);
+	// 	} catch (e) {
+	// 		errorMsg = e;
+	// 	}
+	// }
 
 	async function getCars() {
-		await getCarsTotal();
+		// await getCarsTotal();
 		try {
-			let offset = (currentPage - 1) * pageSize;
-            let response = await fetch(`${API_ASB}?limit=${pageSize}&offset=${offset}`
-            ,{
-                                      method: "GET"
-            });
+			let response;
+            let parametros = `?limit=${pageSize}`;
+            if (currentPage > 0) {
+                const offset = currentPage * pageSize;
+                parametros += `&offset=${offset}`;
+			
+			};
 			if (response.ok) {
 				let data = await response.json();
 				cars = data;
@@ -110,35 +115,30 @@
 		}
 	}
 
-	// // Función para ir a la página anterior
-	// function prevPage() {
-	// 	getCarsTotal();
-	// 	if (page > 1) {
-	// 		page--;
-	// 		getCars();
-	// 	}
-	// }
-
-	// // Función para ir a la página siguiente
-	// function nextPage() {
-	// 	if (page < totalPages) {
-	// 		page++;
-	// 		getCars();
-	// 	}
-	// }
+	// Función para ir a la página anterior
 	async function nextPage() {
-        if ((currentPage * pageSize) < totalItems) {
-            currentPage++;
-            getCars();
-        }
+    if (cars.length >= pageSize) {
+      currentPage++;
+      await getCars();
+    } else {
+      errorMsg = "No hay más datos disponibles en la página siguiente.";
+      setTimeout(() => {
+        errorMsg = "";
+      }, 5000);
     }
+  }
 
-    async function prevPage() {
-        if (currentPage > 1) {
-            currentPage--;
-            getCars();
-        }
+  async function prevPage() {
+    if (currentPage > 0) {
+      currentPage--;
+      await getCars();
+    } else {
+      errorMsg = "Ya estás en la primera página.";
+      setTimeout(() => {
+        errorMsg = "";
+      }, 5000);
     }
+  }
 
 	async function createCar() {
 		try {

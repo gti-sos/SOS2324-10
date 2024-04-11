@@ -284,7 +284,7 @@ function API_ASB_v2 (app,db_ASB){
       const queryParams = req.query; // Obtener los parámetros de consulta de la solicitud
 
       //Parseo
-      const numericAttributes = ["page", "limit", "offset"]; // Añadir cualquier parámetro numérico adicional aquí
+      const numericAttributes = ["limit", "offset"]; // Añadir cualquier parámetro numérico adicional aquí
       numericAttributes.forEach(attr => {
           if (queryParams[attr]) {
               queryParams[attr] = parseInt(queryParams[attr]);
@@ -295,7 +295,6 @@ function API_ASB_v2 (app,db_ASB){
       });
 
       // Paginación
-      const page = queryParams.page || 1; // Página predeterminada: 1
       const limit = queryParams.limit || 10; // Límite predeterminado: 10
       const offset = (page - 1) * limit; // Calcular el número de documentos a saltar
 
@@ -319,9 +318,9 @@ function API_ASB_v2 (app,db_ASB){
       };
 
       // Eliminar parámetros de paginación de queryParams
-      delete queryParams.page;
-      delete queryParams.limit;
-      delete queryParams.offset;
+      // delete queryParams.page;
+      // delete queryParams.limit;
+      // delete queryParams.offset;
 
       // Parsear los valores de los parámetros de consulta según el tipo de dato especificado
       for (const key in queryParams) {
