@@ -92,10 +92,10 @@
                                       method: "GET"
             });
             if(response.ok){
-                let {data, total} = await response.json();
+                let data = await response.json();
                 cars = data;
                 console.log(data);
-                totalItems = total;
+                totalItems = data.length;
                 errorMsg = "";
             } else {
                 if(response.status == 404){
@@ -111,7 +111,7 @@
     }
 
     async function nextPage() {
-        if ((currentPage * pageSize) < totalItems) {
+        if ((currentPage * pageSize) <= totalItems) {
             currentPage++;
             getCars();
         }
@@ -255,7 +255,7 @@
 			on:click={() => prevPage()}
 			>Anterior
 		</button>
-		<span>Página {page}</span>
+		<span>Página {currentPage}</span>
 		<button
 			style="background-color: #A9CCE3; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer;"
 			on:click={() => nextPage()}

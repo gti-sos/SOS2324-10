@@ -279,238 +279,252 @@ function API_ASB_v2(app, db_ASB) {
     res.redirect(documentationURL);
   });
 
-  //   app.get(API_BASE + "/cars-by-motor", (req, res) => {
-  //       const queryParams = req.query; // Obtener los parámetros de consulta de la solicitud
+    app.get(API_BASE + "/cars-by-motor", (req, res) => {
+        const { dataflow, last_update, freq, unit, motor_nrg, geo, time_period, obs_value, obs_flag,
+          millions_of_passenger_per_kilometres, road_deaths_per_million_inhabitants, limit = 10, offset = 0, from, to } = req.query;
+        dataflow
+        const queryParams = {};
+        if (dataflow) queryParams.dataflow = dataflow;
+        if (last_update) queryParams.last_update = last_update;
+        if (freq) queryParams.freq = freq;
+        if (unit) queryParams.unit = unit;
+        if (motor_nrg) queryParams.motor_nrg = motor_nrg;
+        if (geo) queryParams.geo = geo;
+        if (time_period) queryParams.time_period = parseInt(time_period);
+        if (obs_value) queryParams.obs_value = parseInt(obs_value);
+        if (obs_flag) queryParams.obs_flag = parseInt(obs_flag);
+        if (millions_of_passenger_per_kilometres) queryParams.millions_of_passenger_per_kilometres = parseInt(millions_of_passenger_per_kilometres);
+        if (road_deaths_per_million_inhabitants) queryParams.road_deaths_per_million_inhabitants = parseInt(road_deaths_per_million_inhabitants);
+    
+        //Parseo
+        // const numericAttributes = ["limit", "offset"]; // Añadir cualquier parámetro numérico adicional aquí
+        // numericAttributes.forEach(attr => {
+        //     if (queryParams[attr]) {
+        //         queryParams[attr] = parseInt(queryParams[attr]);
+        //         if (isNaN(queryParams[attr])) {
+        //             return res.status(400).send("Bad Request");
+        //         }
+        //     }
+        // });
 
-  //       //Parseo
-  //       const numericAttributes = ["limit", "offset"]; // Añadir cualquier parámetro numérico adicional aquí
-  //       numericAttributes.forEach(attr => {
-  //           if (queryParams[attr]) {
-  //               queryParams[attr] = parseInt(queryParams[attr]);
-  //               if (isNaN(queryParams[attr])) {
-  //                   return res.status(400).send("Bad Request");
-  //               }
-  //           }
-  //       });
+        // // Paginación
+        // const limit = queryParams.limit || 10; // Límite predeterminado: 10
+        // const offset = (page - 1) * limit; // Calcular el número de documentos a saltar
 
-  //       // Paginación
-  //       const limit = queryParams.limit || 10; // Límite predeterminado: 10
-  //       const offset = (page - 1) * limit; // Calcular el número de documentos a saltar
+        // Objeto para almacenar parámetros de consulta parseados
+        const parsedQueryParams = {};
 
-  //       // Objeto para almacenar parámetros de consulta parseados
-  //       const parsedQueryParams = {};
+        // Especificación de tipos de datos
+        const dataTypes = {
+          'id':'number',
+          'dataflow': 'string',
+          'last_update': 'string',
+          'freq': 'string',
+          'unit': 'string',
+          'motor_nrg': 'string',
+          'geo': 'string',
+          'time_period': 'number',
+          'obs_value': 'number',
+          'obs_flag': 'string',
+          'millions_of_passenger_per_kilometres': 'number',
+          'road_deaths_per_million_inhabitants': 'number'
+        };
 
-  //       // Especificación de tipos de datos
-  //       const dataTypes = {
-  //         'id':'number',
-  //         'dataflow': 'string',
-  //         'last_update': 'string',
-  //         'freq': 'string',
-  //         'unit': 'string',
-  //         'motor_nrg': 'string',
-  //         'geo': 'string',
-  //         'time_period': 'number',
-  //         'obs_value': 'number',
-  //         'obs_flag': 'string',
-  //         'millions_of_passenger_per_kilometres': 'number',
-  //         'road_deaths_per_million_inhabitants': 'number'
-  //       };
+        // Eliminar parámetros de paginación de queryParams
+        // delete queryParams.page;
+        // delete queryParams.limit;
+        // delete queryParams.offset;
 
-  //       // Eliminar parámetros de paginación de queryParams
-  //       // delete queryParams.page;
-  //       // delete queryParams.limit;
-  //       // delete queryParams.offset;
+        // Parsear los valores de los parámetros de consulta según el tipo de dato especificado
+        for (const key in queryParams) {
+            const value = queryParams[key];
+            const dataType = dataTypes[key];
 
-  //       // Parsear los valores de los parámetros de consulta según el tipo de dato especificado
-  //       for (const key in queryParams) {
-  //           const value = queryParams[key];
-  //           const dataType = dataTypes[key];
+            if (dataType === 'number') {
+                parsedQueryParams[key] = parseFloat(value);
+            } else {
+                parsedQueryParams[key] = value;
+            }
+        }
 
-  //           if (dataType === 'number') {
-  //               parsedQueryParams[key] = parseFloat(value);
+        // Realizar la búsqueda en la base de datos con los parámetros de consulta parseados y ordenados por ID, con paginación
+        db_ASB.find(parsedQueryParams).sort({ id: 1 }).skip(parseInt(offset)).limit(parseInt(limit)).exec((err, data) => {
+            if (err) {
+                // Si hay un error en la base de datos, enviar error 500 Internal Server Error
+                return res.status(500).send("Internal Error");
+            }
+            if (data.length === 0) {
+                // Si no se encontraron datos, enviar error 404 Not Found
+                return res.status(404).send("Data not found");
+            }
+
+            // Eliminar el campo 'id' de cada objeto en el array 'data'
+            const responseData = data.map(item => {
+                const { _id, ...rest } = item;
+                return rest;
+            });
+
+            // Si se encontraron datos, enviar los resultados en formato JSON sin el campo 'id'
+            res.json(responseData);
+        });
+    });
+
+    app.get(API_BASE + "/cars-by-motor/:geo/:time_period", (req, res) => {
+      const geo = req.params.geo;
+      const time_period = parseInt(req.params.time_period);
+
+      // Verificar time_period válido
+      if (isNaN(time_period)) {
+          return res.sendStatus(400).send("Bad Request");
+      }
+
+      // Aplica el filtro de geo y time_period
+      db_ASB.find({ geo: geo, time_period: time_period }, { _id: 0, id: 0 })
+          .exec((err, data) => {
+              if (err) {
+                  return res.sendStatus(500).send("Internal Error");
+              }
+
+              if (data.length === 0) {
+                  return res.sendStatus(404).send("Not Found");
+              }
+
+              res.status(200).json(data[0]);
+          });
+  });
+
+
+  // app.get(API_BASE + "/cars-by-motor", (req, res) => {
+
+    // const { dataflow, last_update, frequency, unit, motor_nrg, geo, time_period, obs_value, obs_flag,
+    //   millions_of_passenger_per_kilometres, road_deaths_per_million_inhabitants, limit = 10, offset = 0, from, to } = req.query;
+    // dataflow
+    // const query = {};
+    // if (dataflow) query.dataflow = dataflow;
+    // if (last_update) query.last_update = last_update;
+    // if (frequency) query.frequency = frequency;
+    // if (unit) query.unit = unit;
+    // if (motor_nrg) query.motor_nrg = motor_nrg;
+    // if (geo) query.geo = geo;
+    // if (time_period) query.time_period = parseInt(time_period);
+    // if (obs_value) query.obs_value = parseInt(obs_value);
+    // if (obs_flag) query.obs_flag = parseInt(obs_flag);
+    // if (millions_of_passenger_per_kilometres) query.millions_of_passenger_per_kilometres = parseInt(millions_of_passenger_per_kilometres);
+    // if (road_deaths_per_million_inhabitants) query.road_deaths_per_million_inhabitants = parseInt(road_deaths_per_million_inhabitants);
+
+  //   if (from && to) {
+  //     query.time_period = { $gte: parseInt(from), $lte: parseInt(to) };
+  //   } else if (from) {
+  //     query.time_period = { $gte: parseInt(from) };
+  //   } else if (to) {
+  //     query.time_period = { $lte: parseInt(to) };
+  //   }
+
+  //   db_ASB.find(query, { _id: 0, id: 0 })
+  //     .skip(parseInt(offset))
+  //     .limit(parseInt(limit))
+  //     .exec((error, results) => {
+  //       if (error) {
+  //         res.sendStatus(500);
+  //       } else if (results.length === 0) {
+  //         res.sendStatus(404);
+  //       } else {
+  //         db_ASB.count(query, (countError, totalCount) => {
+  //           if (countError) {
+  //             res.sendStatus(500);
   //           } else {
-  //               parsedQueryParams[key] = value;
+
+  //             res.status(200).json({ data: results, total: totalCount });
   //           }
+  //         });
   //       }
+  //     });
 
-  //       // Realizar la búsqueda en la base de datos con los parámetros de consulta parseados y ordenados por ID, con paginación
-  //       db_ASB.find(parsedQueryParams).sort({ id: 1 }).skip(offset).limit(limit).exec((err, data) => {
-  //           if (err) {
-  //               // Si hay un error en la base de datos, enviar error 500 Internal Server Error
-  //               return res.status(500).send("Internal Error");
-  //           }
-  //           if (data.length === 0) {
-  //               // Si no se encontraron datos, enviar error 404 Not Found
-  //               return res.status(404).send("Data not found");
-  //           }
+  // });
 
-  //           // Eliminar el campo 'id' de cada objeto en el array 'data'
-  //           const responseData = data.map(item => {
-  //               const { _id, ...rest } = item;
-  //               return rest;
-  //           });
+  // app.get(API_BASE + "/search", (req, res) => {
+  //   const queryParams = req.query;
+  //   const limit = parseInt(queryParams.limit) || 10; // Tamaño predeterminado de la página
+  //   const offset = parseInt(queryParams.offset) || 0; // Desplazamiento predeterminado
+  //   delete queryParams.limit;
+  //   delete queryParams.offset;
 
-  //           // Si se encontraron datos, enviar los resultados en formato JSON sin el campo 'id'
-  //           res.json(responseData);
-  //       });
+  //   // Convertir los atributos numéricos a enteros si están presentes
+  //   const numericAttributes = ["time_period", "obs_value", "millions_of_passenger_per_kilometres", "road_deaths_per_million_inhabitants"];
+  //   numericAttributes.forEach(attr => {
+  //     if (queryParams[attr]) {
+  //       queryParams[attr] = parseInt(queryParams[attr]);
+  //       if (isNaN(queryParams[attr])) {
+  //         return res.sendStatus(400);
+  //       }
+  //     }
   //   });
 
-  //   app.get(API_BASE + "/cars-by-motor/:geo/:time_period", (req, res) => {
-  //     const geo = req.params.geo;
-  //     const time_period = parseInt(req.params.time_period);
+  //   if (queryParams.from && queryParams.to) {
+  //     queryParams.time_period = { $gte: parseInt(queryParams.from), $lte: parseInt(queryParams.to) };
+  //     delete queryParams.from;
+  //     delete queryParams.to;
+  //   }
 
-  //     // Verificar time_period válido
-  //     // if (isNaN(time_period)) {
-  //     //     return res.sendStatus(400).send("Bad Request");
-  //     // }
+  //   // Consultar la base de datos con el filtro construido y la paginación
+  //   db_ASB.find(queryParams, { _id: 0, id: 0 })
+  //     .skip(offset)
+  //     .limit(limit)
+  //     .exec((error, results) => {
+  //       if (error) {
+  //         res.sendStatus(500);
+  //       } else if (results.length === 0) {
+  //         res.sendStatus(404);
+  //       } else {
+  //         return res.send(results);
+  //       }
+  //     });
+  // });
 
-  //     // Aplica el filtro de geo y time_period
-  //     db_ASB.find({ geo: geo, time_period: time_period }, { _id: 0, id: 0 })
-  //         .exec((err, data) => {
-  //             if (err) {
-  //                 return res.sendStatus(500).send("Internal Error");
-  //             }
+  // app.get(API_BASE + "/:geo", (req, res) => {
+  //   const geo = req.params.geo;
 
-  //             if (data.length === 0) {
-  //                 return res.sendStatus(404).send("Not Found");
-  //             }
 
-  //             res.status(200).json(data[0]);
-  //         });
+  //   // Consultar la base de datos con el filtro de geo
+  //   db_ASB.find({ geo: geo }, { _id: 0, id: 0 })
+  //     .exec((err, filteredData) => {
+  //       if (err) {
+  //         return res.sendStatus(500, "Internal Error");
+  //       }
+
+  //       if (filteredData.length === 0) {
+  //         return res.sendStatus(404, "Not Found");
+  //       }
+
+  //       res.status(200).send(filteredData);
+  //     });
   // });
 
 
-  app.get(API_BASE + "/", (req, res) => {
 
-    const { dataflow, last_update, frequency, unit, motor_nrg, geo, time_period, obs_value, obs_flag,
-      millions_of_passenger_per_kilometres, road_deaths_per_million_inhabitants, limit = 10, offset = 0, from, to } = req.query;
-    dataflow
-    const query = {};
-    if (dataflow) query.dataflow = dataflow;
-    if (last_update) query.last_update = last_update;
-    if (frequency) query.frequency = frequency;
-    if (unit) query.unit = unit;
-    if (motor_nrg) query.motor_nrg = motor_nrg;
-    if (geo) query.geo = geo;
-    if (time_period) query.time_period = parseInt(time_period);
-    if (obs_value) query.obs_value = parseInt(obs_value);
-    if (obs_flag) query.obs_flag = parseInt(obs_flag);
-    if (millions_of_passenger_per_kilometres) query.millions_of_passenger_per_kilometres = parseInt(millions_of_passenger_per_kilometres);
-    if (road_deaths_per_million_inhabitants) query.road_deaths_per_million_inhabitants = parseInt(road_deaths_per_million_inhabitants);
+  // app.get(API_BASE + "/:geo/:time_period", (req, res) => {
+  //   const geo = req.params.geo;
+  //   const time_period = parseInt(req.params.time_period);
 
-    if (from && to) {
-      query.time_period = { $gte: parseInt(from), $lte: parseInt(to) };
-    } else if (from) {
-      query.time_period = { $gte: parseInt(from) };
-    } else if (to) {
-      query.time_period = { $lte: parseInt(to) };
-    }
+  //   // Verificar si el año es un número válido
+  //   if (isNaN(time_period)) {
+  //     return res.sendStatus(400, "Bad Request");
+  //   }
 
-    db_ASB.find(query, { _id: 0, id: 0 })
-      .skip(parseInt(offset))
-      .limit(parseInt(limit))
-      .exec((error, results) => {
-        if (error) {
-          res.sendStatus(500);
-        } else if (results.length === 0) {
-          res.sendStatus(404);
-        } else {
-          db_ASB.count(query, (countError, totalCount) => {
-            if (countError) {
-              res.sendStatus(500);
-            } else {
+  //   // Consultar la base de datos con el filtro de geo y time_period
+  //   db_ASB.find({ geo: geo, time_period: time_period }, { _id: 0, id: 0 })
+  //     .exec((err, filteredData) => {
+  //       if (err) {
+  //         return res.sendStatus(500, "Internal Error");
+  //       }
 
-              res.status(200).json({ data: results, total: totalCount });
-            }
-          });
-        }
-      });
+  //       if (filteredData.length === 0) {
+  //         return res.sendStatus(404, "Not Found");
+  //       }
 
-  });
-
-  app.get(API_BASE + "/search", (req, res) => {
-    const queryParams = req.query;
-    const limit = parseInt(queryParams.limit) || 10; // Tamaño predeterminado de la página
-    const offset = parseInt(queryParams.offset) || 0; // Desplazamiento predeterminado
-    delete queryParams.limit;
-    delete queryParams.offset;
-
-    // Convertir los atributos numéricos a enteros si están presentes
-    const numericAttributes = ["time_period", "obs_value", "millions_of_passenger_per_kilometres", "road_deaths_per_million_inhabitants"];
-    numericAttributes.forEach(attr => {
-      if (queryParams[attr]) {
-        queryParams[attr] = parseInt(queryParams[attr]);
-        if (isNaN(queryParams[attr])) {
-          return res.sendStatus(400);
-        }
-      }
-    });
-
-    if (queryParams.from && queryParams.to) {
-      queryParams.time_period = { $gte: parseInt(queryParams.from), $lte: parseInt(queryParams.to) };
-      delete queryParams.from;
-      delete queryParams.to;
-    }
-
-    // Consultar la base de datos con el filtro construido y la paginación
-    db_ASB.find(queryParams, { _id: 0, id: 0 })
-      .skip(offset)
-      .limit(limit)
-      .exec((error, results) => {
-        if (error) {
-          res.sendStatus(500);
-        } else if (results.length === 0) {
-          res.sendStatus(404);
-        } else {
-          return res.send(results);
-        }
-      });
-  });
-
-  app.get(API_BASE + "/:geo", (req, res) => {
-    const geo = req.params.geo;
-
-
-    // Consultar la base de datos con el filtro de geo
-    db_ASB.find({ geo: geo }, { _id: 0, id: 0 })
-      .exec((err, filteredData) => {
-        if (err) {
-          return res.sendStatus(500, "Internal Error");
-        }
-
-        if (filteredData.length === 0) {
-          return res.sendStatus(404, "Not Found");
-        }
-
-        res.status(200).send(filteredData);
-      });
-  });
-
-
-
-  app.get(API_BASE + "/:geo/:time_period", (req, res) => {
-    const geo = req.params.geo;
-    const time_period = parseInt(req.params.time_period);
-
-    // Verificar si el año es un número válido
-    if (isNaN(time_period)) {
-      return res.sendStatus(400, "Bad Request");
-    }
-
-    // Consultar la base de datos con el filtro de geo y time_period
-    db_ASB.find({ geo: geo, time_period: time_period }, { _id: 0, id: 0 })
-      .exec((err, filteredData) => {
-        if (err) {
-          return res.sendStatus(500, "Internal Error");
-        }
-
-        if (filteredData.length === 0) {
-          return res.sendStatus(404, "Not Found");
-        }
-
-        res.status(200).send(filteredData[0]);
-      });
-  });
+  //       res.status(200).send(filteredData[0]);
+  //     });
+  // });
 
 
 
