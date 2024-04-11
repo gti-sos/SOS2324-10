@@ -40,14 +40,10 @@
 
 	let showSearchForm = false;
 
-	let page = 1;
-	let totalPages = 1;
-	let totalDatos = 0;
-
-	 //offset
-	 let currentPage = 0;
-    //limit
+	let currentPage = 1;
+    let totalItems = 0;
     const pageSize = 10;
+
 
 	onMount(async () => {
 		await getCars();
@@ -88,57 +84,45 @@
 	// 	}
 	// }
 
-	async function getCars() {
-		// await getCarsTotal();
-		try {
-			let response;
-            let parametros = `?limit=${pageSize}`;
-            if (currentPage > 0) {
-                const offset = currentPage * pageSize;
-                parametros += `&offset=${offset}`;
-			
-			};
-			if (response.ok) {
-				let data = await response.json();
-				cars = data;
-				console.log(data);
-				errorMsg = '';
-			} else {
-				if (response.status == 404) {
-					errorMsg = 'No hay datos en la base de datos';
-				} else {
-					errorMsg = `Error ${response.status}: ${response.statusText}`;
-				}
-			}
-		} catch (e) {
-			errorMsg = e;
-		}
-	}
-
-	// Función para ir a la página anterior
-	async function nextPage() {
-    if (cars.length >= pageSize) {
-      currentPage++;
-      await getCars();
-    } else {
-      errorMsg = "No hay más datos disponibles en la página siguiente.";
-      setTimeout(() => {
-        errorMsg = "";
-      }, 5000);
+	async function getCars(){
+        try{
+            let offset = (currentPage - 1) * pageSize;
+            let response = await fetch(`${API_ASB}?limit=${pageSize}&offset=${offset}`
+            ,{
+                                      method: "GET"
+            });
+            if(response.ok){
+                let {data, total} = await response.json();
+                cars = data;
+                console.log(data);
+                totalItems = total;
+                errorMsg = "";
+            } else {
+                if(response.status == 404){
+                    errorMsg = "No hay datos en la base de datos";
+                } else {
+                    errorMsg = `Error ${response.status}: ${response.statusText}`;
+                }
+            }
+        } catch(e){
+            errorMsg = e;
+        }
+        
     }
-  }
 
-  async function prevPage() {
-    if (currentPage > 0) {
-      currentPage--;
-      await getCars();
-    } else {
-      errorMsg = "Ya estás en la primera página.";
-      setTimeout(() => {
-        errorMsg = "";
-      }, 5000);
+    async function nextPage() {
+        if ((currentPage * pageSize) < totalItems) {
+            currentPage++;
+            getCars();
+        }
     }
-  }
+
+    async function prevPage() {
+        if (currentPage > 1) {
+            currentPage--;
+            getCars();
+        }
+    }
 
 	async function createCar() {
 		try {
