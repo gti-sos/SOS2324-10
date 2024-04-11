@@ -335,23 +335,37 @@ function API_ASC_v2(app, db_ASC) {
     });
 
     app.get(API_BASE + "/tourisms-per-age", (req, res) => {
-        const queryParams = req.query; // Obtener los parámetros de consulta de la solicitud
+        const { frequency, unit, age, geo, time_period, obs_value,
+            gdp, volgdp, limit = 10, offset = 0} = req.query;
+
+
+        const queryParams = {};
+        if (frequency) queryParams.frequency = frequency;
+        if (unit) queryParams.unit = unit;
+        if (age) queryParams.age = age;
+        if (geo) queryParams.geo = geo;
+        if (time_period) queryParams.time_period = parseInt(time_period);
+        if (obs_value) queryParams.obs_value = parseInt(obs_value);
+        if (gdp) queryParams.gdp = parseInt(gdp);
+        if (volgdp) queryParams.volgdp = parseInt(volgdp);
+
+        //const queryParams = req.query; // Obtener los parámetros de consulta de la solicitud
 
         //Parseo
-        const numericAttributes = ["page", "limit", "skip"]; // Añadir cualquier parámetro numérico adicional aquí
-        numericAttributes.forEach(attr => {
-            if (queryParams[attr]) {
-                queryParams[attr] = parseInt(queryParams[attr]);
-                if (isNaN(queryParams[attr])) {
-                    return res.status(400).send("Bad Request");
-                }
-            }
-        });
+        // const numericAttributes = ["limit", "offset"]; // Añadir cualquier parámetro numérico adicional aquí
+        // numericAttributes.forEach(attr => {
+        //     if (queryParams[attr]) {
+        //         queryParams[attr] = parseInt(queryParams[attr]);
+        //         if (isNaN(queryParams[attr])) {
+        //             return res.status(400).send("Bad Request");
+        //         }
+        //     }
+        // });
 
         // Paginación
-        const page = queryParams.page || 1; // Página predeterminada: 1
-        const limit = queryParams.limit || 10; // Límite predeterminado: 10
-        const skip = (page - 1) * limit; // Calcular el número de documentos a saltar
+        // const page = queryParams.page || 1; // Página predeterminada: 1
+        //const limit = queryParams.limit || 10; // Límite predeterminado: 10
+        //const offset = 0; // Calcular el número de documentos a saltar
 
         // Objeto para almacenar parámetros de consulta parseados
         const parsedQueryParams = {};
@@ -370,9 +384,9 @@ function API_ASC_v2(app, db_ASC) {
         };
 
         // Eliminar parámetros de paginación de queryParams
-        delete queryParams.page;
-        delete queryParams.limit;
-        delete queryParams.skip;
+        // delete queryParams.page;
+        // delete queryParams.limit;
+        // delete queryParams.skip;
 
         // Parsear los valores de los parámetros de consulta según el tipo de dato especificado
         for (const key in queryParams) {
@@ -387,7 +401,7 @@ function API_ASC_v2(app, db_ASC) {
         }
 
         // Realizar la búsqueda en la base de datos con los parámetros de consulta parseados y ordenados por ID, con paginación
-        db_ASC.find(parsedQueryParams).sort({ id: 1 }).skip(skip).limit(limit).exec((err, data) => {
+        db_ASC.find(parsedQueryParams).sort({ id: 1 }).skip(parseInt(offset)).limit(parseInt(limit)).exec((err, data) => {
             if (err) {
                 // Si hay un error en la base de datos, enviar error 500 Internal Server Error
                 return res.status(500).send("Internal Error");

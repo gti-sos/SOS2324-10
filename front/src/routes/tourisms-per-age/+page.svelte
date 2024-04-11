@@ -34,9 +34,9 @@
 	let errMsg = '';
 	let exitMsg = '';
 
-	let page = 1;
-	let totalDatos = 0;
-	let totalPages = 1;
+	let currentPage = 1;
+	let totalItems = 0;
+	let pageSize = 10;
 
 	onMount(async () => {
 		await getTourisms();
@@ -63,6 +63,32 @@
 			errMsg = error;
 		}
 	}
+
+	async function getTourisms() {
+		// await getTourismsTotal();
+		try {
+			let offset = (currentPage - 1) * pageSize;
+			let response = await fetch(`${API_ASC}?limit=${pageSize}&offset=${offset}`, {
+				method: 'GET',
+			});
+			if (response.ok) {
+				let data = await response.json();
+				tourisms = data;
+				console.log(data);
+				//totalItems = data.length;
+				errMsg = '';
+			} else {
+				if (response.status == 404) {
+					errMsg = 'No hay datos en la base de datos';
+				} else {
+					errMsg = `Error ${response.status}: ${response.statusText}`;
+				}
+			}
+		} catch (e) {
+			errMsg = e;
+		}
+	}
+
 	async function createTourism() {
 		try {
 			await getTourisms();
@@ -97,7 +123,7 @@
 				method: 'GET'
 			});
 			let data = await response.json();
-			totalDatos = data.length;
+			totalItems = data.length;
 			totalPages = Math.ceil(totalDatos / 10);
 		} catch (e) {
 			errMsg = e;
@@ -105,45 +131,21 @@
 	}
 
 	function goToPageAnt() {
-		if (page > 1) {
-			page = page - 1;
-			getTourisms();
-		}
+		if (currentPage > 1) {
+            currentPage--;
+            getTourisms();
+        }
 	}
 
 	function goToPageSig() {
-		if (page < totalPages) {
-			page = page + 1;
-			getTourisms();
-		}
+		console.log(currentPage);
+		if ((currentPage * pageSize) < totalItems) {
+            currentPage++;
+            getTourisms();
+        }
 	}
 
-	async function getTourisms() {
-		await getTourismsTotal();
-		try {
-			let response = await fetch(API_ASC + '?page=' + page, {
-				method: 'GET',
-				headers: {
-					'Cache-Control': 'no-cache',
-					Pragma: 'no-cache'
-				}
-			});
-			if (response.ok) {
-				let data = await response.json();
-				tourisms = data;
-				console.log(data);
-				errMsg = '';
-			} else {
-				if (response.status == 404) {
-					errMsg = 'No hay datos en la base de datos';
-				} else {
-					errMsg = `Error ${response.status}: ${response.statusText}`;
-				}
-			}
-		} catch (e) {
-			errMsg = e;
-		}
-	}
+
 
 	async function deleteTourismAll() {
 		try {
@@ -277,9 +279,9 @@
 {#if tourisms && tourisms.length > 0}<!---->
 	<div class="container">
 		<div style="margin-bottom: 20px; display: flex; justify-content: space-between;">
-			<button disabled={page === 1} on:click={() => goToPageAnt()}>Anterior</button>
-			<span>Página {page}</span>
-			<button disabled={tourisms.length < 10} on:click={() => goToPageSig()}>Siguiente</button>
+			<button on:click={() => goToPageAnt()}>Anterior</button>
+			<span>Página {currentPage}</span>
+			<button on:click={() => goToPageSig()}>Siguiente</button>
 		</div>
 		<table>
 			<thead>
