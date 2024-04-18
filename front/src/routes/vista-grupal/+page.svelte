@@ -1,16 +1,63 @@
+<svelte:head>
+	<script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://code.highcharts.com/modules/treemap.js"></script>
+    <script src="https://code.highcharts.com/modules/heatmap.js"></script>
+</svelte:head>
+
 <script>
 	import { onMount } from 'svelte';
 	import { dev } from '$app/environment';
 
 	let API_TLR = '/api/v2/vehicles-stock';
+	let API_MRF = '/api/v2/gdp-growth-rates';
 	let errorMsg = '';
 
 	if (dev) {
 		API_TLR = 'http://localhost:8080' + API_TLR;
+		API_MRF = 'http://localhost:8080' + API_MRF;
+	}
+
+	
+
+	onMount(async () => {
+		let datos1 = await getVehicles();
+		let datos2 = await getGDP();
+		datos2 = replaceGeo(datos2);
+		console.log('DATOS MRF: ' + JSON.stringify(datos2));
+		let datos = unificarBD(datos1, datos2);
+		console.log('DATOS COMUNES: ' + JSON.stringify(datos));
+		datos = getEstadisticas(datos);
+		console.log("DATOS TRATADOS: " + JSON.stringify(datos));
+		getChart(datos);
+	});
+
+	//Funciones para obtener los datos en la BD
+	async function getInitialData() {
+		try {
+			if (datos.length === 0) {
+				let response = await fetch(API_TLR + '/loadInitialData', {
+					method: 'GET'
+				});
+
+				if (response.ok) {
+					getVehicles();
+					alert('Datos Cargados Correctamente');
+				} else {
+					errorMsg = 'La base de datos no está vacía';
+				}
+			} else {
+				errorMsg = 'La base de datos no está vacía';
+			}
+		} catch (error) {
+			errorMsg = error;
+		}
 	}
 
 	async function getVehicles() {
 		try {
+			await getInitialData();
 			let response = await fetch(`${API_TLR}?limit=10000`, {
 				method: 'GET',
 				headers: {
@@ -21,6 +68,50 @@
 
 			if (response.ok) {
 				let data = await response.json();
+				console.log('DATOS TLR: ' + JSON.stringify(data));
+				return data;
+			} else {
+				if (response.status == 404) {
+					errorMsg = 'No hay datos1 en la base de datos1';
+				} else {
+					errorMsg = `Error ${response.status}: ${response.statusText}`;
+				}
+			}
+		} catch (e) {
+			errorMsg = e;
+		}
+	}
+
+	async function getInitialGDP() {
+		try {
+			if (gdp.length === 0) {
+				let response = await fetch(API_MRF + '/loadInitialData', {
+					method: 'GET'
+				});
+
+				if (response.ok) {
+					exitoMsg = 'Datos cargados correctamente';
+					errorMsg = '';
+				} else {
+					errorMsg = 'Ya existen datos en la base de datos';
+				}
+			} else {
+				errorMsg = 'Ya existen datos en la base de datos';
+			}
+		} catch (e) {
+			errorMsg = e;
+		}
+	}
+
+	async function getGDP() {
+		try {
+			await getInitialGDP();
+			let response = await fetch(`${API_MRF}?limit=10000`, {
+				method: 'GET'
+			});
+			if (response.ok) {
+				let { data, total } = await response.json();
+				errorMsg = '';
 				return data;
 			} else {
 				if (response.status == 404) {
@@ -34,140 +125,157 @@
 		}
 	}
 
-	async function getChart() {
-		let datos = await getVehicles();
-		const chartData = transformData(datos);
-		const chart = Highcharts.chart('graph', {
-			chart: {
-				type: 'bar'
-			},
-			title: {
-				text: 'Ventas de vehículos por país'
-			},
-			xAxis: {
-				categories: chartData.categories,
-				title: {
-					text: 'Países'
-				}
-			},
-			yAxis: {
-				title: {
-					text: 'Número de vehículos vendidos'
-				}
-			},
-			plotOptions: {
-				series: {
-					color: '#3E92CC',
-					cursor: 'pointer',
-					events: {
-						click: function (event) {
-							showCountryChart(event.point.category);
-						}
-					}
-				}
-			},
-			series: [
-				{
-					name: 'Total de vehículos vendidos',
-					data: chartData.series
-				}
-			]
+	function replaceGeo(data2) {
+		const countryNames = {
+			austria: 'Austria',
+			belgium: 'Bélgica',
+			bulgaria: 'Bulgaria',
+			croatia: 'Croacia',
+			cyprus: 'Chipre',
+			czech_republic: 'República Checa',
+			denmark: 'Dinamarca',
+			estonia: 'Estonia',
+			finland: 'Finlandia',
+			france: 'Francia',
+			germany: 'Alemania',
+			greece: 'Grecia',
+			hungary: 'Hungría',
+			ireland: 'Irlanda',
+			it: 'Italia',
+			latvia: 'Letonia',
+			lithuania: 'Lituania',
+			luxembourg: 'Luxemburgo',
+			malta: 'Malta',
+			netherlands: 'Países Bajos',
+			poland: 'Polonia',
+			portugal: 'Portugal',
+			romania: 'Rumania',
+			slovakia: 'Eslovaquia',
+			slovenia: 'Eslovenia',
+			spain: 'España',
+			sweden: 'Suecia',
+			united_kingdom: 'Reino Unido'
+		};
+
+		return data2.map((item) => {
+			return {
+				...item,
+				geo: countryNames[item.geo] || item.geo // Si el país no está en la lista, deja el valor original
+			};
 		});
 	}
 
-	function transformData(datos) {
-		const countrySales = datos.reduce((acc, curr) => {
+	//Creamos función que unifique datos
+	function unificarBD(data1, data2) {
+		const geoSet1 = new Set(data1.map((item) => item.geo));
+		const filteredData2 = data2.filter((item) => geoSet1.has(item.geo));
+		const geoSet2 = new Set(filteredData2.map((item) => item.geo));
+
+		const filteredData1 = data1.filter((item) => geoSet2.has(item.geo));
+
+		const combinedData = [...filteredData1, ...filteredData2];
+
+		return combinedData;
+	}
+
+	//Función para crear la estadística
+	function getEstadisticas(datos) {
+		const countryData = datos.reduce((acc, curr) => {
 			if (!acc[curr.geo]) {
-				acc[curr.geo] = 0;
+				acc[curr.geo] = { pib: 0, deathsInFlights: 0 };
 			}
-			acc[curr.geo] += curr.obs_value;
+			// Acumulación de PIB si obs_value es un valor decimal
+			if (Number.isInteger(curr.obs_value)) {
+				acc[curr.geo].pib += curr.obs_value;
+			}
+			// Acumulación de muertes en vuelos si existe flights_passangers
+			if (curr.flights_passangers) {
+				acc[curr.geo].deathsInFlights += curr.flights_passangers;
+			}
 			return acc;
 		}, {});
 
-		const sortedData = Object.entries(countrySales).map(([country, totalSales]) => ({
-			country,
-			totalSales
+		const sortedData = Object.entries(countryData).map(([country, { pib, deathsInFlights }]) => ({
+			country: country,
+			pib: pib,
+			deathsInFlights: deathsInFlights
 		}));
-
-		sortedData.sort((a, b) => b.totalSales - a.totalSales);
 
 		const chartData = {
 			categories: sortedData.map((item) => item.country),
-			series: sortedData.map((item) => item.totalSales)
-		};
-
-		return chartData;
-	}
-
-	function showCountryChart(country) {
-		const countryData = datos.filter((item) => item.geo === country);
-		const countryChartData = transformCountryData(countryData);
-
-		Highcharts.chart('countryGraph', {
-			chart: {
-				type: 'bar'
-			},
-			title: {
-				text: `Ventas de vehículos en ${country}`
-			},
-			xAxis: {
-				categories: countryChartData.categories,
-				title: {
-					text: 'Año'
-				}
-			},
-			yAxis: {
-				title: {
-					text: 'Número de vehículos vendidos'
-				}
-			},
-			plotOptions: {
-				series: {
-					color: '#FFA500' // Cambiamos el color de las barras a naranja
-				}
-			},
 			series: [
 				{
-					name: 'Ventas por año',
-					data: countryChartData.series
+					name: 'PIB Acumulado',
+					data: sortedData.map((item) => item.pib)
+				},
+				{
+					name: 'Muertes en Aviones',
+					data: sortedData.map((item) => item.deathsInFlights)
 				}
 			]
-		});
-	}
-
-	function transformCountryData(countryData) {
-		const chartData = {
-			categories: [],
-			series: []
 		};
-
-		countryData.forEach((item) => {
-			chartData.categories.push(item.year);
-			chartData.series.push(item.obs_value);
-		});
 
 		return chartData;
 	}
 
-	let datos;
+	//Creamos el gráfico
+	function getChart(datos) {
+    Highcharts.chart('graph', {
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'PIB Acumulado vs Muertes en Aviones por País'
+        },
+        xAxis: {
+            categories: datos.categories,
+            crosshair: true
+        },
+        yAxis: [
+            {
+                min: 0,
+                title: {
+                    text: 'PIB Acumulado'
+                }
+            },
+            {
+                min: 0,
+                title: {
+                    text: 'Muertes en Aviones'
+                },
+                opposite: true
+            }
+        ],
+        tooltip: {
+            shared: true
+        },
+        series: [
+            {
+                name: 'PIB Acumulado',
+                data: datos.series[0].data, // Accede a los datos directamente
+                tooltip: {
+                    valueSuffix: ' unidades'
+                }
+            },
+            {
+                name: 'Muertes en Aviones',
+                data: datos.series[1].data, // Accede a los datos directamente
+                yAxis: 1,
+                tooltip: {
+                    valueSuffix: ' personas'
+                }
+            }
+        ]
+    });
+}
 
-	onMount(async () => {
-		datos = await getVehicles();
-		getChart();
-	});
 </script>
 
-<svelte:head>
-	<script src="https://code.highcharts.com/highcharts.js"></script>
-</svelte:head>
+
 
 <div class="container">
 	<div class="graph1">
 		<div id="graph" style="width:100%; height:400px;"></div>
-	</div>
-
-	<div class="graph2">
-		<div id="countryGraph" style="width:100%; height:400px;"></div>
 	</div>
 </div>
 
@@ -185,15 +293,6 @@
 	}
 
 	.graph1 {
-		width: 80%;
-		margin: 50px auto;
-		background-color: #ffffff; /* Blanco */
-		border: 1px solid #a4caef; /* Azul claro */
-		border-radius: 15px; /* Bordes más redondeados */
-		box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombras */
-		padding: 20px;
-	}
-	.graph2 {
 		width: 80%;
 		margin: 50px auto;
 		background-color: #ffffff; /* Blanco */

@@ -9,7 +9,7 @@
         </div>
     </div>
     <div class="dropdown">
-        <button class="dropbtn">vgdp-growth-rates</button>
+        <button class="dropbtn">gdp-growth-rates</button>
         <div class="dropdown-content">
             <a href="/gdp-growth-rates">Tabla</a>
             <a href="/gdp-growth-rates/vistas">Vista</a>
