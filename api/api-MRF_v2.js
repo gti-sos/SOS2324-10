@@ -571,6 +571,78 @@ function backend_MRF_v2(app, db_MRF){
             obs_value: 2.5,
             growth_rate_2030: 32608,
             growth_rate_2040: 36522
+        },
+        { 
+            dataflow: 'estat:teco00115(1.0)', 
+            last_update: '02/02/24 23:00:00', 
+            frequency: 'a', 
+            unit: 'clv_pch_pre_hab',
+            na_item: 'b1gq', 
+            geo: 'iceland', 
+            time_period: 2020, 
+            obs_value: -8.7, 
+            growth_rate_2030: 46784, 
+            growth_rate_2040: 33489 
+        },
+        { 
+            dataflow: 'estat:teco00115(1.0)', 
+            last_update: '02/02/24 23:00:00', 
+            frequency: 'a', 
+            unit: 'clv_pch_pre_hab', 
+            na_item: 'b1gq', 
+            geo: 'iceland', 
+            time_period: 2021, 
+            obs_value: 2.8,
+            growth_rate_2030: 54779, 
+            growth_rate_2040: 37992 
+        },
+        { 
+            dataflow: 'estat:teco00115(1.0)', 
+            last_update: '02/02/24 23:00:00', 
+            frequency: 'a', 
+            unit: 'clv_pch_pre_hab', 
+            na_item: 'b1gq', 
+            geo: 'iceland', 
+            time_period: 2022, 
+            obs_value: 4.6, 
+            growth_rate_2030: 48313, 
+            growth_rate_2040: 33302
+        },
+        { 
+            dataflow: 'estat:teco00115(1.0)', 
+            last_update: '02/02/24 23:00:00', 
+            frequency: 'a', 
+            unit: 'clv_pch_pre_hab', 
+            na_item: 'b1gq', 
+            geo: 'it', 
+            time_period: 2020, 
+            obs_value: -8.5, 
+            growth_rate_2030: 33212, 
+            growth_rate_2040: 27883 
+        },
+        { 
+            dataflow: 'estat:teco00115(1.0)', 
+            last_update: '02/02/24 23:00:00', 
+            frequency: 'a', 
+            unit: 'clv_pch_pre_hab', 
+            na_item: 'b1gq', 
+            geo: 'it', 
+            time_period: 2021, 
+            obs_value: 8.9, 
+            growth_rate_2030: 35994, 
+            growth_rate_2040: 28373 
+        },
+        { 
+            dataflow: 'estat:teco00115(1.0)', 
+            last_update: '02/02/24 23:00:00', 
+            frequency: 'a', 
+            unit: 'clv_pch_pre_hab', 
+            na_item: 'b1gq', 
+            geo: 'it', 
+            time_period: 2022, 
+            obs_value: 3.9, 
+            growth_rate_2030: 35442, 
+            growth_rate_2040: 29992
         }
     ];
 

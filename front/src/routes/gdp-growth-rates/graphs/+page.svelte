@@ -1,9 +1,10 @@
 <svelte:head>
     <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="https://code.highcharts.com/modules/exporting.js"></script>
-    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-
+    <script src="https://code.highcharts.com/modules/treemap.js"></script>
+    <script src="https://code.highcharts.com/modules/heatmap.js"></script>
+    
 </svelte:head>
 
 
@@ -18,12 +19,10 @@
         try {
             const res = await fetch(API_DATA);
             const data = await res.json();
-            console.log(`Data received: ${JSON.stringify(data, null, 2)}`);
-            console.log(data.length);
-
             if (data.length > 0) {
                 dataAvailable = true; 
-                createBubbleChart(data);
+                createBubbleChart(meanGrowthRate(data));
+                createTreemapChart(meanGrowthRate(data));
             }
 
         } catch (error) {
@@ -52,56 +51,46 @@
         }
     }   
     
-    /**
-     * 
     function meanGrowthRate(data) {
-        // Objeto para almacenar la suma de crecimiento y la cantidad de veces que aparece cada país
-        const sumas = {};
-        const conteo = {};
-
-        // Iterar sobre los datos para calcular la suma de crecimiento y el conteo de cada país
-        data.forEach(entry => {
-            const pais = entry.geo;
-            const crecimiento = (entry.growth_rate_2030 + entry.growth_rate_2040) / 2;
-
-            if (sumas[pais]) {
-                sumas[pais] += crecimiento;
-                conteo[pais]++;
-            } else {
-                sumas[pais] = crecimiento;
-                conteo[pais] = 1;
+        const groupedData = data.reduce((acc, curr) => {
+            if (!acc[curr.geo]) {
+                acc[curr.geo] = { total2030: 0, total2040: 0, count: 0 };
             }
+            acc[curr.geo].total2030 += curr.growth_rate_2030;
+            acc[curr.geo].total2040 += curr.growth_rate_2040;
+            acc[curr.geo].count++;
+            return acc;
+        }, {});
+
+        const averagedData = Object.keys(groupedData).map(country => {
+            const { total2030, total2040, count } = groupedData[country];
+            return {
+                geo: country,
+                growth_rate_2030: total2030 / count,
+                growth_rate_2040: total2040 / count
+            };
         });
 
-        // Objeto para almacenar la media de crecimiento de cada país
-        const medias = {};
-
-        // Calcular la media de crecimiento para cada país
-        for (const pais in sumas) {
-            medias[pais] = sumas[pais] / conteo[pais];
-        }
-
-        // Ordenar los países por su media de crecimiento de mayor a menor
-        const paisesOrdenados = Object.keys(medias).sort((a, b) => medias[b] - medias[a]);
-
-        // Preparar los datos en un formato adecuado para Highcharts
-        const dataHighcharts = paisesOrdenados.map(pais => ({
-            name: pais,
-            y: medias[pais]
-        }));
-
-        // Devolver los datos en un formato adecuado para Highcharts
-        return dataHighcharts;
+        return averagedData;
     }
-    */
-    // Crear un gráfico de pastel utilizando Highcharts
     
+
+
+
+
 
    
     // Crear un gráfico de dispersión utilizando Highcharts
     function createBubbleChart(data) {
 
-        const scatterChart = Highcharts.chart('container', {
+        const seriesData = data.map(entry => ({
+                x: entry.growth_rate_2030,
+                y: entry.growth_rate_2040,
+                name: entry.geo,
+                country: entry.geo // Si deseas mantener la propiedad 'country' como en tu ejemplo original
+        }));
+
+        const scatterChart = Highcharts.chart('bubble-container', {
 
             chart: {
                 type: 'bubble',
@@ -114,26 +103,26 @@
             },
 
             title: {
-                text: 'Sugar and fat intake per country'
+                text: 'Estimación de crecimiento en las próximas decadas'
             },
 
             subtitle: {
-                text: 'Source: <a href="http://www.euromonitor.com/">Euromonitor</a> and <a href="https://data.oecd.org/">OECD</a>'
+                text: 'Source: <a href="https://sos2324-10.appspot.com/api/v2/gdp-growth-rates">Gdp-growth-rates</a>'
             },
 
             accessibility: {
                 point: {
-                    valueDescriptionFormat: '{index}. {point.name}, fat: {point.x}g, sugar: {point.y}g, obesity: {point.z}%.'
+                    valueDescriptionFormat: '{index}. {point.name}, 2030: {point.x}$, 2040: {point.y}$'
                 }
             },
 
             xAxis: {
                 gridLineWidth: 1,
                 title: {
-                    text: 'Daily fat intake'
+                    text: 'Crecimiento 2030'
                 },
                 labels: {
-                    format: '{value} gr'
+                    format: '{value} $'
                 },
                 plotLines: [{
                     color: 'black',
@@ -146,12 +135,11 @@
                         style: {
                             fontStyle: 'italic'
                         },
-                        text: 'Safe fat intake 65g/day'
                     },
                     zIndex: 3
                 }],
                 accessibility: {
-                    rangeDescription: 'Range: 60 to 100 grams.'
+                    rangeDescription: 'Range: 10000 to 100000 millions.'
                 }
             },
 
@@ -159,10 +147,10 @@
                 startOnTick: false,
                 endOnTick: false,
                 title: {
-                    text: 'Daily sugar intake'
+                    text: 'Crecimiento 2040'
                 },
                 labels: {
-                    format: '{value} gr'
+                    format: '{value} $'
                 },
                 maxPadding: 0.2,
                 plotLines: [{
@@ -175,13 +163,11 @@
                         style: {
                             fontStyle: 'italic'
                         },
-                        text: 'Safe sugar intake 50g/day',
-                        x: -10
                     },
                     zIndex: 3
                 }],
                 accessibility: {
-                    rangeDescription: 'Range: 0 to 160 grams.'
+                    rangeDescription: 'Range: 10000 to 100000 millions.'
                 }
             },
 
@@ -189,9 +175,8 @@
                 useHTML: true,
                 headerFormat: '<table>',
                 pointFormat: '<tr><th colspan="2"><h3>{point.country}</h3></th></tr>' +
-                    '<tr><th>Fat intake:</th><td>{point.x}g</td></tr>' +
-                    '<tr><th>Sugar intake:</th><td>{point.y}g</td></tr>' +
-                    '<tr><th>Obesity (adults):</th><td>{point.z}%</td></tr>',
+                    '<tr><th>Crecimiento 2030:</th><td>{point.x} millions</td></tr>' +
+                    '<tr><th>Crecimiento 2040:</th><td>{point.y} millions</td></tr>',
                 footerFormat: '</table>',
                 followPointer: true
             },
@@ -205,29 +190,71 @@
                 }
             },
 
+
             series: [{
-                data: [
-                    { x: 95, y: 95, z: 13.8, name: 'BE', country: 'Belgium' },
-                    { x: 86.5, y: 102.9, z: 14.7, name: 'DE', country: 'Germany' },
-                    { x: 80.8, y: 91.5, z: 15.8, name: 'FI', country: 'Finland' },
-                    { x: 80.4, y: 102.5, z: 12, name: 'NL', country: 'Netherlands' },
-                    { x: 80.3, y: 86.1, z: 11.8, name: 'SE', country: 'Sweden' },
-                    { x: 78.4, y: 70.1, z: 16.6, name: 'ES', country: 'Spain' },
-                    { x: 74.2, y: 68.5, z: 14.5, name: 'FR', country: 'France' },
-                    { x: 73.5, y: 83.1, z: 10, name: 'NO', country: 'Norway' },
-                    { x: 71, y: 93.2, z: 24.7, name: 'UK', country: 'United Kingdom' },
-                    { x: 69.2, y: 57.6, z: 10.4, name: 'IT', country: 'Italy' },
-                    { x: 68.6, y: 20, z: 16, name: 'RU', country: 'Russia' },
-                    { x: 65.5, y: 126.4, z: 35.3, name: 'US', country: 'United States' },
-                    { x: 65.4, y: 50.8, z: 28.5, name: 'HU', country: 'Hungary' },
-                    { x: 63.4, y: 51.8, z: 15.4, name: 'PT', country: 'Portugal' },
-                    { x: 64, y: 82.9, z: 31.3, name: 'NZ', country: 'New Zealand' }
-                ],
+                data: seriesData,
                 colorByPoint: true
             }]
 
         });
     }
+
+
+    async function createTreemapChart(data) {
+        let points = [];
+        let regionI = 0;
+
+        data.forEach(entry => {
+            points.push({
+                id: `id_${regionI}`,
+                name: entry.geo,
+                value: entry.growth_rate_2030
+            });
+            regionI++;
+        });
+
+        Highcharts.chart('treemap-container', {
+            series: [{
+                name: 'Regions',
+                type: 'treemap',
+                layoutAlgorithm: 'squarified',
+                allowDrillToNode: true,
+                animationLimit: 1000,
+                dataLabels: {
+                    enabled: false
+                },
+                levels: [{
+                    level: 1,
+                    dataLabels: {
+                        enabled: true
+                    },
+                    borderWidth: 3,
+                    levelIsConstant: false
+                }, {
+                    level: 1,
+                    dataLabels: {
+                        style: {
+                            fontSize: '14px'
+                        }
+                    }
+                }],
+                accessibility: {
+                    exposeAsGroupOnly: true
+                },
+                data: points
+            }],
+            subtitle: {
+                text: 'Source: <a href="https://sos2324-10.appspot.com/api/v2/gdp-growth-rates">Gdp-growth-rates</a>',
+                align: 'left'
+            },
+            title: {
+                text: 'Growth Rate 2030 by Region',
+                align: 'left'
+            }
+        });
+    }
+
+    
             
 
 
@@ -237,5 +264,6 @@
 
 </script>
 
-
-<div id="container"></div>
+<div id="bubble-container"></div>
+<br>
+<div id="treemap-container"></div>
