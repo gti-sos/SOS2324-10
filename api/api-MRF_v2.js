@@ -80,7 +80,7 @@ function backend_MRF_v2(app, db_MRF){
                             res.sendStatus(500);
                         } else {
                             
-                            res.status(200).json({ data: results, total: totalCount });
+                            res.status(200).json(results);
                         }
                     });
                 }

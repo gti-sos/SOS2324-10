@@ -1,117 +1,241 @@
 <svelte:head>
     <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
 </svelte:head>
 
+
 <script>
+
     import { onMount } from "svelte";
-    import { dev } from "$app/environment";
+    let dataAvailable = false;
 
-    let API_MRF = "/api/v2/gdp-growth-rates";
-    if(dev)
-        API_MRF = "http://localhost:8080" + API_MRF;
-
-
-    onMount(async () => {
-        const gdpData = await getGDP();
-        if (gdpData.length === 0) {
-            errorMsg = "La base de datos está vacía, no es posible hacer las gráficas";
-        } else {
-            createChart(gdpData);
-        }
-    });
+    let API_DATA = "https://sos2324-10.appspot.com/api/v2/gdp-growth-rates";
 
     async function getGDP() {
         try {
-            const res = await fetch(API_MRF);
-            const datos_MRF = await res.json();
-            console.log(`Data received: ${JSON.stringify(datos_MRF, null, 2)}`);
-            return datos_MRF;
-           // createSecondGraph(datos_MRF);
+            const res = await fetch(API_DATA);
+            const data = await res.json();
+            console.log(`Data received: ${JSON.stringify(data, null, 2)}`);
+            console.log(data.length);
+
+            if (data.length > 0) {
+                dataAvailable = true; 
+                createBubbleChart(data);
+            }
+
         } catch (error) {
-            console.error("Error en la solicitud de datos:", error);
+            console.log(`Error fetching data: ${error}`);
         }
     }
 
 
-    function calcularDiferencia(datos_MRF) {
-    // Verifica que los datos sean un array
-    if (!Array.isArray(data)) {
-        console.error("Los datos no son un array:", data);
-        return [];
+    // Función asíncrona para cargar datos desde el servidor
+    async function loadInitialGDP() {
+
+        try {
+            let response = await fetch(API_DATA + "/loadInitialData", {
+                method: "GET",
+            });
+
+            let status = await response.status;
+            console.log(`Status code: ${status}`);
+            dataAvailable = true;
+            if (status === 200) {
+                await getGDP();
+            } 
+
+        } catch (error) {
+            console.log(`Error loading initail GDP data: ${error}`)
+        }
+    }   
+    
+    /**
+     * 
+    function meanGrowthRate(data) {
+        // Objeto para almacenar la suma de crecimiento y la cantidad de veces que aparece cada país
+        const sumas = {};
+        const conteo = {};
+
+        // Iterar sobre los datos para calcular la suma de crecimiento y el conteo de cada país
+        data.forEach(entry => {
+            const pais = entry.geo;
+            const crecimiento = (entry.growth_rate_2030 + entry.growth_rate_2040) / 2;
+
+            if (sumas[pais]) {
+                sumas[pais] += crecimiento;
+                conteo[pais]++;
+            } else {
+                sumas[pais] = crecimiento;
+                conteo[pais] = 1;
+            }
+        });
+
+        // Objeto para almacenar la media de crecimiento de cada país
+        const medias = {};
+
+        // Calcular la media de crecimiento para cada país
+        for (const pais in sumas) {
+            medias[pais] = sumas[pais] / conteo[pais];
+        }
+
+        // Ordenar los países por su media de crecimiento de mayor a menor
+        const paisesOrdenados = Object.keys(medias).sort((a, b) => medias[b] - medias[a]);
+
+        // Preparar los datos en un formato adecuado para Highcharts
+        const dataHighcharts = paisesOrdenados.map(pais => ({
+            name: pais,
+            y: medias[pais]
+        }));
+
+        // Devolver los datos en un formato adecuado para Highcharts
+        return dataHighcharts;
     }
-
-    // Itera sobre cada elemento de los datos y calcula la diferencia
-    const diferencias = data.map(entry => {
-        // Extrae los valores de growth_rate_2040 y growth_rate_2030
-        const { growth_rate_2040, growth_rate_2030 } = entry;
-        
-        // Calcula la diferencia entre growth_rate_2040 y growth_rate_2030
-        const diferencia = growth_rate_2040 - growth_rate_2030;
-
-        // Retorna un nuevo objeto con la diferencia calculada
-        return {
-            geo: entry.geo,
-            diferencia: diferencia
-        };
-    });
-
-    return diferencias;
-}
-
+    */
+    // Crear un gráfico de pastel utilizando Highcharts
     
 
-    function createChart(diferencias) {
-        Highcharts.chart('container', {
+   
+    // Crear un gráfico de dispersión utilizando Highcharts
+    function createBubbleChart(data) {
+
+        const scatterChart = Highcharts.chart('container', {
+
             chart: {
-                type: 'area'
+                type: 'bubble',
+                plotBorderWidth: 1,
+                zoomType: 'xy'
             },
+
+            legend: {
+                enabled: false
+            },
+
             title: {
-                text: 'Diferencias entre Growth Rate 2040 y Growth Rate 2030 por País'
+                text: 'Sugar and fat intake per country'
             },
+
             subtitle: {
-                text: 'Source: Tu API'
+                text: 'Source: <a href="http://www.euromonitor.com/">Euromonitor</a> and <a href="https://data.oecd.org/">OECD</a>'
             },
+
+            accessibility: {
+                point: {
+                    valueDescriptionFormat: '{index}. {point.name}, fat: {point.x}g, sugar: {point.y}g, obesity: {point.z}%.'
+                }
+            },
+
             xAxis: {
-                categories: diferencias.map(entry => entry.geo),
+                gridLineWidth: 1,
                 title: {
-                    text: 'País'
+                    text: 'Daily fat intake'
+                },
+                labels: {
+                    format: '{value} gr'
+                },
+                plotLines: [{
+                    color: 'black',
+                    dashStyle: 'dot',
+                    width: 2,
+                    value: 65,
+                    label: {
+                        rotation: 0,
+                        y: 15,
+                        style: {
+                            fontStyle: 'italic'
+                        },
+                        text: 'Safe fat intake 65g/day'
+                    },
+                    zIndex: 3
+                }],
+                accessibility: {
+                    rangeDescription: 'Range: 60 to 100 grams.'
                 }
             },
+
             yAxis: {
+                startOnTick: false,
+                endOnTick: false,
                 title: {
-                    text: 'Diferencia'
+                    text: 'Daily sugar intake'
+                },
+                labels: {
+                    format: '{value} gr'
+                },
+                maxPadding: 0.2,
+                plotLines: [{
+                    color: 'black',
+                    dashStyle: 'dot',
+                    width: 2,
+                    value: 50,
+                    label: {
+                        align: 'right',
+                        style: {
+                            fontStyle: 'italic'
+                        },
+                        text: 'Safe sugar intake 50g/day',
+                        x: -10
+                    },
+                    zIndex: 3
+                }],
+                accessibility: {
+                    rangeDescription: 'Range: 0 to 160 grams.'
                 }
             },
+
             tooltip: {
-                shared: true,
-                valueSuffix: ' unidades'
+                useHTML: true,
+                headerFormat: '<table>',
+                pointFormat: '<tr><th colspan="2"><h3>{point.country}</h3></th></tr>' +
+                    '<tr><th>Fat intake:</th><td>{point.x}g</td></tr>' +
+                    '<tr><th>Sugar intake:</th><td>{point.y}g</td></tr>' +
+                    '<tr><th>Obesity (adults):</th><td>{point.z}%</td></tr>',
+                footerFormat: '</table>',
+                followPointer: true
             },
+
             plotOptions: {
-                area: {
-                    stacking: 'normal',
-                    lineColor: '#666666',
-                    lineWidth: 1,
-                    marker: {
-                        lineWidth: 1,
-                        lineColor: '#666666'
+                series: {
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.name}'
                     }
                 }
             },
+
             series: [{
-                name: 'Diferencia',
-                data: diferencias.map(entry => entry.diferencia)
+                data: [
+                    { x: 95, y: 95, z: 13.8, name: 'BE', country: 'Belgium' },
+                    { x: 86.5, y: 102.9, z: 14.7, name: 'DE', country: 'Germany' },
+                    { x: 80.8, y: 91.5, z: 15.8, name: 'FI', country: 'Finland' },
+                    { x: 80.4, y: 102.5, z: 12, name: 'NL', country: 'Netherlands' },
+                    { x: 80.3, y: 86.1, z: 11.8, name: 'SE', country: 'Sweden' },
+                    { x: 78.4, y: 70.1, z: 16.6, name: 'ES', country: 'Spain' },
+                    { x: 74.2, y: 68.5, z: 14.5, name: 'FR', country: 'France' },
+                    { x: 73.5, y: 83.1, z: 10, name: 'NO', country: 'Norway' },
+                    { x: 71, y: 93.2, z: 24.7, name: 'UK', country: 'United Kingdom' },
+                    { x: 69.2, y: 57.6, z: 10.4, name: 'IT', country: 'Italy' },
+                    { x: 68.6, y: 20, z: 16, name: 'RU', country: 'Russia' },
+                    { x: 65.5, y: 126.4, z: 35.3, name: 'US', country: 'United States' },
+                    { x: 65.4, y: 50.8, z: 28.5, name: 'HU', country: 'Hungary' },
+                    { x: 63.4, y: 51.8, z: 15.4, name: 'PT', country: 'Portugal' },
+                    { x: 64, y: 82.9, z: 31.3, name: 'NZ', country: 'New Zealand' }
+                ],
+                colorByPoint: true
             }]
+
         });
     }
+            
 
-    let errorMsg = '';
+
+    onMount(() => {
+        getGDP();
+    });
+
 </script>
 
-<div id="container" style="width:100%; height:400px;"></div>
 
-<div class="salida">
-    <!-- Exito o error -->
-    {#if errorMsg != ""}
-        <hr>ERROR: {errorMsg}
-    {/if}
-</div>
+<div id="container"></div>
