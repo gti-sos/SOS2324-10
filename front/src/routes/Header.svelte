@@ -1,5 +1,6 @@
 <nav class="container">
     <a href="/" class="nav-link">Inicio</a>
+    <a href="/vista-grupal" class="nav-link">Vista Grupal</a>
     <div class="dropdown">
         <button class="dropbtn">vehicles-stock</button>
         <div class="dropdown-content">
