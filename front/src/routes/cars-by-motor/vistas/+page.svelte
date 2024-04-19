@@ -237,7 +237,7 @@ Highcharts.chart('container2', {
         type: 'pie'
     },
     title: {
-        text: 'Deaths per kilometre by country',
+        text: 'Deaths per million inhabitants by country',
         align: 'center'
     },
     tooltip: {
@@ -267,21 +267,31 @@ Highcharts.chart('container2', {
             duration: 2000
         },
         colorByPoint: true,
+		//total = 16859
         data: [{
-            name: 'Customer Support',
-            y: 21.3
+            name: 'AT',
+            y: (1325/16859)*100
         }, {
-            name: 'Development',
-            y: 18.7
+            name: 'BE',
+            y: (764/16859)*100
         }, {
-            name: 'Sales',
-            y: 20.2
+            name: 'BG',
+            y: (1024/16859)*100
         }, {
-            name: 'Marketing',
-            y: 14.2
+            name: 'CZ',
+            y: (1188/16859)*100
         }, {
-            name: 'Other',
-            y: 25.6
+            name: 'DE',
+            y: (8069/16859)*100
+        }, {
+            name: 'DK',
+            y: (447/16859)*100
+        }, {
+            name: 'ES',
+            y: (3369/16859)*100
+        }, {
+            name: 'FI',
+            y: (673/16859)*100
         }]
     }]
 });
