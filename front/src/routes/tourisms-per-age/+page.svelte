@@ -124,7 +124,6 @@
 			});
 			let data = await response.json();
 			totalItems = data.length;
-			totalPages = Math.ceil(totalDatos / 10);
 		} catch (e) {
 			errMsg = e;
 		}
