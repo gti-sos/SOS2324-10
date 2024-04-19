@@ -4,14 +4,13 @@
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
     <script src="https://code.highcharts.com/modules/treemap.js"></script>
     <script src="https://code.highcharts.com/modules/heatmap.js"></script>
-    
+
 </svelte:head>
 
 
 <script>
 
     import { onMount } from "svelte";
-    let dataAvailable = false;
 
     let API_DATA = "https://sos2324-10.appspot.com/api/v2/gdp-growth-rates";
 
@@ -19,8 +18,8 @@
         try {
             const res = await fetch(API_DATA);
             const data = await res.json();
+            console.log(data);
             if (data.length > 0) {
-                dataAvailable = true; 
                 createBubbleChart(meanGrowthRate(data));
                 createTreemapChart(meanGrowthRate(data));
             }
@@ -41,7 +40,6 @@
 
             let status = await response.status;
             console.log(`Status code: ${status}`);
-            dataAvailable = true;
             if (status === 200) {
                 await getGDP();
             } 
@@ -74,10 +72,6 @@
         return averagedData;
     }
     
-
-
-
-
 
    
     // Crear un gráfico de dispersión utilizando Highcharts
@@ -241,7 +235,8 @@
                 accessibility: {
                     exposeAsGroupOnly: true
                 },
-                data: points
+                data: points,
+                colorByPoint: true
             }],
             subtitle: {
                 text: 'Source: <a href="https://sos2324-10.appspot.com/api/v2/gdp-growth-rates">Gdp-growth-rates</a>',
@@ -258,7 +253,8 @@
             
 
 
-    onMount(() => {
+    onMount(async () => {
+        await loadInitialGDP();
         getGDP();
     });
 
