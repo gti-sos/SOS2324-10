@@ -12,6 +12,7 @@
 	}
 
 	onMount(async () => {
+		await getInitialGDP();
 		let datos1 = await getVehicles();
 		let datos2 = await getGDP();
 		console.log('DATOS MRF Crudos: ' + JSON.stringify(datos2));

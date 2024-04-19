@@ -30,6 +30,7 @@
 
 
     onMount(async ()=>{
+       await getInitialGDP();
        await getGDP();
     })
 

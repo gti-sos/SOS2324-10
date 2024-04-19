@@ -256,7 +256,7 @@
 
     onMount(async () => {
         await loadInitialGDP();
-        getGDP();
+        await getGDP();
     });
 
 </script>
