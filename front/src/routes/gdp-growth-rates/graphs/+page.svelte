@@ -4,7 +4,7 @@
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
     <script src="https://code.highcharts.com/modules/treemap.js"></script>
     <script src="https://code.highcharts.com/modules/heatmap.js"></script>
-    
+
 </svelte:head>
 
 
@@ -241,7 +241,8 @@
                 accessibility: {
                     exposeAsGroupOnly: true
                 },
-                data: points
+                data: points,
+                colorByPoint: true
             }],
             subtitle: {
                 text: 'Source: <a href="https://sos2324-10.appspot.com/api/v2/gdp-growth-rates">Gdp-growth-rates</a>',
