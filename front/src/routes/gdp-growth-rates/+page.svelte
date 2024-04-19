@@ -26,7 +26,6 @@
 
     /**Paginacion*/
     let currentPage = 1;
-    let totalItems = 0;
     const pageSize = 10;
 
 
@@ -36,6 +35,7 @@
 
     async function getInitialGDP(){
         try{
+            console.log(gdp.length);
             if(gdp.length === 0){
 
                 let response = await fetch(API_MRF+"/loadInitialData",{
@@ -68,10 +68,9 @@
                                       method: "GET"
             });
             if(response.ok){
-                let {data, total} = await response.json();
+                let data = await response.json();
                 gdp = data;
                 console.log(data);
-                totalItems = total;
                 errorMsg = "";
             } else {
                 if(response.status == 404){
@@ -86,12 +85,42 @@
         
     }
 
+    /*
     async function nextPage() {
         if ((currentPage * pageSize) < totalItems) {
             currentPage++;
             getGDP();
         }
+    }*/
+    
+    async function nextPage() {
+    try {
+        let offset = currentPage * pageSize;
+        let response = await fetch(`${API_MRF}?limit=${pageSize}&offset=${offset}`, {
+            method: "GET"
+        });
+
+        if (response.ok) {
+            let data = await response.json();
+            // Verificar si hay más datos disponibles
+            if (data && data.length === pageSize) {
+                gdp = data;
+                currentPage++;
+                errorMsg = "";
+            } else {
+                errorMsg = "No hay más datos disponibles";
+            }
+        } else {
+            if (response.status == 404) {
+                errorMsg = "No hay datos en la base de datos";
+            } else {
+                errorMsg = `Error ${response.status}: ${response.statusText}`;
+            }
+        }
+    } catch (e) {
+        errorMsg = e;
     }
+}
 
     async function prevPage() {
         if (currentPage > 1) {
