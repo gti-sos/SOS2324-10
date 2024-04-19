@@ -118,65 +118,82 @@
 			]
 		});
 	}
+    
 
 	function graf2(data) {
-		// Filtrar los datos por geo === 'ES'
-		const filteredData = data.filter((item) => item.geo === 'ES');
+    // Filtrar los datos por Bulgaria (BG) y España (ES)
+    const filteredData = data.filter(item => item.geo === 'BG' || item.geo === 'ES');
 
-		// Crear un objeto para almacenar los datos agrupados por año
-		const yearsData = {};
+    // Crear un objeto para almacenar los datos agrupados por país y año
+    const countriesData = {};
 
-		// Iterar sobre los datos filtrados y agruparlos por año
-		filteredData.forEach((item) => {
-			const { time_period, obs_value } = item;
-			if (!yearsData[time_period]) {
-				yearsData[time_period] = 0;
-			}
-			yearsData[time_period] += obs_value;
-		});
+    // Iterar sobre los datos filtrados y agruparlos por país y año
+    filteredData.forEach(item => {
+        const { geo, time_period, obs_value } = item;
+        if (!countriesData[geo]) {
+            countriesData[geo] = {};
+        }
+        if (!countriesData[geo][time_period]) {
+            countriesData[geo][time_period] = 0;
+        }
+        countriesData[geo][time_period] += obs_value;
+    });
 
-		// Preparar los datos para Highcharts
-		const xAxisCategories = Object.keys(yearsData);
-		const seriesData = Object.values(yearsData);
+    // Preparar los datos para Highcharts
+    const seriesData = Object.entries(countriesData).map(([country, yearsData]) => ({
+        name: country,
+        data: Object.entries(yearsData).map(([year, value]) => ({
+            name: year,
+            y: value
+        }))
+    }));
 
-		// Configurar el gráfico Highcharts
-		Highcharts.chart('container2', {
-			chart: {
-				type: 'line'
-			},
-			title: {
-				text: 'Venta de coches por año en España'
-			},
-			subtitle: {
-				text:
-					'Source: ' +
-					'<a href="https://ofv.no/registreringsstatistikk" ' +
-					'target="_blank">EUROSTAT</a>'
-			},
-			xAxis: {
-				categories: xAxisCategories
-			},
-			yAxis: {
-				title: {
-					text: 'Turismos vendidos'
-				}
-			},
-			plotOptions: {
-				line: {
-					dataLabels: {
-						enabled: true
-					},
-					enableMouseTracking: false
-				}
-			},
-			series: [
-				{
-					name: 'Turismos vendidos',
-					data: seriesData
-				}
-			]
-		});
-	}
+    // Configurar el gráfico Highcharts
+    Highcharts.chart('container2', {
+        chart: {
+            type: 'area'
+        },
+        title: {
+            text: 'Venta de coches por país y año'
+        },
+        subtitle: {
+            text: 'Source: ' +
+                '<a href="https://yoursource.com" target="_blank">EUROSTAT</a>'
+        },
+        xAxis: {
+            allowDecimals: false,
+            accessibility: {
+                rangeDescription: 'Range: 2016 to 2021.'
+            }
+        },
+        yAxis: {
+            title: {
+                text: 'Número de coches vendidos'
+            }
+        },
+        tooltip: {
+            pointFormat: '{series.name} vendió <b>{point.y:,.0f}</b><br/>coches en {point.x}'
+        },
+        plotOptions: {
+            area: {
+                pointStart: 2016, // Se asume que comienza en 2010, ajustar si es diferente
+                marker: {
+                    enabled: false,
+                    symbol: 'circle',
+                    radius: 2,
+                    states: {
+                        hover: {
+                            enabled: true
+                        }
+                    }
+                }
+            }
+        },
+        series: seriesData
+    });
+}
+
+
 
 	onMount(async () => {
 		getTourisms();

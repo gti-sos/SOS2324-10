@@ -9,26 +9,6 @@ let backupData = [
         frequency: 'A',
         unit: 'NR',
         age: 'TOTAL',
-        geo: 'BG',
-        time_period: 2020,
-        obs_value: 2866763,
-        gdp: -4,
-        volgdp: 75.4
-    },
-    {
-        frequency: 'A',
-        unit: 'NR',
-        age: 'TOTAL',
-        geo: 'BG',
-        time_period: 2021,
-        obs_value: 2830464,
-        gdp: 7.7,
-        volgdp: 72.3
-    },
-    {
-        frequency: 'A',
-        unit: 'NR',
-        age: 'TOTAL',
         geo: 'CZ',
         time_period: 2013,
         obs_value: 4729185,
@@ -230,7 +210,7 @@ let backupData = [
         unit: 'NR',
         age: 'TOTAL',
         geo: 'BG',
-        time_period: 2013,
+        time_period: 2016,
         obs_value: 2910235,
         gdp: -0.5,
         volgdp: 94.4
@@ -240,10 +220,50 @@ let backupData = [
         unit: 'NR',
         age: 'TOTAL',
         geo: 'BG',
-        time_period: 2014,
+        time_period: 2017,
         obs_value: 3013863,
         gdp: 0.9,
         volgdp: 99.1
+    },
+    {
+        frequency: 'A',
+        unit: 'NR',
+        age: 'TOTAL',
+        geo: 'BG',
+        time_period: 2018,
+        obs_value: 3314393,
+        gdp: 0.9,
+        volgdp: 99.1
+    },
+    {
+        frequency: 'A',
+        unit: 'NR',
+        age: 'TOTAL',
+        geo: 'BG',
+        time_period: 2019,
+        obs_value: 3216173,
+        gdp: 0.9,
+        volgdp: 99.1
+    },
+    {
+        frequency: 'A',
+        unit: 'NR',
+        age: 'TOTAL',
+        geo: 'BG',
+        time_period: 2020,
+        obs_value: 2866763,
+        gdp: -4,
+        volgdp: 75.4
+    },
+    {
+        frequency: 'A',
+        unit: 'NR',
+        age: 'TOTAL',
+        geo: 'BG',
+        time_period: 2021,
+        obs_value: 2830464,
+        gdp: 7.7,
+        volgdp: 72.3
     },
     {
         frequency: 'A',
