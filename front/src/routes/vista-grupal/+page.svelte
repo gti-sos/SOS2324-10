@@ -1,11 +1,3 @@
-<svelte:head>
-	<script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="https://code.highcharts.com/highcharts-more.js"></script>
-    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-    <script src="https://code.highcharts.com/modules/treemap.js"></script>
-    <script src="https://code.highcharts.com/modules/heatmap.js"></script>
-</svelte:head>
-
 <script>
 	import { onMount } from 'svelte';
 	import { dev } from '$app/environment';
@@ -19,17 +11,16 @@
 		API_MRF = 'http://localhost:8080' + API_MRF;
 	}
 
-	
-
 	onMount(async () => {
 		let datos1 = await getVehicles();
 		let datos2 = await getGDP();
+		console.log('DATOS MRF Crudos: ' + JSON.stringify(datos2));
 		datos2 = replaceGeo(datos2);
 		console.log('DATOS MRF: ' + JSON.stringify(datos2));
 		let datos = unificarBD(datos1, datos2);
 		console.log('DATOS COMUNES: ' + JSON.stringify(datos));
 		datos = getEstadisticas(datos);
-		console.log("DATOS TRATADOS: " + JSON.stringify(datos));
+		console.log('DATOS TRATADOS: ' + JSON.stringify(datos));
 		getChart(datos);
 	});
 
@@ -92,11 +83,7 @@
 				if (response.ok) {
 					exitoMsg = 'Datos cargados correctamente';
 					errorMsg = '';
-				} else {
-					errorMsg = 'Ya existen datos en la base de datos';
 				}
-			} else {
-				errorMsg = 'Ya existen datos en la base de datos';
 			}
 		} catch (e) {
 			errorMsg = e;
@@ -104,13 +91,15 @@
 	}
 
 	async function getGDP() {
+		await getInitialGDP();
 		try {
-			await getInitialGDP();
-			let response = await fetch(`${API_MRF}?limit=10000`, {
+			console.log('Datos correctamente cargados');
+			let response = await fetch(API_MRF, {
 				method: 'GET'
 			});
 			if (response.ok) {
-				let { data, total } = await response.json();
+				let data = await response.json();
+				console.log("API MRF: " + JSON.stringify(data));
 				errorMsg = '';
 				return data;
 			} else {
@@ -220,58 +209,63 @@
 
 	//Creamos el gráfico
 	function getChart(datos) {
-    Highcharts.chart('graph', {
-        chart: {
-            type: 'column'
-        },
-        title: {
-            text: 'PIB Acumulado vs Muertes en Aviones por País'
-        },
-        xAxis: {
-            categories: datos.categories,
-            crosshair: true
-        },
-        yAxis: [
-            {
-                min: 0,
-                title: {
-                    text: 'PIB Acumulado'
-                }
-            },
-            {
-                min: 0,
-                title: {
-                    text: 'Muertes en Aviones'
-                },
-                opposite: true
-            }
-        ],
-        tooltip: {
-            shared: true
-        },
-        series: [
-            {
-                name: 'PIB Acumulado',
-                data: datos.series[0].data, // Accede a los datos directamente
-                tooltip: {
-                    valueSuffix: ' unidades'
-                }
-            },
-            {
-                name: 'Muertes en Aviones',
-                data: datos.series[1].data, // Accede a los datos directamente
-                yAxis: 1,
-                tooltip: {
-                    valueSuffix: ' personas'
-                }
-            }
-        ]
-    });
-}
-
+		Highcharts.chart('graph', {
+			chart: {
+				type: 'column'
+			},
+			title: {
+				text: 'PIB Acumulado vs Muertes en Aviones por País'
+			},
+			xAxis: {
+				categories: datos.categories,
+				crosshair: true
+			},
+			yAxis: [
+				{
+					min: 0,
+					title: {
+						text: 'PIB Acumulado'
+					}
+				},
+				{
+					min: 0,
+					title: {
+						text: 'Muertes en Aviones'
+					},
+					opposite: true
+				}
+			],
+			tooltip: {
+				shared: true
+			},
+			series: [
+				{
+					name: 'PIB Acumulado',
+					data: datos.series[0].data, // Accede a los datos directamente
+					tooltip: {
+						valueSuffix: ' unidades'
+					}
+				},
+				{
+					name: 'Muertes en Aviones',
+					data: datos.series[1].data, // Accede a los datos directamente
+					yAxis: 1,
+					tooltip: {
+						valueSuffix: ' personas'
+					}
+				}
+			]
+		});
+	}
 </script>
 
-
+<svelte:head>
+	<script src="https://code.highcharts.com/highcharts.js"></script>
+	<script src="https://code.highcharts.com/highcharts-more.js"></script>
+	<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+	<script src="https://code.highcharts.com/modules/treemap.js"></script>
+	<script src="https://code.highcharts.com/modules/heatmap.js"></script>
+</svelte:head>
 
 <div class="container">
 	<div class="graph1">
@@ -283,7 +277,6 @@
 	.container {
 		width: 100%;
 		height: 100%;
-		margin: 50px auto;
 		background-color: #89deff;
 		color: #333;
 		border: 1px solid #89deff;
