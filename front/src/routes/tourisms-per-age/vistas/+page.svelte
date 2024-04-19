@@ -139,54 +139,40 @@
 		const xAxisCategories = Object.keys(yearsData);
 		const seriesData = Object.values(yearsData);
 
-		// Configurar el gráfico
-		const chart = new Highcharts.Chart({
+		// Configurar el gráfico Highcharts
+		Highcharts.chart('container2', {
 			chart: {
-				renderTo: 'container2',
-				type: 'column',
-				options3d: {
-					enabled: true,
-					alpha: 15,
-					beta: 15,
-					depth: 50,
-					viewDistance: 25
-				}
+				type: 'line'
+			},
+			title: {
+				text: 'Venta de coches por año en España'
+			},
+			subtitle: {
+				text:
+					'Source: ' +
+					'<a href="https://ofv.no/registreringsstatistikk" ' +
+					'target="_blank">EUROSTAT</a>'
 			},
 			xAxis: {
 				categories: xAxisCategories
 			},
 			yAxis: {
 				title: {
-					enabled: false
+					text: 'Turismos vendidos'
 				}
 			},
-			tooltip: {
-				headerFormat: '<b>{point.key}</b><br>',
-				pointFormat: 'Coches vendidos: {point.y}'
-			},
-			title: {
-				text: 'Venta de coches por año en España',
-				align: 'left'
-			},
-			subtitle: {
-				text:
-					'Source: ' +
-					'<a href="https://ofv.no/registreringsstatistikk"' +
-					'target="_blank">EUROSTAT</a>',
-				align: 'left'
-			},
-			legend: {
-				enabled: false
-			},
 			plotOptions: {
-				column: {
-					depth: 25
+				line: {
+					dataLabels: {
+						enabled: true
+					},
+					enableMouseTracking: false
 				}
 			},
 			series: [
 				{
-					data: seriesData,
-					colorByPoint: true
+					name: 'Turismos vendidos',
+					data: seriesData
 				}
 			]
 		});
@@ -198,7 +184,38 @@
 </script>
 
 
-
 <div id="container1" style="width:100%; height:400px;"></div>
 <div id="container2" style="width: 100%; height: 400px;"></div>
 
+<style>
+	/* Estilos para la primera gráfica */
+	#container1,
+	#container2 {
+		height: 400px;
+		width: 100%;
+		margin: 1em auto;
+	}
+
+	.highcharts-figure,
+	.highcharts-data-table table {
+		min-width: 310px;
+		max-width: 800px;
+		margin: 1em auto;
+	}
+
+	#sliders td input[type='range'] {
+		display: inline;
+	}
+
+	#sliders td {
+		padding-right: 1em;
+		white-space: nowrap;
+	}
+
+	/* Estilos específicos para el gráfico de dispersión 3D */
+	.scatter-container {
+		height: 600px;
+		width: 100%;
+		margin: 0 auto;
+	}
+</style>
