@@ -106,9 +106,9 @@
 	async function getGDP() {
 		try {
 			await getInitialGDP();
-			let response = await fetch(`${API_MRF}?limit=10000`, {
-				method: 'GET'
-			});
+			let response = await fetch(API_MRF + "/", {
+                method: "GET",
+            });
 			if (response.ok) {
 				let { data, total } = await response.json();
 				errorMsg = '';
@@ -127,9 +127,10 @@
 
 	function replaceGeo(data2) {
 		const countryNames = {
+			albania: 'Albania',
 			austria: 'Austria',
 			belgium: 'Bélgica',
-			bulgaria: 'Bulgaria',
+			bulgary: 'Bulgaria',
 			croatia: 'Croacia',
 			cyprus: 'Chipre',
 			czech_republic: 'República Checa',
@@ -141,7 +142,8 @@
 			greece: 'Grecia',
 			hungary: 'Hungría',
 			ireland: 'Irlanda',
-			it: 'Italia',
+			iceland: 'Islandia',
+			italy: 'Italia',
 			latvia: 'Letonia',
 			lithuania: 'Lituania',
 			luxembourg: 'Luxemburgo',
