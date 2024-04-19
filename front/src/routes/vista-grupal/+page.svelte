@@ -169,43 +169,44 @@
 
 	//Función para crear la estadística
 	function getEstadisticas(datos) {
-		const countryData = datos.reduce((acc, curr) => {
-			if (!acc[curr.geo]) {
-				acc[curr.geo] = { pib: 0, deathsInFlights: 0 };
-			}
-			// Acumulación de PIB si obs_value es un valor decimal
-			if (Number.isInteger(curr.obs_value)) {
-				acc[curr.geo].pib += curr.obs_value;
-			}
-			// Acumulación de muertes en vuelos si existe flights_passangers
-			if (curr.flights_passangers) {
-				acc[curr.geo].deathsInFlights += curr.flights_passangers;
-			}
-			return acc;
-		}, {});
+    const countryData = datos.reduce((acc, curr) => {
+        if (!acc[curr.geo]) {
+            acc[curr.geo] = { pib: 0, deathsInFlights: 0 };
+        }
+        // Acumulación de PIB si tiene el atributo "frequency"
+        if ('frequency' in curr) {
+            acc[curr.geo].pib += curr.obs_value;
+        }
+        // Acumulación de muertes en vuelos si existe flights_passangers
+        if (curr.flights_passangers) {
+            acc[curr.geo].deathsInFlights += curr.flights_passangers;
+        }
+        return acc;
+    }, {});
 
-		const sortedData = Object.entries(countryData).map(([country, { pib, deathsInFlights }]) => ({
-			country: country,
-			pib: pib,
-			deathsInFlights: deathsInFlights
-		}));
+    const sortedData = Object.entries(countryData).map(([country, { pib, deathsInFlights }]) => ({
+        country: country,
+        pib: pib,
+        deathsInFlights: deathsInFlights
+    }));
 
-		const chartData = {
-			categories: sortedData.map((item) => item.country),
-			series: [
-				{
-					name: 'PIB Acumulado',
-					data: sortedData.map((item) => item.pib)
-				},
-				{
-					name: 'Muertes en Aviones',
-					data: sortedData.map((item) => item.deathsInFlights)
-				}
-			]
-		};
+    const chartData = {
+        categories: sortedData.map((item) => item.country),
+        series: [
+            {
+                name: 'PIB Acumulado',
+                data: sortedData.map((item) => item.pib)
+            },
+            {
+                name: 'Muertes en Aviones',
+                data: sortedData.map((item) => item.deathsInFlights)
+            }
+        ]
+    };
 
-		return chartData;
-	}
+    return chartData;
+}
+
 
 	//Creamos el gráfico
 	function getChart(datos) {
