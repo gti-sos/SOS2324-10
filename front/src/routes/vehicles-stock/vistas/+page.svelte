@@ -103,54 +103,59 @@
 	}
 
 	function showCountryChart(country) {
-		const countryData = datos.filter((item) => item.geo === country);
-		const countryChartData = transformCountryData(countryData);
+    const countryData = datos.filter((item) => item.geo === country);
+    const countryChartData = transformCountryData(countryData);
 
-		Highcharts.chart('countryGraph', {
-			chart: {
-				type: 'bar'
-			},
-			title: {
-				text: `Ventas de vehículos en ${country}`
-			},
-			xAxis: {
-				categories: countryChartData.categories,
-				title: {
-					text: 'Año'
-				}
-			},
-			yAxis: {
-				title: {
-					text: 'Número de vehículos vendidos'
-				}
-			},
-			plotOptions: {
-				series: {
-					color: '#FFA500' // Cambiamos el color de las barras a naranja
-				}
-			},
-			series: [
-				{
-					name: 'Ventas por año',
-					data: countryChartData.series
-				}
-			]
-		});
-	}
+    Highcharts.chart('countryGraph', {
+        chart: {
+            type: 'area' // Cambiamos el tipo de gráfico a área
+        },
+        title: {
+            text: `Ventas de vehículos en ${country}`
+        },
+        xAxis: {
+            categories: countryChartData.categories,
+            title: {
+                text: 'Año'
+            }
+        },
+        yAxis: {
+            title: {
+                text: 'Número de vehículos vendidos'
+            }
+        },
+        plotOptions: {
+            series: {
+                color: '#FFA500' // Cambiamos el color del área a naranja
+            }
+        },
+        series: [
+            {
+                name: 'Ventas por año',
+                data: countryChartData.series
+            }
+        ]
+    });
+}
 
-	function transformCountryData(countryData) {
-		const chartData = {
-			categories: [],
-			series: []
-		};
+function transformCountryData(countryData) {
+    // Ordenamos los datos por el atributo "year"
+    countryData.sort((a, b) => a.year - b.year);
 
-		countryData.forEach((item) => {
-			chartData.categories.push(item.year);
-			chartData.series.push(item.obs_value);
-		});
+    const chartData = {
+        categories: [],
+        series: []
+    };
 
-		return chartData;
-	}
+    // Procesamos los datos ordenados
+    countryData.forEach((item) => {
+        chartData.categories.push(item.year);
+        chartData.series.push(item.obs_value);
+    });
+
+    return chartData;
+}
+
 
 	let datos;
 

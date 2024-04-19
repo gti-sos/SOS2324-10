@@ -16,6 +16,7 @@
 
     async function getGDP() {
         try {
+            await loadInitialGDP();
             const res = await fetch(API_DATA);
             const data = await res.json();
             console.log(data);
