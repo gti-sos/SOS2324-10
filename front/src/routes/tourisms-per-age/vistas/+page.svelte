@@ -10,21 +10,23 @@
 	import { onMount } from 'svelte';
 	import { dev } from '$app/environment';
 
-	let API_TLR = '/api/v2/tourisms-per-age';
+	let API_ASC = '/api/v2/tourisms-per-age';
 	let errMsg = '';
 
 	if (dev) {
-		API_TLR = 'http://localhost:8080' + API_ASC;
+		API_ASC = 'http://localhost:8080' + API_ASC;
 	}
 
 	async function getTourisms() {
 		try {
 			let response = await fetch(`${API_ASC}?limit=10000`, {
-				method: 'GET',
+				method: 'GET'
 			});
 
 			if (response.ok) {
 				let data = await response.json();
+				graf1(data);
+				graf2(data);
 				return data;
 			} else {
 				if (response.status == 404) {
@@ -38,11 +40,36 @@
 		}
 	}
 
-    async function graf1(data) {
-        // Set up the chart
+	function graf1(data) {
+		// Crear un objeto para almacenar los datos agrupados por país
+		const countriesData = {};
+
+		// Iterar sobre los datos recibidos y agruparlos por país
+		data.forEach((item) => {
+			const { geo, obs_value } = item;
+			if (!countriesData[geo]) {
+				countriesData[geo] = [];
+			}
+			countriesData[geo].push(obs_value);
+		});
+
+		// Calcular la media de obs_value por país
+		const countriesAverageData = {};
+		for (const country in countriesData) {
+			const obsValues = countriesData[country];
+			const totalObsValue = obsValues.reduce((acc, cur) => acc + cur, 0);
+			const averageObsValue = totalObsValue / obsValues.length;
+			countriesAverageData[country] = averageObsValue;
+		}
+
+		// Preparar los datos para Highcharts
+		const xAxisCategories = Object.keys(countriesAverageData);
+		const seriesData = Object.values(countriesAverageData);
+
+		// Configurar el gráfico
 		const chart = new Highcharts.Chart({
 			chart: {
-				renderTo: 'container',
+				renderTo: 'container1',
 				type: 'column',
 				options3d: {
 					enabled: true,
@@ -53,17 +80,7 @@
 				}
 			},
 			xAxis: {
-				categories: [
-					'ES',
-					'BG',
-					'CZ',
-					'LT',
-					'PL',
-					'IT',
-					'SE',
-					'HU',
-					'DE'
-				]
+				categories: xAxisCategories
 			},
 			yAxis: {
 				title: {
@@ -72,24 +89,21 @@
 			},
 			tooltip: {
 				headerFormat: '<b>{point.key}</b><br>',
-				pointFormat: 'Turismos vendidos: {point.y}'
+				pointFormat: 'Coches vendidos: {point.y}'
 			},
 			title: {
-				text: 'Turismos nuevos vendidos en 2017',
+				text: 'Media de coches vendidos por país',
 				align: 'left'
 			},
 			subtitle: {
 				text:
 					'Source: ' +
 					'<a href="https://ofv.no/registreringsstatistikk"' +
-					'target="_blank">Eurostat</a>',
+					'target="_blank">EUROSTAT</a>',
 				align: 'left'
 			},
 			legend: {
 				enabled: false
-			},
-			accessibility: {
-				enabled: false // Disable accessibility features
 			},
 			plotOptions: {
 				column: {
@@ -98,34 +112,93 @@
 			},
 			series: [
 				{
-					data: data,
+					data: seriesData,
 					colorByPoint: true
 				}
 			]
 		});
+	}
 
-		function showValues() {
-			document.getElementById('alpha-value').innerHTML = chart.options.chart.options3d.alpha;
-			document.getElementById('beta-value').innerHTML = chart.options.chart.options3d.beta;
-			document.getElementById('depth-value').innerHTML = chart.options.chart.options3d.depth;
-		}
+	function graf2(data) {
+		// Filtrar los datos por geo === 'ES'
+		const filteredData = data.filter((item) => item.geo === 'ES');
 
-		// Activate the sliders
-		document.querySelectorAll('#sliders input').forEach((input) =>
-			input.addEventListener('input', (e) => {
-				chart.options.chart.options3d[e.target.id] = parseFloat(e.target.value);
-				showValues();
-				chart.redraw(false);
-			})
-		);
+		// Crear un objeto para almacenar los datos agrupados por año
+		const yearsData = {};
 
-		showValues();
-    }
+		// Iterar sobre los datos filtrados y agruparlos por año
+		filteredData.forEach((item) => {
+			const { time_period, obs_value } = item;
+			if (!yearsData[time_period]) {
+				yearsData[time_period] = 0;
+			}
+			yearsData[time_period] += obs_value;
+		});
+
+		// Preparar los datos para Highcharts
+		const xAxisCategories = Object.keys(yearsData);
+		const seriesData = Object.values(yearsData);
+
+		// Configurar el gráfico
+		const chart = new Highcharts.Chart({
+			chart: {
+				renderTo: 'container2',
+				type: 'column',
+				options3d: {
+					enabled: true,
+					alpha: 15,
+					beta: 15,
+					depth: 50,
+					viewDistance: 25
+				}
+			},
+			xAxis: {
+				categories: xAxisCategories
+			},
+			yAxis: {
+				title: {
+					enabled: false
+				}
+			},
+			tooltip: {
+				headerFormat: '<b>{point.key}</b><br>',
+				pointFormat: 'Coches vendidos: {point.y}'
+			},
+			title: {
+				text: 'Venta de coches por año en España',
+				align: 'left'
+			},
+			subtitle: {
+				text:
+					'Source: ' +
+					'<a href="https://ofv.no/registreringsstatistikk"' +
+					'target="_blank">EUROSTAT</a>',
+				align: 'left'
+			},
+			legend: {
+				enabled: false
+			},
+			plotOptions: {
+				column: {
+					depth: 25
+				}
+			},
+			series: [
+				{
+					data: seriesData,
+					colorByPoint: true
+				}
+			]
+		});
+	}
+
 	onMount(async () => {
-		data = await getTourisms();
+		getTourisms();
 	});
 </script>
 
 
 
-<div id="container" style="width:100%; height:400px;"></div>
+<div id="container1" style="width:100%; height:400px;"></div>
+<div id="container2" style="width: 100%; height: 400px;"></div>
+

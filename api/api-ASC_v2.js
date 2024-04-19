@@ -89,6 +89,46 @@ let backupData = [
         frequency: 'A',
         unit: 'NR',
         age: 'TOTAL',
+        geo: 'ES',
+        time_period: 2018,
+        obs_value: 25845530,
+        gdp: 3.0,
+        volgdp: 100.6
+    },
+    {
+        frequency: 'A',
+        unit: 'NR',
+        age: 'TOTAL',
+        geo: 'ES',
+        time_period: 2019,
+        obs_value: 24373560,
+        gdp: 3.0,
+        volgdp: 100.6
+    },
+    {
+        frequency: 'A',
+        unit: 'NR',
+        age: 'TOTAL',
+        geo: 'ES',
+        time_period: 2020,
+        obs_value: 25898640,
+        gdp: 3.0,
+        volgdp: 100.6
+    },
+    {
+        frequency: 'A',
+        unit: 'NR',
+        age: 'TOTAL',
+        geo: 'ES',
+        time_period: 2021,
+        obs_value: 26045320,
+        gdp: 3.0,
+        volgdp: 100.6
+    },
+    {
+        frequency: 'A',
+        unit: 'NR',
+        age: 'TOTAL',
         geo: 'PL',
         time_period: 2015,
         obs_value: 18011775,
@@ -164,36 +204,6 @@ let backupData = [
         obs_value: 244719,
         gdp: 4.3,
         volgdp: 103.5
-    },
-    {
-        frequency: 'A',
-        unit: 'NR',
-        age: 'TOTAL',
-        geo: 'EU27_2020',
-        time_period: 2018,
-        obs_value: 240415203,
-        gdp: 1.9,
-        volgdp: 96.6
-    },
-    {
-        frequency: 'A',
-        unit: 'NR',
-        age: 'TOTAL',
-        geo: 'EU27_2020',
-        time_period: 2019,
-        obs_value: 244951204,
-        gdp: 1.6,
-        volgdp: 95.4
-    },
-    {
-        frequency: 'A',
-        unit: 'NR',
-        age: 'TOTAL',
-        geo: 'EU27_2020',
-        time_period: 2020,
-        obs_value: 247754214,
-        gdp: -5.7,
-        volgdp: 79.2
     },
     {
         frequency: 'A',
@@ -349,24 +359,6 @@ function API_ASC_v2(app, db_ASC) {
         if (gdp) queryParams.gdp = parseInt(gdp);
         if (volgdp) queryParams.volgdp = parseInt(volgdp);
 
-        //const queryParams = req.query; // Obtener los parámetros de consulta de la solicitud
-
-        //Parseo
-        // const numericAttributes = ["limit", "offset"]; // Añadir cualquier parámetro numérico adicional aquí
-        // numericAttributes.forEach(attr => {
-        //     if (queryParams[attr]) {
-        //         queryParams[attr] = parseInt(queryParams[attr]);
-        //         if (isNaN(queryParams[attr])) {
-        //             return res.status(400).send("Bad Request");
-        //         }
-        //     }
-        // });
-
-        // Paginación
-        // const page = queryParams.page || 1; // Página predeterminada: 1
-        //const limit = queryParams.limit || 10; // Límite predeterminado: 10
-        //const offset = 0; // Calcular el número de documentos a saltar
-
         // Objeto para almacenar parámetros de consulta parseados
         const parsedQueryParams = {};
 
@@ -382,11 +374,6 @@ function API_ASC_v2(app, db_ASC) {
             'gdp': 'number',
             'volgdp': 'number'
         };
-
-        // Eliminar parámetros de paginación de queryParams
-        // delete queryParams.page;
-        // delete queryParams.limit;
-        // delete queryParams.skip;
 
         // Parsear los valores de los parámetros de consulta según el tipo de dato especificado
         for (const key in queryParams) {
