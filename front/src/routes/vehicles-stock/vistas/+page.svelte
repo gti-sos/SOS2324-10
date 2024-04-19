@@ -9,6 +9,7 @@
 		API_TLR = 'http://localhost:8080' + API_TLR;
 	}
 
+
 	async function getVehicles() {
 		try {
 			let response = await fetch(`${API_TLR}?limit=10000`, {
@@ -73,6 +74,8 @@
 				}
 			]
 		});
+		showCountryChart('España');
+
 	}
 
 	function transformData(datos) {
@@ -162,20 +165,24 @@
 </svelte:head>
 
 <div class="container">
-	<div class="graph1">
-		<div id="graph" style="width:100%; height:400px;"></div>
-	</div>
+    <div class="graph1">
+        <div id="graph" style="width:100%; height:400px;"></div>
+    </div>
 
-	<div class="graph2">
-		<div id="countryGraph" style="width:100%; height:400px;"></div>
-	</div>
+    <div class="message">
+        <span>! </span> Pinche en un país para mostrar más información
+    </div>
+
+    <div class="graph2">
+        <div id="countryGraph" style="width:100%; height:400px;"></div>
+    </div>
 </div>
 
 <style>
 	.container {
 		width: 100%;
 		height: 100%;
-		margin: 50px auto;
+		
 		background-color: #89deff;
 		color: #333;
 		border: 1px solid #89deff;
@@ -184,7 +191,7 @@
 		padding: 20px;
 	}
 
-	.graph1 {
+	.graph1, .graph2{
 		width: 80%;
 		margin: 50px auto;
 		background-color: #ffffff; /* Blanco */
@@ -193,13 +200,14 @@
 		box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombras */
 		padding: 20px;
 	}
-	.graph2 {
-		width: 80%;
-		margin: 50px auto;
-		background-color: #ffffff; /* Blanco */
-		border: 1px solid #a4caef; /* Azul claro */
-		border-radius: 15px; /* Bordes más redondeados */
-		box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombras */
-		padding: 20px;
-	}
+	
+	.message {
+        text-align: center;
+        
+    }
+
+    .message span {
+        font-size: 24px;
+        color: #ff0000;
+    }
 </style>
