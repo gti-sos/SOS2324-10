@@ -4,16 +4,19 @@
 
 	let API_TLR = '/api/v2/vehicles-stock';
 	let API_MRF = '/api/v2/gdp-growth-rates';
+	let API_ASC = '/api/v2/tourisms-per-age';
 	let errorMsg = '';
 
 	if (dev) {
 		API_TLR = 'http://localhost:8080' + API_TLR;
 		API_MRF = 'http://localhost:8080' + API_MRF;
+		API_ASC = 'http://localhost:8080' + API_ASC;
 	}
 
 	onMount(async () => {
 		let datos1 = await getVehicles();
 		let datos2 = await getGDP();
+		let datos3 = await getTourisms();
 		console.log('DATOS MRF Crudos: ' + JSON.stringify(datos2));
 		datos2 = replaceGeo(datos2);
 		console.log('DATOS MRF: ' + JSON.stringify(datos2));
@@ -156,6 +159,55 @@
 		});
 	}
 
+	function replaceeGeo(data3) {
+		const countryNames = {
+			DE: 'Germany',
+			EE: 'Estonia',
+			IE: 'Ireland',
+			EL: 'Greece',
+			ES: 'Spain',
+			FR: 'France',
+			HR: 'Croatia',
+			IT: 'Italy',
+			CY: 'Cyprus',
+			LV: 'Latvia',
+			LT: 'Lithuania',
+			LU: 'Luxembourg',
+			HU: 'Hungary',
+			MT: 'Malta',
+			NL: 'Netherlands',
+			AT: 'Austria',
+			PL: 'Poland',
+			PT: 'Portugal',
+			RO: 'Romania',
+			SI: 'Slovenia',
+			SK: 'Slovakia',
+			FI: 'Finland',
+			SE: 'Sweden',
+			IS: 'Iceland',
+			LI: 'Liechtenstein',
+			NO: 'Norway',
+			CH: 'Switzerland',
+			UK: 'United Kingdom',
+			BA: 'Bosnia and Herzegovina',
+			ME: 'Montenegro',
+			MD: 'Moldova',
+			MK: 'North Macedonia',
+			AL: 'Albania',
+			RS: 'Serbia',
+			TR: 'Türkiye',
+			XK: 'Kosovo*',
+			GE: 'Georgia'
+		};
+
+		return data3.map((item) => {
+			return {
+				...item,
+				geo: countryNames[item.geo] || item.geo // Si el país no está en la lista, deja el valor original
+			};
+		});
+	}
+
 	//Creamos función que unifique datos
 	function unificarBD(data1, data2) {
 		const geoSet1 = new Set(data1.map((item) => item.geo));
@@ -259,15 +311,56 @@
 			]
 		});
 	}
-</script>
 
-<svelte:head>
-	<script src="https://code.highcharts.com/highcharts.js"></script>
-	<script src="https://code.highcharts.com/highcharts-more.js"></script>
-	<script src="https://code.highcharts.com/modules/accessibility.js"></script>
-	<script src="https://code.highcharts.com/modules/treemap.js"></script>
-	<script src="https://code.highcharts.com/modules/heatmap.js"></script>
-</svelte:head>
+	///////
+	async function loadInitialData() {
+		try {
+			if (datos.length === 0) {
+				let response = await fetch(API_ASC + '/loadInitialData', {
+					method: 'GET'
+				});
+
+				if (response.ok) {
+					getVehicles();
+					alert('Datos Cargados Correctamente');
+				} else {
+					errorMsg = 'La base de datos no está vacía';
+				}
+			} else {
+				errorMsg = 'La base de datos no está vacía';
+			}
+		} catch (error) {
+			errorMsg = error;
+		}
+	}
+
+	async function getTourisms() {
+		try {
+			await loadInitialData();
+			let response = await fetch(`${API_ASC}?limit=10000`, {
+				method: 'GET',
+				headers: {
+					'Cache-Control': 'no-cache',
+					Pragma: 'no-cache'
+				}
+			});
+
+			if (response.ok) {
+				let data = await response.json();
+				console.log('DATOS ASC: ' + JSON.stringify(data));
+				return data;
+			} else {
+				if (response.status == 404) {
+					errorMsg = 'No hay datos3 en la base de datos3';
+				} else {
+					errorMsg = `Error ${response.status}: ${response.statusText}`;
+				}
+			}
+		} catch (e) {
+			errorMsg = e;
+		}
+	}
+</script>
 
 <div class="container">
 	<div class="graph1">
