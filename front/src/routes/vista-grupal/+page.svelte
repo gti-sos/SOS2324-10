@@ -22,7 +22,7 @@
 		console.log('DATOS MRF Crudos: ' + JSON.stringify(datos2));
 		datos2 = replaceGeo(datos2);
 		console.log('DATOS MRF: ' + JSON.stringify(datos2));
-		let datos = unificarBD(datos1, datos2);
+		let datos = unificarBD(datos1, datos2, datos3);
 		console.log('DATOS COMUNES: ' + JSON.stringify(datos));
 		datos = getEstadisticas(datos);
 		console.log('DATOS TRATADOS: ' + JSON.stringify(datos));
