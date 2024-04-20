@@ -1,3 +1,10 @@
+<svelte:head>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+</svelte:head>
+
 <script>
 	import { onMount } from 'svelte';
 	import { dev } from '$app/environment';
@@ -18,25 +25,27 @@
 
 	onMount(async () => {
 		
+		await loadAllData();
 		datos1 = await getVehicles();
 		datos2 = await getGDP();
 		datos3 = await getTourisms();
 		datos4 = await getCars();
 		datos4 = replaceeGeo(datos4);
 		datos3 = replaceeGeo(datos3);
-		console.log('Datos ASC parseados: ' + JSON.stringify(datos3));
-		console.log('Datos ASB parseados: ' + JSON.stringify(datos4));
-		console.log('DATOS MRF Crudos: ' + JSON.stringify(datos2));
+		//console.log('Datos ASC parseados: ' + JSON.stringify(datos3));
+		//console.log('Datos ASB parseados: ' + JSON.stringify(datos4));
+		//console.log('DATOS MRF Crudos: ' + JSON.stringify(datos2));
 		datos2 = replaceGeo(datos2);
-		console.log('DATOS MRF: ' + JSON.stringify(datos2));
+		//console.log('DATOS MRF: ' + JSON.stringify(datos2));
 		let datos = unificarBD(datos1, datos2, datos3, datos4);
-		console.log('DATOS COMUNES: ' + JSON.stringify(datos));
+		//console.log('DATOS COMUNES: ' + JSON.stringify(datos));
 		datos = getEstadisticas(datos);
-		console.log('DATOS TRATADOS: ' + JSON.stringify(datos));
+		//console.log('DATOS TRATADOS: ' + JSON.stringify(datos));
 		getChart(datos);
 	});
 
 	//Funciones para obtener los datos en la BD
+	/*
 	async function getInitialData() {
 		try {
 			if (datos1.length === 0) {
@@ -53,6 +62,23 @@
 			} else {
 				errorMsg = 'La base de datos no está vacía';
 			}
+		} catch (error) {
+			errorMsg = error;
+		}
+	}*/
+
+	async function getInitialData() {
+		try {
+			let response = await fetch(API_TLR + '/loadInitialData', {
+				method: 'GET'
+			});
+
+			if (response.ok) {
+				alert('Datos Cargados Correctamente');
+			} else {
+				errorMsg = 'La base de datos no está vacía';
+			}
+
 		} catch (error) {
 			errorMsg = error;
 		}
@@ -85,6 +111,7 @@
 		}
 	}
 
+	/*
 	async function getInitialGDP() {
 		try {
 			if (datos2.length === 0) {
@@ -96,6 +123,21 @@
 					exitoMsg = 'Datos cargados correctamente';
 					errorMsg = '';
 				}
+			}
+		} catch (e) {
+			errorMsg = e;
+		}
+	}*/
+
+	async function getInitialGDP() {
+		try {
+			let response = await fetch(API_MRF + '/loadInitialData', {
+				method: 'GET'
+			});
+
+			if (response.ok) {
+				exitoMsg = 'Datos cargados correctamente';
+				errorMsg = '';
 			}
 		} catch (e) {
 			errorMsg = e;
@@ -127,6 +169,7 @@
 	}
 
 	///////
+	/*
 	async function loadInitialDataASC() {
 		try {
 			if (datos3.length === 0) {
@@ -140,6 +183,21 @@
 				} else {
 					errorMsg = 'La base de datos no está vacía';
 				}
+			} else {
+				errorMsg = 'La base de datos no está vacía';
+			}
+		} catch (error) {
+			errorMsg = error;
+		}
+	}*/
+	async function loadInitialDataASC() {
+		try {
+			let response = await fetch(API_ASC + '/loadInitialData', {
+				method: 'GET'
+			});
+			if (response.ok) {
+				//getTourisms();
+				exitMsg = 'Datos Cargados Correctamente';	
 			} else {
 				errorMsg = 'La base de datos no está vacía';
 			}
@@ -175,6 +233,7 @@
 		}
 	}
 	///////
+	/*
 	async function loadInitialCars() {
 		try {
 			if (datos4.length === 0) {
@@ -188,6 +247,22 @@
 				} else {
 					errorMsg = 'La base de datos no está vacía';
 				}
+			} else {
+				errorMsg = 'La base de datos no está vacía';
+			}
+		} catch (error) {
+			errorMsg = error;
+		}
+	}*/
+
+	async function loadInitialCars() {
+		try {
+			let response = await fetch(API_ASB + '/loadInitialData', {
+				method: 'GET'
+			});
+
+			if (response.ok) {
+				alert('Datos Cargados Correctamente');
 			} else {
 				errorMsg = 'La base de datos no está vacía';
 			}
@@ -219,6 +294,18 @@
 			}
 		} catch (e) {
 			errorMsg = e;
+		}
+	}
+
+	//Cargar todos los datos
+	async function loadAllData() {
+		try {
+			await getInitialData();
+			await getInitialGDP();
+			await loadInitialCars();
+			await loadInitialDataASC();
+		} catch (error) {
+			errorMsg = error;
 		}
 	}
 
