@@ -7,7 +7,10 @@
 	let API_ASC = '/api/v2/tourisms-per-age';
 	let API_ASB = '/api/v2/cars-by-motor';
 	let errorMsg = '';
-	let datos1, datos2, datos3, datos4 ={};
+	let datos1 = {};
+	let datos2 = {};
+	let datos3 = {};
+	let datos4 = {};
 
 	if (dev) {
 		API_TLR = 'http://localhost:8080' + API_TLR;
@@ -17,7 +20,7 @@
 	}
 
 	onMount(async () => {
-		
+		await getIntitalsData();
 		datos1 = await getVehicles();
 		datos2 = await getGDP();
 		datos3 = await getTourisms();
@@ -36,31 +39,37 @@
 		getChart(datos);
 	});
 
+	async function getIntitalsData(){
+		try{
+			await getInitialData();
+			await getInitialGDP();
+			await loadInitialCars();
+			await loadInitialDataASC();
+			console.log("Todos los datos cargados");
+		}catch(error){
+			errorMsg = error;
+		}
+	}
+
 	//Funciones para obtener los datos en la BD
 	async function getInitialData() {
 		try {
-			if (datos1.length === 0) {
-				let response = await fetch(API_TLR + '/loadInitialData', {
+			let response = await fetch(API_TLR + '/loadInitialData', {
 					method: 'GET'
 				});
 
 				if (response.ok) {
-					getVehicles();
-					alert('Datos Cargados Correctamente');
+					console.log("Datos TLR cargados.")
 				} else {
 					errorMsg = 'La base de datos no está vacía';
 				}
-			} else {
-				errorMsg = 'La base de datos no está vacía';
-			}
 		} catch (error) {
 			errorMsg = error;
 		}
 	}
 
 	async function getVehicles() {
-		try {
-			await getInitialData();
+		try {		
 			let response = await fetch(`${API_TLR}?limit=10000`, {
 				method: 'GET',
 				headers: {
@@ -87,8 +96,7 @@
 
 	async function getInitialGDP() {
 		try {
-			if (datos2.length === 0) {
-				let response = await fetch(API_MRF + '/loadInitialData', {
+			let response = await fetch(API_MRF + '/loadInitialData', {
 					method: 'GET'
 				});
 
@@ -96,7 +104,6 @@
 					exitoMsg = 'Datos cargados correctamente';
 					errorMsg = '';
 				}
-			}
 		} catch (e) {
 			errorMsg = e;
 		}
@@ -104,7 +111,6 @@
 
 	async function getGDP() {
 		try {
-			await getInitialGDP();
 			console.log('Datos correctamente cargados');
 			let response = await fetch(API_MRF, {
 				method: 'GET'
@@ -129,8 +135,7 @@
 	///////
 	async function loadInitialDataASC() {
 		try {
-			if (datos3.length === 0) {
-				let response = await fetch(API_ASC + '/loadInitialData', {
+			let response = await fetch(API_ASC + '/loadInitialData', {
 					method: 'GET'
 				});
 
@@ -140,9 +145,6 @@
 				} else {
 					errorMsg = 'La base de datos no está vacía';
 				}
-			} else {
-				errorMsg = 'La base de datos no está vacía';
-			}
 		} catch (error) {
 			errorMsg = error;
 		}
@@ -150,7 +152,6 @@
 
 	async function getTourisms() {
 		try {
-			await loadInitialDataASC();
 			let response = await fetch(`${API_ASC}?limit=10000`, {
 				method: 'GET',
 				headers: {
@@ -177,8 +178,7 @@
 	///////
 	async function loadInitialCars() {
 		try {
-			if (datos4.length === 0) {
-				let response = await fetch(API_ASB + '/loadInitialData', {
+			let response = await fetch(API_ASB + '/loadInitialData', {
 					method: 'GET'
 				});
 
@@ -188,9 +188,6 @@
 				} else {
 					errorMsg = 'La base de datos no está vacía';
 				}
-			} else {
-				errorMsg = 'La base de datos no está vacía';
-			}
 		} catch (error) {
 			errorMsg = error;
 		}
@@ -198,7 +195,6 @@
 
 	async function getCars() {
 		try {
-			await loadInitialCars();
 			let response = await fetch(`${API_ASB}?limit=10000`, {
 				method: 'GET',
 				headers: {
