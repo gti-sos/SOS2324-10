@@ -1,10 +1,3 @@
-<svelte:head>
-    <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="https://code.highcharts.com/highcharts-more.js"></script>
-    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-
-</svelte:head>
-
 <script>
 	import { onMount } from 'svelte';
 	import { dev } from '$app/environment';
@@ -14,7 +7,11 @@
 	let API_ASC = '/api/v2/tourisms-per-age';
 	let API_ASB = '/api/v2/cars-by-motor';
 	let errorMsg = '';
-	let datos1, datos2, datos3, datos4 ={};
+	let exitMsg = '';
+	let datos1,
+		datos2,
+		datos3,
+		datos4 = {};
 
 	if (dev) {
 		API_TLR = 'http://localhost:8080' + API_TLR;
@@ -24,7 +21,6 @@
 	}
 
 	onMount(async () => {
-		
 		await loadAllData();
 		datos1 = await getVehicles();
 		datos2 = await getGDP();
@@ -38,7 +34,7 @@
 		datos2 = replaceGeo(datos2);
 		//console.log('DATOS MRF: ' + JSON.stringify(datos2));
 		let datos = unificarBD(datos1, datos2, datos3, datos4);
-		//console.log('DATOS COMUNES: ' + JSON.stringify(datos));
+		console.log('DATOS COMUNES: ' + JSON.stringify(datos));
 		datos = getEstadisticas(datos);
 		//console.log('DATOS TRATADOS: ' + JSON.stringify(datos));
 		getChart(datos);
@@ -74,11 +70,10 @@
 			});
 
 			if (response.ok) {
-				alert('Datos Cargados Correctamente');
+				exitMsg = 'Datos Cargados Correctamente';
 			} else {
 				errorMsg = 'La base de datos no está vacía';
 			}
-
 		} catch (error) {
 			errorMsg = error;
 		}
@@ -136,7 +131,7 @@
 			});
 
 			if (response.ok) {
-				exitoMsg = 'Datos cargados correctamente';
+				exitMsg = 'Datos cargados correctamente';
 				errorMsg = '';
 			}
 		} catch (e) {
@@ -197,7 +192,7 @@
 			});
 			if (response.ok) {
 				//getTourisms();
-				exitMsg = 'Datos Cargados Correctamente';	
+				exitMsg = 'Datos Cargados Correctamente';
 			} else {
 				errorMsg = 'La base de datos no está vacía';
 			}
@@ -262,7 +257,7 @@
 			});
 
 			if (response.ok) {
-				alert('Datos Cargados Correctamente');
+				exitMsg = 'Datos cartados correctamente';
 			} else {
 				errorMsg = 'La base de datos no está vacía';
 			}
@@ -417,11 +412,12 @@
 		return combinedData;
 	}
 
-	//Función para crear la estadística
+	// Función para crear la estadística
+	// Función para crear la estadística
 	function getEstadisticas(datos) {
 		const countryData = datos.reduce((acc, curr) => {
 			if (!acc[curr.geo]) {
-				acc[curr.geo] = { pib: 0, deathsInFlights: 0 };
+				acc[curr.geo] = { pib: 0, deathsInFlights: 0, volgdp: 0 }; // Incluir el volgdp
 			}
 			// Acumulación de PIB si tiene el atributo "frequency"
 			if ('frequency' in curr) {
@@ -431,14 +427,21 @@
 			if (curr.flights_passangers) {
 				acc[curr.geo].deathsInFlights += curr.flights_passangers;
 			}
+			// Volgdp
+			if (curr.volgdp) {
+				acc[curr.geo].volgdp = curr.volgdp;
+			}
 			return acc;
 		}, {});
 
-		const sortedData = Object.entries(countryData).map(([country, { pib, deathsInFlights }]) => ({
-			country: country,
-			pib: pib,
-			deathsInFlights: deathsInFlights
-		}));
+		const sortedData = Object.entries(countryData).map(
+			([country, { pib, deathsInFlights, volgdp }]) => ({
+				country: country,
+				pib: pib,
+				deathsInFlights: deathsInFlights,
+				volgdp: volgdp // Incluir el volgdp
+			})
+		);
 
 		const chartData = {
 			categories: sortedData.map((item) => item.country),
@@ -450,6 +453,10 @@
 				{
 					name: 'Muertes en Aviones',
 					data: sortedData.map((item) => item.deathsInFlights)
+				},
+				{
+					name: 'VolGDP',
+					data: sortedData.map((item) => item.volgdp) // Nueva serie para VolGDP
 				}
 			]
 		};
@@ -457,14 +464,14 @@
 		return chartData;
 	}
 
-	//Creamos el gráfico
+	// Creamos el gráfico
 	function getChart(datos) {
 		Highcharts.chart('graph', {
 			chart: {
 				type: 'area'
 			},
 			title: {
-				text: 'PIB Acumulado vs Muertes en Aviones por País'
+				text: 'PIB Acumulado vs Muertes en Aviones vs VolGDP por País' // Actualizar título
 			},
 			xAxis: {
 				categories: datos.categories,
@@ -483,6 +490,13 @@
 						text: 'Muertes en Aviones'
 					},
 					opposite: true
+				},
+				{
+					min: 0,
+					title: {
+						text: 'VolGDP'
+					},
+					opposite: true
 				}
 			],
 			tooltip: {
@@ -491,23 +505,37 @@
 			series: [
 				{
 					name: 'PIB Acumulado',
-					data: datos.series[0].data, // Accede a los datos directamente
+					data: datos.series[0].data,
 					tooltip: {
 						valueSuffix: ' unidades'
 					}
 				},
 				{
 					name: 'Muertes en Aviones',
-					data: datos.series[1].data, // Accede a los datos directamente
+					data: datos.series[1].data,
 					yAxis: 1,
 					tooltip: {
 						valueSuffix: ' personas'
+					}
+				},
+				{
+					name: 'VolGDP',
+					data: datos.series[2].data, // Nueva serie para VolGDP
+					yAxis: 2, // Usar el tercer eje y para VolGDP
+					tooltip: {
+						valueSuffix: ' unidades'
 					}
 				}
 			]
 		});
 	}
 </script>
+
+<svelte:head>
+	<script src="https://code.highcharts.com/highcharts.js"></script>
+	<script src="https://code.highcharts.com/highcharts-more.js"></script>
+	<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+</svelte:head>
 
 <div class="container">
 	<div class="graph1">
