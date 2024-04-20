@@ -184,7 +184,7 @@
 
 	// Función para ir a la página siguiente
 	function goToNextPage() {
-		if ((page * pageSize) < totalDatos) {
+		if ((page * pageSize) <= totalDatos) {
 			page ++;
 			getVehicles();
 		}
