@@ -213,14 +213,15 @@
 	}
 
 	//Creamos función que unifique datos
-	function unificarBD(data1, data2) {
+	function unificarBD(data1, data2, data3) {
 		const geoSet1 = new Set(data1.map((item) => item.geo));
 		const filteredData2 = data2.filter((item) => geoSet1.has(item.geo));
 		const geoSet2 = new Set(filteredData2.map((item) => item.geo));
+		const filteredData3 = data3.filter((item) => geoSet1.has(item.geo) && geoSet2.has(item.geo));
 
 		const filteredData1 = data1.filter((item) => geoSet2.has(item.geo));
 
-		const combinedData = [...filteredData1, ...filteredData2];
+		const combinedData = [...filteredData1, ...filteredData2, ...filteredData3];
 
 		return combinedData;
 	}
