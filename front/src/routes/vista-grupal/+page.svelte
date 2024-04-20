@@ -399,14 +399,24 @@
 
 	//Creamos función que unifique datos
 	function unificarBD(data1, data2, data3, data4) {
+		// Crear conjuntos de países únicos para cada conjunto de datos
 		const geoSet1 = new Set(data1.map((item) => item.geo));
-		const filteredData2 = data2.filter((item) => geoSet1.has(item.geo));
-		const geoSet2 = new Set(filteredData2.map((item) => item.geo));
-		const filteredData3 = data3.filter((item) => geoSet1.has(item.geo) && geoSet2.has(item.geo));
-		const filteredData4 = data4.filter((item) => geoSet1.has(item.geo) && geoSet2.has(item.geo));
+		const geoSet2 = new Set(data2.map((item) => item.geo));
+		const geoSet3 = new Set(data3.map((item) => item.geo));
+		const geoSet4 = new Set(data4.map((item) => item.geo));
 
-		const filteredData1 = data1.filter((item) => geoSet2.has(item.geo));
+		// Encontrar la intersección de países comunes a todas las bases de datos
+		const commonGeoSet = new Set(
+			[...geoSet1].filter((geo) => geoSet2.has(geo) && geoSet3.has(geo) && geoSet4.has(geo))
+		);
 
+		// Filtrar datos para incluir solo países comunes
+		const filteredData1 = data1.filter((item) => commonGeoSet.has(item.geo));
+		const filteredData2 = data2.filter((item) => commonGeoSet.has(item.geo));
+		const filteredData3 = data3.filter((item) => commonGeoSet.has(item.geo));
+		const filteredData4 = data4.filter((item) => commonGeoSet.has(item.geo));
+
+		// Combinar todos los datos filtrados
 		const combinedData = [...filteredData1, ...filteredData2, ...filteredData3, ...filteredData4];
 
 		return combinedData;
