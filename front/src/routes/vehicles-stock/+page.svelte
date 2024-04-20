@@ -297,6 +297,7 @@
 	}
 </script>
 
+
 <body>
 	<!--Estilo y formato de la tabla-->
 	<title> vehicles-stock</title>
@@ -601,8 +602,17 @@
 		{#if errorMsg != ''}
 			ERROR: {errorMsg}
 		{/if}
-	
-	
+	{:else}
+		<div style="justify-content: center; text-align: center; margin-top: 20px">
+			<button
+				style=" background-color: #0366d6; color: white; padding: 5px 20px; border: none; border-radius: 5px; cursor: pointer; "
+				on:click={() => getInitialData()}
+			>
+				Cargar datos
+			</button>
+		</div>
+		<p class="container">No hay datos disponibles</p>
+	{/if}
 </body>
 
 <style>
