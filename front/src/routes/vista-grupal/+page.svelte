@@ -5,24 +5,29 @@
 	let API_TLR = '/api/v2/vehicles-stock';
 	let API_MRF = '/api/v2/gdp-growth-rates';
 	let API_ASC = '/api/v2/tourisms-per-age';
+	let API_ASB = '/api/v2/cars-by-motor';
 	let errorMsg = '';
 
 	if (dev) {
 		API_TLR = 'http://localhost:8080' + API_TLR;
 		API_MRF = 'http://localhost:8080' + API_MRF;
 		API_ASC = 'http://localhost:8080' + API_ASC;
+		API_ASB = 'http://localhost:8080' + API_ASB;
 	}
 
 	onMount(async () => {
 		let datos1 = await getVehicles();
+		await getInitialGDP();
 		let datos2 = await getGDP();
 		let datos3 = await getTourisms();
+		let datos4 = await getCars();
+		datos4 = replaceeGeo(datos4);
 		datos3 = replaceeGeo(datos3);
 		console.log('Datos ASC parseados: ' +JSON.stringify(datos3));
 		console.log('DATOS MRF Crudos: ' + JSON.stringify(datos2));
 		datos2 = replaceGeo(datos2);
 		console.log('DATOS MRF: ' + JSON.stringify(datos2));
-		let datos = unificarBD(datos1, datos2, datos3);
+		let datos = unificarBD(datos1, datos2, datos3, datos4);
 		console.log('DATOS COMUNES: ' + JSON.stringify(datos));
 		datos = getEstadisticas(datos);
 		console.log('DATOS TRATADOS: ' + JSON.stringify(datos));
@@ -213,15 +218,16 @@
 	}
 
 	//Creamos función que unifique datos
-	function unificarBD(data1, data2, data3) {
+	function unificarBD(data1, data2, data3, data4) {
 		const geoSet1 = new Set(data1.map((item) => item.geo));
 		const filteredData2 = data2.filter((item) => geoSet1.has(item.geo));
 		const geoSet2 = new Set(filteredData2.map((item) => item.geo));
 		const filteredData3 = data3.filter((item) => geoSet1.has(item.geo) && geoSet2.has(item.geo));
+		const filteredData4 = data4.filter((item) => geoSet1.has(item.geo) && geoSet2.has(item.geo));
 
 		const filteredData1 = data1.filter((item) => geoSet2.has(item.geo));
 
-		const combinedData = [...filteredData1, ...filteredData2, ...filteredData3];
+		const combinedData = [...filteredData1, ...filteredData2, ...filteredData3, ...filteredData4];
 
 		return combinedData;
 	}
@@ -357,6 +363,54 @@
 			} else {
 				if (response.status == 404) {
 					errorMsg = 'No hay datos3 en la base de datos3';
+				} else {
+					errorMsg = `Error ${response.status}: ${response.statusText}`;
+				}
+			}
+		} catch (e) {
+			errorMsg = e;
+		}
+	}
+	///////
+	async function loadInitialCars() {
+		try {
+			if (datos.length === 0) {
+				let response = await fetch(API_ASB + '/loadInitialData', {
+					method: 'GET'
+				});
+
+				if (response.ok) {
+					getCars();
+					alert('Datos Cargados Correctamente');
+				} else {
+					errorMsg = 'La base de datos no está vacía';
+				}
+			} else {
+				errorMsg = 'La base de datos no está vacía';
+			}
+		} catch (error) {
+			errorMsg = error;
+		}
+	}
+
+	async function getCars() {
+		try {
+			await loadInitialCars();
+			let response = await fetch(`${API_ASB}?limit=10000`, {
+				method: 'GET',
+				headers: {
+					'Cache-Control': 'no-cache',
+					Pragma: 'no-cache'
+				}
+			});
+
+			if (response.ok) {
+				let data = await response.json();
+				console.log('DATOS ASB: ' + JSON.stringify(data));
+				return data;
+			} else {
+				if (response.status == 404) {
+					errorMsg = 'No hay datos4 en la base de datos3';
 				} else {
 					errorMsg = `Error ${response.status}: ${response.statusText}`;
 				}
