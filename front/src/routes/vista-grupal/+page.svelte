@@ -365,6 +365,54 @@
 			errorMsg = e;
 		}
 	}
+	///////
+	async function loadInitialCars() {
+		try {
+			if (datos.length === 0) {
+				let response = await fetch(API_ASB + '/loadInitialData', {
+					method: 'GET'
+				});
+
+				if (response.ok) {
+					getCars();
+					alert('Datos Cargados Correctamente');
+				} else {
+					errorMsg = 'La base de datos no está vacía';
+				}
+			} else {
+				errorMsg = 'La base de datos no está vacía';
+			}
+		} catch (error) {
+			errorMsg = error;
+		}
+	}
+
+	async function getCars() {
+		try {
+			await loadInitialCars();
+			let response = await fetch(`${API_ASB}?limit=10000`, {
+				method: 'GET',
+				headers: {
+					'Cache-Control': 'no-cache',
+					Pragma: 'no-cache'
+				}
+			});
+
+			if (response.ok) {
+				let data = await response.json();
+				console.log('DATOS ASCB: ' + JSON.stringify(data));
+				return data;
+			} else {
+				if (response.status == 404) {
+					errorMsg = 'No hay datos4 en la base de datos3';
+				} else {
+					errorMsg = `Error ${response.status}: ${response.statusText}`;
+				}
+			}
+		} catch (e) {
+			errorMsg = e;
+		}
+	}
 </script>
 
 <div class="container">
