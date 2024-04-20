@@ -27,7 +27,8 @@
     /**Paginacion*/
     let currentPage = 1;
     const pageSize = 10;
-
+    let totalDatos = 0; 
+    let totalPages = 1;
 
     onMount(async ()=>{
        await getInitialGDP();
@@ -62,6 +63,7 @@
 
   
     async function getGDP(){
+        await getGDPTotal();
         try{
             let offset = (currentPage - 1) * pageSize;
             let response = await fetch(`${API_MRF}?limit=${pageSize}&offset=${offset}`
@@ -86,44 +88,33 @@
         
     }
 
-    /*
+    async function getGDPTotal() {
+		try {
+            let offset = (currentPage - 1) * pageSize;
+            let response = await fetch(API_MRF + '?limit=100',{
+                                      method: "GET"
+            });
+			let data = await response.json();
+			totalDatos = data.length;
+			totalPages = Math.ceil(totalDatos / 10); // Calcular el número total de páginas
+			console.log('Total páginas: ' + totalPages);
+		} catch (e) {
+			errorMsg = e;
+		}
+	}
+
+    
     async function nextPage() {
-        if ((currentPage * pageSize) < totalItems) {
+        if ((currentPage * pageSize) <= totalDatos) {
             currentPage++;
             getGDP();
         }
-    }*/
-    
-    async function nextPage() {
-    try {
-        let offset = currentPage * pageSize;
-        let response = await fetch(`${API_MRF}?limit=${pageSize}&offset=${offset}`, {
-            method: "GET"
-        });
-
-        if (response.ok) {
-            let data = await response.json();
-            // Verificar si hay más datos disponibles
-            if (data && data.length === pageSize) {
-                gdp = data;
-                currentPage++;
-                errorMsg = "";
-            } else {
-                errorMsg = "No hay más datos disponibles";
-            }
-        } else {
-            if (response.status == 404) {
-                errorMsg = "No hay datos en la base de datos";
-            } else {
-                errorMsg = `Error ${response.status}: ${response.statusText}`;
-            }
-        }
-    } catch (e) {
-        errorMsg = e;
     }
-}
+    
+    
 
     async function prevPage() {
+        getGDPTotal();
         if (currentPage > 1) {
             currentPage--;
             getGDP();

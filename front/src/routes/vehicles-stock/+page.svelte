@@ -144,6 +144,7 @@
 		}
 	}
 
+
 	async function getVehicles() {
 		await getVehiclesTotal();
 
@@ -171,6 +172,7 @@
 			errorMsg = e;
 		}
 	}
+
 	// Función para ir a la página anterior
 	function goToPreviousPage() {
 		getVehiclesTotal();
@@ -294,6 +296,7 @@
 		}
 	}
 </script>
+
 
 <body>
 	<!--Estilo y formato de la tabla-->
