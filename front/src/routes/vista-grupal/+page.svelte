@@ -129,11 +129,7 @@
 	///////
 	async function loadInitialDataASC() {
 		try {
-<<<<<<< HEAD
-			if (tourisms.length === 0) {
-=======
 			if (datos3.length === 0) {
->>>>>>> parent of 6639693 (h)
 				let response = await fetch(API_ASC + '/loadInitialData', {
 					method: 'GET'
 				});
