@@ -17,6 +17,8 @@
 		let datos1 = await getVehicles();
 		let datos2 = await getGDP();
 		let datos3 = await getTourisms();
+		datos3 = replaceeGeo(datos3);
+		console.log(JSON.stringify(datos3));
 		console.log('DATOS MRF Crudos: ' + JSON.stringify(datos2));
 		datos2 = replaceGeo(datos2);
 		console.log('DATOS MRF: ' + JSON.stringify(datos2));
@@ -166,6 +168,8 @@
 			IE: 'Irlanda',
 			EL: 'Grecia',
 			ES: 'España',
+			BG: 'Bulgaria',
+			CZ: 'República Checa',
 			FR: 'Francia',
 			HR: 'Croacia',
 			IT: 'Italia',
@@ -196,7 +200,7 @@
 			AL: 'Albania',
 			RS: 'Serbia',
 			TR: 'Turquía',
-			XK: 'Kosovo*',
+			XK: 'Kosovo',
 			GE: 'Georgia'
 		};
 
