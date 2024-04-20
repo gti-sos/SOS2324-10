@@ -135,16 +135,20 @@
 	///////
 	async function loadInitialDataASC() {
 		try {
-			let response = await fetch(API_ASC + '/loadInitialData', {
+			if (tourisms.length === 0) {
+				let response = await fetch(API_ASC + '/loadInitialData', {
 					method: 'GET'
 				});
 
 				if (response.ok) {
-					getVehicles();
-					alert('Datos Cargados Correctamente');
+					getTourisms();
+					exitMsg = 'Datos Cargados Correctamente';
 				} else {
 					errorMsg = 'La base de datos no está vacía';
 				}
+			} else {
+				errorMsg = 'La base de datos no está vacía';
+			}
 		} catch (error) {
 			errorMsg = error;
 		}
