@@ -18,7 +18,7 @@
 		let datos2 = await getGDP();
 		let datos3 = await getTourisms();
 		datos3 = replaceeGeo(datos3);
-		console.log(JSON.stringify(datos3));
+		console.log('Datos ASC parseados: ' +JSON.stringify(datos3));
 		console.log('DATOS MRF Crudos: ' + JSON.stringify(datos2));
 		datos2 = replaceGeo(datos2);
 		console.log('DATOS MRF: ' + JSON.stringify(datos2));
@@ -352,7 +352,7 @@
 
 			if (response.ok) {
 				let data = await response.json();
-				console.log('DATOS ASC: ' + JSON.stringify(data));
+				//console.log('DATOS ASC: ' + JSON.stringify(data));
 				return data;
 			} else {
 				if (response.status == 404) {
