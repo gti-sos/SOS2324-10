@@ -445,11 +445,12 @@
 		}, {});
 
 		const sortedData = Object.entries(countryData).map(
-			([country, { pib, deathsInFlights, volgdp }]) => ({
+			([country, { pib, deathsInFlights, volgdp ,road_deaths_per_million_inhabitants}]) => ({
 				country: country,
 				pib: pib,
 				deathsInFlights: deathsInFlights,
-				volgdp: volgdp // Incluir el volgdp
+				volgdp: volgdp, // Incluir el volgdp
+				road_deaths_per_million_inhabitants: road_deaths_per_million_inhabitants
 			})
 		);
 
@@ -467,6 +468,10 @@
 				{
 					name: 'VolGDP',
 					data: sortedData.map((item) => item.volgdp) // Nueva serie para VolGDP
+				},
+				{
+					name: 'Muertes en carretera por millón de habitantes',
+					data: sortedData.map((item) => item.road_deaths_per_million_inhabitants)
 				}
 			]
 		};
@@ -481,7 +486,7 @@
 				type: 'area'
 			},
 			title: {
-				text: 'PIB Acumulado vs Muertes en Aviones vs VolGDP por País' // Actualizar título
+				text: 'PIB Acumulado vs Muertes en Aviones vs VolGDP por País vs Muertes en carretera pmh' // Actualizar título
 			},
 			xAxis: {
 				categories: datos.categories,
@@ -505,6 +510,13 @@
 					min: 0,
 					title: {
 						text: 'VolGDP'
+					},
+					opposite: true
+				},
+				{
+					min: 0,
+					title: {
+						text: 'Muertes en carretera pmh'
 					},
 					opposite: true
 				}
@@ -532,6 +544,14 @@
 					name: 'VolGDP',
 					data: datos.series[2].data, // Nueva serie para VolGDP
 					yAxis: 2, // Usar el tercer eje y para VolGDP
+					tooltip: {
+						valueSuffix: ' unidades'
+					}
+				},
+				{
+					name: 'Muertes en carretera pmh',
+					data: datos.series[2+3].data, 
+					yAxis: 3, 
 					tooltip: {
 						valueSuffix: ' unidades'
 					}
