@@ -427,7 +427,7 @@
 	function getEstadisticas(datos) {
 		const countryData = datos.reduce((acc, curr) => {
 			if (!acc[curr.geo]) {
-				acc[curr.geo] = { pib: 0, deathsInFlights: 0, volgdp: 0 }; // Incluir el volgdp
+				acc[curr.geo] = { pib: 0, deathsInFlights: 0, volgdp: 0, road_deaths_per_million_inhabitants:0}; // Incluir el volgdp
 			}
 			// Acumulación de PIB si tiene el atributo "frequency"
 			if ('frequency' in curr) {
@@ -440,6 +440,10 @@
 			// Volgdp
 			if (curr.volgdp) {
 				acc[curr.geo].volgdp = curr.volgdp;
+			}
+			// road_deaths_per_million_inhabitants
+			if (curr.road_deaths_per_million_inhabitants) {
+				acc[curr.geo].road_deaths_per_million_inhabitants += curr.road_deaths_per_million_inhabitants;
 			}
 			return acc;
 		}, {});
@@ -517,8 +521,7 @@
 					min: 0,
 					title: {
 						text: 'Muertes en carretera pmh'
-					},
-					opposite: true
+					}
 				}
 			],
 			tooltip: {
@@ -550,10 +553,10 @@
 				},
 				{
 					name: 'Muertes en carretera pmh',
-					data: datos.series[2+3].data, 
+					data: datos.series[3].data, 
 					yAxis: 3, 
 					tooltip: {
-						valueSuffix: ' unidades'
+						valueSuffix: ' fallecidos'
 					}
 				}
 			]
