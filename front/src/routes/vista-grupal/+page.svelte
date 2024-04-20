@@ -7,6 +7,7 @@
 	let API_ASC = '/api/v2/tourisms-per-age';
 	let API_ASB = '/api/v2/cars-by-motor';
 	let errorMsg = '';
+	let datos1, datos2, datos3, datos4 ={};
 
 	if (dev) {
 		API_TLR = 'http://localhost:8080' + API_TLR;
@@ -16,13 +17,15 @@
 	}
 
 	onMount(async () => {
-		let datos1 = await getVehicles();
-		let datos2 = await getGDP();
-		let datos3 = await getTourisms();
-		let datos4 = await getCars();
+		
+		datos1 = await getVehicles();
+		datos2 = await getGDP();
+		datos3 = await getTourisms();
+		datos4 = await getCars();
 		datos4 = replaceeGeo(datos4);
 		datos3 = replaceeGeo(datos3);
-		console.log('Datos ASC parseados: ' +JSON.stringify(datos3));
+		console.log('Datos ASC parseados: ' + JSON.stringify(datos3));
+		console.log('Datos ASB parseados: ' + JSON.stringify(datos4));
 		console.log('DATOS MRF Crudos: ' + JSON.stringify(datos2));
 		datos2 = replaceGeo(datos2);
 		console.log('DATOS MRF: ' + JSON.stringify(datos2));
@@ -36,7 +39,7 @@
 	//Funciones para obtener los datos en la BD
 	async function getInitialData() {
 		try {
-			if (datos.length === 0) {
+			if (datos1.length === 0) {
 				let response = await fetch(API_TLR + '/loadInitialData', {
 					method: 'GET'
 				});
@@ -84,7 +87,7 @@
 
 	async function getInitialGDP() {
 		try {
-			if (gdp.length === 0) {
+			if (datos2.length === 0) {
 				let response = await fetch(API_MRF + '/loadInitialData', {
 					method: 'GET'
 				});
@@ -100,8 +103,8 @@
 	}
 
 	async function getGDP() {
-		await getInitialGDP();
 		try {
+			await getInitialGDP();
 			console.log('Datos correctamente cargados');
 			let response = await fetch(API_MRF, {
 				method: 'GET'
@@ -114,6 +117,102 @@
 			} else {
 				if (response.status == 404) {
 					errorMsg = 'No hay datos en la base de datos';
+				} else {
+					errorMsg = `Error ${response.status}: ${response.statusText}`;
+				}
+			}
+		} catch (e) {
+			errorMsg = e;
+		}
+	}
+
+	///////
+	async function loadInitialDataASC() {
+		try {
+			if (datos3.length === 0) {
+				let response = await fetch(API_ASC + '/loadInitialData', {
+					method: 'GET'
+				});
+
+				if (response.ok) {
+					getVehicles();
+					alert('Datos Cargados Correctamente');
+				} else {
+					errorMsg = 'La base de datos no está vacía';
+				}
+			} else {
+				errorMsg = 'La base de datos no está vacía';
+			}
+		} catch (error) {
+			errorMsg = error;
+		}
+	}
+
+	async function getTourisms() {
+		try {
+			await loadInitialDataASC();
+			let response = await fetch(`${API_ASC}?limit=10000`, {
+				method: 'GET',
+				headers: {
+					'Cache-Control': 'no-cache',
+					Pragma: 'no-cache'
+				}
+			});
+
+			if (response.ok) {
+				let data = await response.json();
+				//console.log('DATOS ASC: ' + JSON.stringify(data));
+				return data;
+			} else {
+				if (response.status == 404) {
+					errorMsg = 'No hay datos3 en la base de datos3';
+				} else {
+					errorMsg = `Error ${response.status}: ${response.statusText}`;
+				}
+			}
+		} catch (e) {
+			errorMsg = e;
+		}
+	}
+	///////
+	async function loadInitialCars() {
+		try {
+			if (datos4.length === 0) {
+				let response = await fetch(API_ASB + '/loadInitialData', {
+					method: 'GET'
+				});
+
+				if (response.ok) {
+					getCars();
+					alert('Datos Cargados Correctamente');
+				} else {
+					errorMsg = 'La base de datos no está vacía';
+				}
+			} else {
+				errorMsg = 'La base de datos no está vacía';
+			}
+		} catch (error) {
+			errorMsg = error;
+		}
+	}
+
+	async function getCars() {
+		try {
+			await loadInitialCars();
+			let response = await fetch(`${API_ASB}?limit=10000`, {
+				method: 'GET',
+				headers: {
+					'Cache-Control': 'no-cache',
+					Pragma: 'no-cache'
+				}
+			});
+
+			if (response.ok) {
+				let data = await response.json();
+				return data;
+			} else {
+				if (response.status == 404) {
+					errorMsg = 'No hay datos4 en la base de datos3';
 				} else {
 					errorMsg = `Error ${response.status}: ${response.statusText}`;
 				}
@@ -320,103 +419,6 @@
 				}
 			]
 		});
-	}
-
-	///////
-	async function loadInitialData() {
-		try {
-			if (datos.length === 0) {
-				let response = await fetch(API_ASC + '/loadInitialData', {
-					method: 'GET'
-				});
-
-				if (response.ok) {
-					getVehicles();
-					alert('Datos Cargados Correctamente');
-				} else {
-					errorMsg = 'La base de datos no está vacía';
-				}
-			} else {
-				errorMsg = 'La base de datos no está vacía';
-			}
-		} catch (error) {
-			errorMsg = error;
-		}
-	}
-
-	async function getTourisms() {
-		try {
-			await loadInitialData();
-			let response = await fetch(`${API_ASC}?limit=10000`, {
-				method: 'GET',
-				headers: {
-					'Cache-Control': 'no-cache',
-					Pragma: 'no-cache'
-				}
-			});
-
-			if (response.ok) {
-				let data = await response.json();
-				//console.log('DATOS ASC: ' + JSON.stringify(data));
-				return data;
-			} else {
-				if (response.status == 404) {
-					errorMsg = 'No hay datos3 en la base de datos3';
-				} else {
-					errorMsg = `Error ${response.status}: ${response.statusText}`;
-				}
-			}
-		} catch (e) {
-			errorMsg = e;
-		}
-	}
-	///////
-	async function loadInitialCars() {
-		try {
-			if (datos.length === 0) {
-				let response = await fetch(API_ASB + '/loadInitialData', {
-					method: 'GET'
-				});
-
-				if (response.ok) {
-					getCars();
-					alert('Datos Cargados Correctamente');
-				} else {
-					errorMsg = 'La base de datos no está vacía';
-				}
-			} else {
-				errorMsg = 'La base de datos no está vacía';
-			}
-		} catch (error) {
-			errorMsg = error;
-		}
-	}
-
-	async function getCars() {
-		try {
-			await loadInitialCars();
-			let response = await fetch(`${API_ASB}?limit=10000`, {
-				method: 'GET',
-				headers: {
-					'Cache-Control': 'no-cache',
-					Pragma: 'no-cache'
-				}
-			});
-
-			if (response.ok) {
-				let data = await response.json();
-				console.log('DATOS ASB: ' + JSON.stringify(data));
-				return data;
-			} else {
-				if (response.status == 404) {
-					errorMsg = 'No hay datos4 en la base de datos3';
-				} else {
-					errorMsg = `Error ${response.status}: ${response.statusText}`;
-				}
-			}
-		} catch (e) {
-			errorMsg = e;
-		}
 	}
 </script>
 
