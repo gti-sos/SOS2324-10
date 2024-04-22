@@ -9,7 +9,6 @@
 		API_TLR = 'http://localhost:8080' + API_TLR;
 	}
 
-
 	async function getVehicles() {
 		try {
 			let response = await fetch(`${API_TLR}?limit=10000`, {
@@ -75,7 +74,6 @@
 			]
 		});
 		showCountryChart('España');
-
 	}
 
 	function transformData(datos) {
@@ -108,7 +106,7 @@
 
     Highcharts.chart('countryGraph', {
         chart: {
-            type: 'area' // Cambiamos el tipo de gráfico a área
+            type: 'scatter' // Cambiamos el tipo de gráfico a dispersión
         },
         title: {
             text: `Ventas de vehículos en ${country}`
@@ -125,8 +123,11 @@
             }
         },
         plotOptions: {
-            series: {
-                color: '#FFA500' // Cambiamos el color del área a naranja
+            scatter: {
+                marker: {
+                    symbol: 'circle', // Cambiamos el símbolo de los puntos a círculos
+                    radius: 5 // Ajustamos el tamaño de los puntos
+                }
             }
         },
         series: [
@@ -138,24 +139,24 @@
     });
 }
 
-function transformCountryData(countryData) {
-    // Ordenamos los datos por el atributo "year"
-    countryData.sort((a, b) => a.year - b.year);
 
-    const chartData = {
-        categories: [],
-        series: []
-    };
+	function transformCountryData(countryData) {
+		// Ordenamos los datos por el atributo "year"
+		countryData.sort((a, b) => a.year - b.year);
 
-    // Procesamos los datos ordenados
-    countryData.forEach((item) => {
-        chartData.categories.push(item.year);
-        chartData.series.push(item.obs_value);
-    });
+		const chartData = {
+			categories: [],
+			series: []
+		};
 
-    return chartData;
-}
+		// Procesamos los datos ordenados
+		countryData.forEach((item) => {
+			chartData.categories.push(item.year);
+			chartData.series.push(item.obs_value);
+		});
 
+		return chartData;
+	}
 
 	let datos;
 
@@ -170,24 +171,24 @@ function transformCountryData(countryData) {
 </svelte:head>
 
 <div class="container">
-    <div class="graph1">
-        <div id="graph" style="width:100%; height:400px;"></div>
-    </div>
+	<div class="graph1">
+		<div id="graph" style="width:100%; height:400px;"></div>
+	</div>
 
-    <div class="message">
-        <span>! </span> Pinche en un país para mostrar más información
-    </div>
+	<div class="message">
+		<span>! </span> Pinche en un país para mostrar más información
+	</div>
 
-    <div class="graph2">
-        <div id="countryGraph" style="width:100%; height:400px;"></div>
-    </div>
+	<div class="graph2">
+		<div id="countryGraph" style="width:100%; height:400px;"></div>
+	</div>
 </div>
 
 <style>
 	.container {
 		width: 100%;
 		height: 100%;
-		
+
 		background-color: #89deff;
 		color: #333;
 		border: 1px solid #89deff;
@@ -196,7 +197,8 @@ function transformCountryData(countryData) {
 		padding: 20px;
 	}
 
-	.graph1, .graph2{
+	.graph1,
+	.graph2 {
 		width: 80%;
 		margin: 50px auto;
 		background-color: #ffffff; /* Blanco */
@@ -205,14 +207,13 @@ function transformCountryData(countryData) {
 		box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombras */
 		padding: 20px;
 	}
-	
-	.message {
-        text-align: center;
-        
-    }
 
-    .message span {
-        font-size: 24px;
-        color: #ff0000;
-    }
+	.message {
+		text-align: center;
+	}
+
+	.message span {
+		font-size: 24px;
+		color: #ff0000;
+	}
 </style>
