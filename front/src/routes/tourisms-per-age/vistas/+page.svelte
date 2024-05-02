@@ -4,6 +4,7 @@
 	<script src="https://code.highcharts.com/modules/exporting.js"></script>
 	<script src="https://code.highcharts.com/modules/export-data.js"></script>
 	<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+	<script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
 </svelte:head>
 
 <script>
@@ -27,7 +28,8 @@
 				let data = await response.json();
 				graf1(data);
 				graf2(data);
-                graf3(data);
+                //graf3(data);
+				graf4(data);
 				return data;
 			} else {
 				if (response.status == 404) {
@@ -190,7 +192,59 @@
 			series: seriesData
 		});
 	}
-	function graf3(data) {
+	// function graf3(data) {
+	// 	// Filtrar los datos por geo === 'ES'
+	// 	const filteredData = data.filter((item) => item.geo === 'ES');
+
+	// 	// Crear un objeto para almacenar los datos agrupados por año
+	// 	const yearsData = {};
+
+	// 	// Iterar sobre los datos filtrados y agruparlos por año
+	// 	filteredData.forEach((item) => {
+	// 		const { time_period, obs_value } = item;
+	// 		if (!yearsData[time_period]) {
+	// 			yearsData[time_period] = 0;
+	// 		}
+	// 		yearsData[time_period] += obs_value;
+	// 	});
+
+	// 	// Preparar los datos para Highcharts
+	// 	const seriesData = [];
+	// 	for (const year in yearsData) {
+	// 		seriesData.push([year, yearsData[year]]);
+	// 	}
+
+	// 	// Configurar el gráfico
+	// 	const chart = new Highcharts.Chart({
+	// 		chart: {
+	// 			renderTo: 'container3', // Contenedor para la segunda gráfica
+	// 			type: 'pie',
+	// 			options3d: {
+	// 				enabled: true,
+	// 				alpha: 45
+	// 			}
+	// 		},
+	// 		title: {
+	// 			text: 'Venta de coches por año en España',
+	// 		},
+	// 		subtitle: {
+	// 			text: 'Source: ' + '<a href="https://yoursource.com" target="_blank">EUROSTAT</a>'
+	// 		},
+	// 		plotOptions: {
+	// 			pie: {
+	// 				innerSize: 100,
+	// 				depth: 45
+	// 			}
+	// 		},
+	// 		series: [
+	// 			{
+	// 				name: 'Numero de coches vendidos',
+	// 				data: seriesData
+	// 			}
+	// 		]
+	// 	});
+	// }
+	function graf4(data) {
 		// Filtrar los datos por geo === 'ES'
 		const filteredData = data.filter((item) => item.geo === 'ES');
 
@@ -206,41 +260,31 @@
 			yearsData[time_period] += obs_value;
 		});
 
-		// Preparar los datos para Highcharts
-		const seriesData = [];
-		for (const year in yearsData) {
-			seriesData.push([year, yearsData[year]]);
-		}
+		// Preparar los datos para CanvasJS
+		const dataPoints = Object.entries(yearsData).map(([year, value]) => ({
+			y: value,
+			name: year
+		}));
 
-		// Configurar el gráfico
-		const chart = new Highcharts.Chart({
-			chart: {
-				renderTo: 'container3', // Contenedor para la segunda gráfica
-				type: 'pie',
-				options3d: {
-					enabled: true,
-					alpha: 45
-				}
+		// Configurar el gráfico de CanvasJS
+		var chart = new CanvasJS.Chart("canvasjsContainer", {
+			theme: "dark2",
+			animationEnabled: true,
+			title:{
+				text: "Venta de coches por año en España"
 			},
-			title: {
-				text: 'Venta de coches por año en España',
-			},
-			subtitle: {
-				text: 'Source: ' + '<a href="https://yoursource.com" target="_blank">EUROSTAT</a>'
-			},
-			plotOptions: {
-				pie: {
-					innerSize: 100,
-					depth: 45
-				}
-			},
-			series: [
-				{
-					name: 'Numero de coches vendidos',
-					data: seriesData
-				}
-			]
+			subtitles: [{
+				text: 'Source: EUROSTAT'
+			}],
+			data: [{
+				type: "doughnut",
+				showInLegend: true,
+				toolTipContent: "<b>{name}</b>: {y}",
+				indexLabel: "{name} - {y}",
+				dataPoints: dataPoints
+			}]
 		});
+		chart.render();
 	}
 
 	onMount(async () => {
@@ -252,14 +296,16 @@
 
 <div id="container1" style="width:100%; height:400px;"></div>
 <div id="container2" style="width: 100%; height: 400px;"></div>
-<div id="container3" style="width: 100%; height: 400px;"></div>
+<!-- <div id="container3" style="width: 100%; height: 400px;"></div> -->
+<div id="canvasjsContainer" style="height: 400px; width: 100%;"></div>
+
 
 
 <style>
 	/* Estilos para la primera gráfica */
 	#container1,
 	#container2,
-    #container3 {
+	#canvasjsContainer {
 		height: 400px;
 		width: 100%;
 		margin: 1em auto;
