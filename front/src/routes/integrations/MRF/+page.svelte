@@ -17,8 +17,6 @@
             let response = await fetch(`https://world-countries-data.p.rapidapi.com/countries/all-countries`, {
                 method: 'GET',
                 headers: {
-                    'Cache-Control': 'no-cache',
-                    'Pragma': 'no-cache',
                     'X-RapidAPI-Key': '77e71d3380msh154aec6377535a9p1b8f1ajsnec607687032a',
                     'X-RapidAPI-Host': 'world-countries-data.p.rapidapi.com'
                 }
