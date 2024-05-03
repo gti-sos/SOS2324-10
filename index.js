@@ -1,4 +1,4 @@
-import express from "express";
+import express, { response } from "express";
 import bodyParser from "body-parser";
 
 import {API_TLR_v1} from "./api/api-TLR-v1.js";
@@ -20,13 +20,20 @@ let db_ASB = new dataStore();
 //Adaptador Svelte
 import {handler} from "./front/build/handler.js";
 import cors from "cors";
+import request from "request";
 
 
 
 let app = express();
 const PORT = process.env.PORT || 8080;
-//Activar CORS
-app.use(cors());
+
+//Activar CORS 
+app.use(cors({
+    "origin": "http://127.0.0.1:8080",
+    "preflightContinue": false,
+    "optionsSuccessStatus": 204
+}));
+
 
 
 app.listen(PORT);
@@ -41,8 +48,24 @@ API_ASC_v2(app, db_ASC);
 API_ASB_v1(app, db_ASB);
 API_ASB_v2(app, db_ASB);
 
-//Uso del handler
+//Hacemos uso de proxy
+app.use("/proxyTLR", function(req,res){
+    var url = "https://sos2324-10.appspot.com/api/v2/vehicles-stock";
+    console.log('piped' + req.url);
 
+    request(url, (error, response, body)=> {
+        if(error){
+            console.log(error);
+        }
+        console.log(response.statusCode);
+        console.log(body);
+        res.send(body);
+    });
+
+    
+});
+
+//Uso del handler
 app.use(handler);
 
 // Establecemos subdirectorios de la web
