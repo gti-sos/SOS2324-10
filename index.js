@@ -28,8 +28,19 @@ let app = express();
 const PORT = process.env.PORT || 8080;
 
 //Activar CORS 
+const whitelist = [
+    'http://127.0.0.1:8080',
+    'https://car-api2.p.rapidapi.com/api/vin/1GTG6CEN0L1139305'
+];
+
 app.use(cors({
-    "origin": "http://127.0.0.1:8080",
+    "origin": function (origin, callback) {
+        if (whitelist.indexOf(origin) !== -1) {
+            callback(null, true)
+        } else {
+            callback(new Error('Not allowed by CORS'))
+        }
+    },
     "preflightContinue": false,
     "optionsSuccessStatus": 204
 }));
@@ -60,9 +71,7 @@ app.use("/proxyTLR", function(req,res){
         console.log(response.statusCode);
         console.log(body);
         res.send(body);
-    });
-
-    
+    });    
 });
 
 
