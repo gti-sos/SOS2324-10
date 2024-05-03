@@ -65,6 +65,23 @@ app.use("/proxyTLR", function(req,res){
     
 });
 
+
+app.use("/proxyMRF", function(req,res){
+    var url = "https://sos2324-10.appspot.com/api/v2/gdp-growth-rates";
+    console.log('piped' + req.url);
+
+    request(url, (error, response, body)=> {
+        if(error){
+            console.log(error);
+        }
+        console.log(response.statusCode);
+        console.log(body);
+        res.send(body);
+    });
+
+    
+});
+
 //Uso del handler
 app.use(handler);
 

@@ -222,6 +222,32 @@ function backend_MRF_v2(app, db_MRF){
             || !newData.na_item || !newData.obs_value || !newData.growth_rate_2030 || !newData.growth_rate_2040) {
             return res.sendStatus(400);
         }
+    
+        // Buscar duplicados basados en geo y time_period
+        db_MRF.findOne({ geo: newData.geo, time_period: newData.time_period }, (err, doc) => {
+            if (err) {
+                return res.sendStatus(500);
+            } else if (doc) {
+                res.sendStatus(409); // Duplicado encontrado
+            } else {
+                // Insertar el nuevo dato si no hay duplicados
+                db_MRF.insert(newData, (err, newDoc) => {
+                    if (err) {
+                        return res.sendStatus(500);
+                    } else {
+                        res.sendStatus(201); // Dato insertado correctamente
+                    }
+                });
+            }
+        });
+    });
+    /*
+    app.post(API_BASE + "/", (req, res) => {
+        const newData = req.body;
+        if (!newData.geo || !newData.time_period || !newData.frequency || !newData.unit
+            || !newData.na_item || !newData.obs_value || !newData.growth_rate_2030 || !newData.growth_rate_2040) {
+            return res.sendStatus(400);
+        }
 
         db_MRF.findOne({ id: newData.id }, (err, doc) => {
             if (err) {
@@ -238,7 +264,7 @@ function backend_MRF_v2(app, db_MRF){
                 });
             }
         });
-    });
+    });*/
 
 
     // -------------------------------------- PUT -----------------------------
