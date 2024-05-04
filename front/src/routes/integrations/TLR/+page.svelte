@@ -3,17 +3,17 @@
 	import { dev } from '$app/environment';
 	import * as d3 from 'd3';
 
-	let API_TLR = '/api/v2/vehicles-stock';
+	let API_TLR1 = '/proxyTLR1';
 	let errorMsg = '';
 	let datos= {};
 	if (dev) {
-		API_TLR = 'http://localhost:8080' + API_TLR;
+		API_TLR1 = 'http://localhost:8080' + API_TLR1;
 	}
 
 	async function API_cars_TLR() {
 
 		try {
-			let response = await fetch(`https://car-api2.p.rapidapi.com/api/vin/1GTG6CEN0L1139305`, {
+			let response = await fetch(API_TLR1, {
 				method: 'GET',
 				headers: {
 					'Cache-Control': 'no-cache',
