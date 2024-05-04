@@ -197,48 +197,7 @@
             getGDP();
     };  
 
-    /**
-    async function searchGDP() {
-        const country = document.getElementById('countryInput').value.trim();
-        const from = document.getElementById('fromInput').value.trim();
-        const to = document.getElementById('toInput').value.trim();
-
-        let url = `${API_MRF}?`;
-
-        // Verificar qué campos están completados y agregarlos a la URL
-        if (country !== '') {
-            url += `geo=${encodeURIComponent(country)}&`;
-        }
-        if (from !== '') {
-            url += `from=${encodeURIComponent(from)}&`;
-        }
-        if (to !== '') {
-            url += `to=${encodeURIComponent(to)}&`;
-        }
-
-        // Eliminar el último '&' de la URL si está presente
-        if (url.endsWith('&')) {
-            url = url.slice(0, -1);
-        }
-
-        try {
-            const response = await fetch(url, {
-                method: 'GET'
-            });
-
-            if (response.ok) {
-                const { data } = await response.json();
-                gdp = data; 
-                exitoMsg = "Búsqueda realizada correctamente";
-                errorMsg = '';
-            } else {
-                errorMsg = "Error en la búsqueda";
-            }
-        } catch (e) {
-            errorMsg = e;
-        }
-    }
-    */
+   
 
     async function createGDP(){
         try{
