@@ -12,6 +12,7 @@ jobs:
       - run: npx playwright install --with-deps
       - run: npm test
 
+
   deploy:
     needs: [test]
     runs-on: ubuntu-latest
