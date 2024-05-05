@@ -79,7 +79,7 @@ app.use("/proxyTLR1", function (req, res) {
                 let countryData = data.result[countryCode];
                 let services = Object.values(countryData.services).map(service => service.name);
                 return {
-                    country: countryData.name,
+                    geo: countryData.name,
                     services: services
                 };
             });
@@ -115,7 +115,7 @@ app.use("/proxyTLR2", function (req, res) {
             // Transform the data to only include 'country' and 'deaths.total'
             let transformedData = data.response.map(item => {
                 return {
-                    country: item.country,
+                    geo: item.country,
                     deaths: item.deaths.total
                 };
             });
@@ -142,7 +142,7 @@ app.use("/proxyTLR3", function (req, res) {
             let modifiedData = data.map(country => {
                 let currencyName = country.currencies ? Object.values(country.currencies)[0].name : null;
                 return {
-                    country: country.name.common,
+                    geo: country.name.common,
                     currency: currencyName
                 };
             });

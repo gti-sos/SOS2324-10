@@ -1,7 +1,7 @@
 <script>
     import { onMount } from 'svelte';
     import { dev } from '$app/environment';
-    import Chart from 'chart.js/auto';
+    //import Chart from 'chart.js/auto';
 
     let API_MRF = '/api/v2/gdp-growth-rates';
     let errorMsg = '';
