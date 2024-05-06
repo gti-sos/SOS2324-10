@@ -151,6 +151,42 @@ app.use("/proxyTLR3", function (req, res) {
     });
 });
 
+app.use("/proxyTLR4", function (req, res) {
+    const url = 'https://free-to-play-games-database.p.rapidapi.com/api/games';
+    const options = {
+        url: url,
+        headers: {
+            'X-RapidAPI-Key': '1aadf5ce53msh199300bed84e271p129a87jsn45a312038c14',
+            'X-RapidAPI-Host': 'free-to-play-games-database.p.rapidapi.com'
+        }
+    };
+
+    request(options, (error, response, body) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send(error);
+        } else {
+            console.log(response.statusCode);
+
+            // Parse the body to a JavaScript object
+            let data = JSON.parse(body);
+
+            // Transform the data to only include 'title', 'genre', and 'platform'
+            let transformedData = data.map(item => {
+                return {
+                    title: item.title,
+                    genre: item.genre,
+                    platform: item.platform
+                };
+            });
+
+            // Send the transformed data
+            res.send(transformedData);
+        }
+    });
+});
+
+
 
 app.use("/proxyMRF", function(req,res){
 

@@ -3,6 +3,15 @@
 	<a href="/" class="nav-link">Inicio</a>
 	<a href="/analytics" class="nav-link">Vista Grupal</a>
 	<div class="dropdown">
+		<button class="dropbtn">Integraciones</button>
+		<div class="dropdown-content">
+			<a href="/integrations/TLR">TLR</a>
+			<a href="/integrations/MRF">MRF</a>
+			<a href="/integrations/ASB">ASB</a>
+			<a href="/integrations/ASC">ASC</a>
+		</div>
+	</div>
+	<div class="dropdown">
 		<button class="dropbtn">vehicles-stock</button>
 		<div class="dropdown-content">
 			<a href="/vehicles-stock">Tabla</a>

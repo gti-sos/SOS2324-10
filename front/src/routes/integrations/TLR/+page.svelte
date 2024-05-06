@@ -2,11 +2,13 @@
 	import { onMount } from 'svelte';
 	import { dev } from '$app/environment';
 	import * as echarts from 'echarts';
+	import QuickChart from 'quickchart-js';
 
 	let API_TLR = '/api/v2/vehicles-stock';
 	let API_TLR1 = '/proxyTLR1';
 	let API_TLR2 = '/proxyTLR2';
 	let API_TLR3 = '/proxyTLR3';
+	let API_TLR4 = '/proxyTLR4';
 	let errorMsg = '';
 	let datos = {};
 	if (dev) {
@@ -14,6 +16,7 @@
 		API_TLR1 = 'http://localhost:8080' + API_TLR1;
 		API_TLR2 = 'http://localhost:8080' + API_TLR2;
 		API_TLR3 = 'http://localhost:8080' + API_TLR3;
+		API_TLR4 = 'http://localhost:8080' + API_TLR4;
 	}
 
 	async function getVehicles() {
@@ -96,6 +99,31 @@
 	async function API_TLR_3() {
 		try {
 			let response = await fetch(API_TLR3, {
+				method: 'GET',
+				headers: {
+					'Cache-Control': 'no-cache',
+					Pragma: 'no-cache'
+				}
+			});
+
+			if (response.ok) {
+				let data = await response.json();
+				return data;
+			} else {
+				if (response.status == 404) {
+					errorMsg = 'No hay datos en la base de datos';
+				} else {
+					errorMsg = `Error ${response.status}: ${response.statusText}`;
+				}
+			}
+		} catch (e) {
+			errorMsg = e;
+		}
+	}
+
+	async function API_TLR_4() {
+		try {
+			let response = await fetch(API_TLR4, {
 				method: 'GET',
 				headers: {
 					'Cache-Control': 'no-cache',
@@ -344,11 +372,177 @@
 		myChart.setOption(option);
 	}
 
+	function transformData3(datos_TLR, datos1) {
+		// Filtrar los países que están en ambas listas de datos
+		const commonCountries = datos_TLR.filter((car) => {
+			return datos1.some((stream) => stream.geo === car.geo);
+		});
+
+		// Obtener los países comunes y sus datos combinados
+		const combinedData = commonCountries.map((country) => {
+			const carSold = datos_TLR.find((car) => car.geo === country.geo);
+			const streamingServices = datos1.find((stream) => stream.geo === country.geo);
+			return {
+				country: country.geo,
+				carsSold: carSold ? carSold.obs_value : 0,
+				streamingServices: streamingServices ? streamingServices.services.length : 0
+			};
+		});
+
+		return combinedData;
+	}
+
+	async function crearGrafico3(data) {
+		// Inicializar el gráfico
+		var chart = echarts.init(document.getElementById('graph03'));
+
+		// Configurar opciones del gráfico
+		var options = {
+			title: {
+				text: 'Relación vehículos vendidos vs nº servicios streaming', // Título del gráfico
+				left: 'center' // Alineación del título
+			},
+			xAxis: {
+				type: 'value',
+				name: 'Coches Vendidos'
+			},
+			yAxis: {
+				type: 'value',
+				name: 'Servicios de Streaming'
+			},
+			series: [
+				{
+					type: 'scatter',
+					data: data.map((item) => ({
+						value: [item.carsSold, item.streamingServices, item.country], // Agregar el país como tercer valor
+						emphasis: {
+							focus: 'series', // Enfatizar el punto al pasar el ratón
+							itemStyle: {
+								shadowBlur: 10,
+								shadowOffsetX: 0,
+								shadowColor: 'rgba(0, 0, 0, 0.5)'
+							},
+							label: {
+								show: true, // Mostrar etiqueta de énfasis
+								formatter: function (params) {
+									return (
+										'{a|' +
+										params.data.value[2] +
+										'}\n' + // Nombre del país
+										'{b|Nº de servicios de streaming: ' +
+										params.data.value[1] +
+										'}\n' + // Nº de servicios de streaming
+										'{c|Nº de vehículos vendidos: ' +
+										params.data.value[0] +
+										'}'
+									); // Nº de vehículos vendidos
+								},
+								rich: {
+									a: {
+										color: '#000', // Color del texto del país
+										fontSize: 12, // Tamaño de fuente del texto del país
+										lineHeight: 20 // Espaciado de línea del texto del país
+									},
+									b: {
+										color: '#000', // Color del texto de servicios de streaming
+										padding: [3, 5], // Relleno alrededor del texto de servicios de streaming
+										fontSize: 12, // Tamaño de fuente del texto de servicios de streaming
+										lineHeight: 20 // Espaciado de línea del texto de servicios de streaming
+									},
+									c: {
+										color: '#000', // Color del texto de vehículos vendidos
+										padding: [3, 5], // Relleno alrededor del texto de vehículos vendidos
+										fontSize: 12, // Tamaño de fuente del texto de vehículos vendidos
+										lineHeight: 20 // Espaciado de línea del texto de vehículos vendidos
+									}
+								},
+								backgroundColor: 'rgba(255, 255, 255, 0.8)', // Color de fondo del énfasis (blanco y opaco)
+								borderColor: '#000', // Color del borde del énfasis
+								borderWidth: 1, // Ancho del borde del énfasis
+								padding: [5, 10], // Relleno alrededor del énfasis
+								position: 'top' // Posición de la etiqueta
+							}
+						}
+					})),
+					symbolSize: function (data) {
+						// Ajustar el tamaño de las burbujas según el número de servicios de streaming
+						return Math.sqrt(data[1]) * 10;
+					},
+					label: {
+						show: false // No mostrar etiquetas por defecto
+					},
+					itemStyle: {
+						color: '#5470c6' // Color de las burbujas
+					}
+				}
+			]
+		};
+
+		// Establecer las opciones en el gráfico
+		chart.setOption(options);
+	}
+
+	function transformData4(data) {
+		// Inicializar un objeto para contar el número de juegos para cada género
+		let genreCounts = {};
+
+		// Iterar sobre los datos y contar el número de juegos para cada género
+		data.forEach((item) => {
+			const genre = item.genre;
+			genreCounts[genre] = (genreCounts[genre] || 0) + 1;
+		});
+
+		// Convertir el objeto de recuento en un array de objetos con la forma { genre: ..., count: ... }
+		let transformedData = Object.keys(genreCounts).map((genre) => ({
+			genre: genre,
+			count: genreCounts[genre]
+		}));
+
+		return transformedData;
+	}
+
+	async function crearGrafico4(datos) {
+	// Transformar los datos
+	let transformedData = transformData4(datos);
+
+	// Extraer los géneros y los recuentos para configurar las series
+	let labels = transformedData.map((item) => item.genre);
+	let values = transformedData.map((item) => item.count);
+
+	// Configurar los datos del gráfico
+	let data = [
+		{
+			values: values,
+			labels: labels,
+			type: 'pie'
+		}
+	];
+
+	// Configurar el diseño del gráfico
+	let layout = {
+		title: 'Número de Juegos por Género',
+		height: 400,
+		width: 500,
+		legend: {
+			orientation: 'v',
+			xanchor: 'left',
+			x: 1.02,
+			yanchor: 'middle',
+			y: 0.5
+		}
+	};
+
+	// Dibujar el gráfico
+	Plotly.newPlot('graph04', data, layout);
+}
+
+
 	async function inicializarDatos() {
 		let datos_TLR = await getVehicles();
 		let datos1 = await API_TLR_1();
 		let datos2 = await API_TLR_2();
 		let datos3 = await API_TLR_3();
+		let datos4 = await API_TLR_4();
 
 		datos1 = geoEspana(datos1);
 		datos2 = geoEspana(datos2);
@@ -363,6 +557,14 @@
 
 		let chartData2 = transformData2(datos3);
 		crearGrafico2(chartData2);
+
+		let chartData3 = transformData3(datos_TLR, datos1);
+		crearGrafico3(chartData3);
+
+		let chartData4 = transformData4(datos4);
+		console.log('Datos 4 Sin Tratar: ' + JSON.stringify(datos4));
+		console.log('Datos 4 Tratados: ' + JSON.stringify(chartData4));
+		crearGrafico4(datos4);
 	}
 
 	onMount(async () => {
@@ -374,6 +576,7 @@
 	<script src="https://code.highcharts.com/highcharts.js"></script>
 	<script src="https://code.highcharts.com/modules/accessibility.js"></script>
 	<script src="https://d3js.org/d3.v7.min.js"></script>
+	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </svelte:head>
 
 <div class="container">
@@ -383,6 +586,14 @@
 
 	<div class="graph1">
 		<div id="graph02" style="width:100%; height:400px;"></div>
+	</div>
+
+	<div class="graph1">
+		<div id="graph03" style="width:100%; height:400px;"></div>
+	</div>
+
+	<div class="graph1">
+		<div id="graph04" style="width:100%; height:400px;"></div>
 	</div>
 </div>
 
