@@ -127,37 +127,6 @@ function backend_MRF_v2(app, db_MRF){
         });
     });
     
-    /**
-    app.get(API_BASE + "/search", (req, res) => {
-        const queryParams = req.query;
-    
-        // Convertir los atributos numéricos a enteros si están presentes
-        const numericAttributes = ["time_period", "obs_value", "growth_rate_2030", "growth_rate_2040"];
-        numericAttributes.forEach(attr => {
-          if (queryParams[attr]) {
-            queryParams[attr] = parseInt(queryParams[attr]);
-            if (isNaN(queryParams[attr])) {
-              return res.sendStatus(400);
-            }
-          }
-        });
-    
-        // Consultar la base de datos con el filtro construido
-        db_MRF.find(queryParams, { _id: 0, id: 0 }, (err, filteredData) => {
-          if (err) {
-            return res.sendStatus(500);
-          }
-    
-          if (filteredData.length === 0) {
-            return res.sendStatus(404);
-          }else{
-            return res.send(filteredData);
-          }
-    
-          
-        });
-    });*/
-    
     
 
     app.get(API_BASE + "/:geo", (req, res) => {
@@ -241,31 +210,7 @@ function backend_MRF_v2(app, db_MRF){
             }
         });
     });
-    /*
-    app.post(API_BASE + "/", (req, res) => {
-        const newData = req.body;
-        if (!newData.geo || !newData.time_period || !newData.frequency || !newData.unit
-            || !newData.na_item || !newData.obs_value || !newData.growth_rate_2030 || !newData.growth_rate_2040) {
-            return res.sendStatus(400);
-        }
-
-        db_MRF.findOne({ id: newData.id }, (err, doc) => {
-            if (err) {
-                return res.sendStatus(500);
-            } else if (doc) {
-                res.sendStatus(409);
-            } else {
-                db_MRF.insert(newData, (err, newDoc) => {
-                    if (err) {
-                        return res.sendStatus(500);
-                    } else {
-                        res.sendStatus(201);
-                    }
-                });
-            }
-        });
-    });*/
-
+   
 
     // -------------------------------------- PUT -----------------------------
 
