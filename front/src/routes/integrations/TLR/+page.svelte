@@ -580,6 +580,7 @@
 		console.log('Datos 4 Tratados: ' + JSON.stringify(chartData4));
 		crearGrafico4(chartData4);
 	}
+	
 
 	onMount(async () => {
 		inicializarDatos();
