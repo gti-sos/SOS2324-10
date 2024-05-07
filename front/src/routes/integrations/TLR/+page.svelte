@@ -501,40 +501,54 @@
 		return transformedData;
 	}
 
-	async function crearGrafico4(datos) {
-	// Transformar los datos
-	let transformedData = transformData4(datos);
+	function crearGrafico4(datos) {
 
-	// Extraer los géneros y los recuentos para configurar las series
-	let labels = transformedData.map((item) => item.genre);
-	let values = transformedData.map((item) => item.count);
+    // Extraer los géneros y los recuentos para configurar las series
+    let labels = datos.map((item) => item.genre);
+    let values = datos.map((item) => item.count);
 
-	// Configurar los datos del gráfico
-	let data = [
-		{
-			values: values,
-			labels: labels,
-			type: 'pie'
-		}
-	];
+    // Configurar los datos del gráfico
+    let data = {
+        xAxis: {
+            type: 'category',
+            data: labels
+        },
+        yAxis: {
+            type: 'category',
+            data: labels
+        },
+        visualMap: {
+            min: Math.min(...values),
+            max: Math.max(...values),
+            calculable: true,
+            orient: 'horizontal',
+            left: 'center',
+            bottom: '15%'
+        },
+        series: [{
+            name: 'Número de Juegos por Género',
+            type: 'heatmap',
+            data: values.map((value, index) => [index, index, value]),
+            label: {
+                show: true
+            },
+            itemStyle: {
+                emphasis: {
+                    shadowBlur: 10,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+            }
+        }]
+    };
 
-	// Configurar el diseño del gráfico
-	let layout = {
-		title: 'Número de Juegos por Género',
-		height: 400,
-		width: 500,
-		legend: {
-			orientation: 'v',
-			xanchor: 'left',
-			x: 1.02,
-			yanchor: 'middle',
-			y: 0.5
-		}
-	};
+    // Inicializar el gráfico
+    let chart = echarts.init(document.getElementById('graph04'));
 
-	// Dibujar el gráfico
-	Plotly.newPlot('graph04', data, layout);
+    // Dibujar el gráfico
+    chart.setOption(data);
 }
+
+
 
 
 	async function inicializarDatos() {
@@ -564,7 +578,7 @@
 		let chartData4 = transformData4(datos4);
 		console.log('Datos 4 Sin Tratar: ' + JSON.stringify(datos4));
 		console.log('Datos 4 Tratados: ' + JSON.stringify(chartData4));
-		crearGrafico4(datos4);
+		crearGrafico4(chartData4);
 	}
 
 	onMount(async () => {
