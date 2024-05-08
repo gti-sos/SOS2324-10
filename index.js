@@ -215,6 +215,32 @@ app.use("/proxyMRF1", function(req,res){
     
 });
 
+
+app.use("/proxyMRF2", function(req,res){
+
+    const url = 'https://deaths-by-european-countries.p.rapidapi.com/4mjf2k/deaths_by_country';
+    
+    const options = {
+      url: url,
+      headers: {
+        'X-RapidAPI-Key': '77e71d3380msh154aec6377535a9p1b8f1ajsnec607687032a',
+        'X-RapidAPI-Host': 'deaths-by-european-countries.p.rapidapi.com'
+      }
+    };
+
+    request(options, (error, response, body) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send(error);
+        } else {
+            console.log(response.statusCode);
+            console.log(body);
+            res.send(body);
+        }
+    });
+    
+});
+
 //Uso del handler
 app.use(handler);
 
