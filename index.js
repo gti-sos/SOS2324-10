@@ -190,16 +190,16 @@ app.use("/proxyTLR4", function (req, res) {
 
 
 
-app.use("/proxyMRF1", function(req,res){
+app.use("/proxyMRF1", function (req, res) {
 
     const url = 'https://beers-list.p.rapidapi.com/beers';
-    
+
     const options = {
-      url: url,
-      headers: {
-        'X-RapidAPI-Key': '77e71d3380msh154aec6377535a9p1b8f1ajsnec607687032a',
-        'X-RapidAPI-Host': 'beers-list.p.rapidapi.com'
-      }
+        url: url,
+        headers: {
+            'X-RapidAPI-Key': '77e71d3380msh154aec6377535a9p1b8f1ajsnec607687032a',
+            'X-RapidAPI-Host': 'beers-list.p.rapidapi.com'
+        }
     };
 
     request(options, (error, response, body) => {
@@ -228,6 +228,52 @@ app.use("/proxyASC1", function (req, res) {
             console.error(error);
             res.status(500).send(error);
         } else {
+            console.log(response.statusCode);
+            console.log(body);
+            res.send(body);
+        }
+    });
+})
+
+app.use("/proxyASC2", function (req, res) {
+    const url = 'https://ski-resort-forecast.p.rapidapi.com/Jackson%20Hole/forecast?units=i&el=mid';
+    const options = {
+        url: url,
+        headers: {
+            'X-RapidAPI-Key': '85099dfe9emsh2e80361b8f26190p1f3cdejsnc4545794f7f2',
+            'X-RapidAPI-Host': 'ski-resort-forecast.p.rapidapi.com'
+        }
+    };
+
+    request(options, (error, response, body) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send(error);
+        } else {
+            console.log(response.statusCode);
+            console.log(body);
+            res.send(body);
+        }
+    });
+})
+
+app.use("/proxyASC3", function (req, res) {
+    const url = 'https://cheapshark-game-deals.p.rapidapi.com/games?title=batman&exact=0&limit=5';
+    const options = {
+        url:url,
+        headers: {
+            'X-RapidAPI-Key': '85099dfe9emsh2e80361b8f26190p1f3cdejsnc4545794f7f2',
+            'X-RapidAPI-Host': 'cheapshark-game-deals.p.rapidapi.com'
+        }
+    };
+
+    request(options, (error, response, body) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send(error);
+        } else {
+            console.log(response.statusCode);
+            console.log(body);
             res.send(body);
         }
     });
