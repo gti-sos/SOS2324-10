@@ -2,7 +2,6 @@
         import { onMount } from 'svelte';
         import { dev } from '$app/environment';
         import * as echarts from 'echarts';
-        import Chartist from 'chartist';
 
 
         let API_MRF = '/api/v2/gdp-growth-rates';
@@ -242,38 +241,53 @@
             return combinedData;
         }
 
+        function createGraphII(data) {
+    // Preparar los datos para el gráfico de radar
+    let countries = data.map(item => item.country);
+    let growthRates = data.map(item => item.growth_rate_2030 !== null ? item.growth_rate_2030 : 0);
+    let deaths = data.map(item => item.deaths_2020 !== null ? item.deaths_2020 : 0);
 
-        async function createGraphII(datos) {
-            // Extraer los nombres de los países y los datos de muertes para la gráfica
-            const nombresPaises = datos.map(entry => entry.country);
-            const muertes2020 = datos.map(entry => entry.deaths_2020);
+    // Inicializar el gráfico de radar
+    const myChart = echarts.init(document.getElementById('graph2'));
 
-            // Configurar los datos de la gráfica
-            const data = {
-                labels: nombresPaises,
-                series: [muertes2020]
-            };
-
-            // Configurar opciones de la gráfica
-            const options = {
-                width: 800,
-                height: 600,
-                showArea: true,
-                showPoint: false,
-                showLine: false,
-                axisX: {
-                    labelInterpolationFnc: function(value, index) {
-                        return value.split(' ')[0];
+    // Configurar las opciones del gráfico de radar
+    const option = {
+        title: {
+            text: 'Basic Radar Chart'
+        },
+        legend: {
+            data: ['Growth Rate 2030', 'Deaths 2020']
+        },
+        radar: {
+            // shape: 'circle',
+            indicator: countries.map(country => ({ name: country })),
+        },
+        series: [
+            {
+                name: 'Growth Rate vs Deaths',
+                type: 'radar',
+                data: [
+                    {
+                        value: growthRates,
+                        name: 'Growth Rate 2030'
+                    },
+                    {
+                        value: deaths,
+                        name: 'Deaths 2020'
                     }
-                }
-            };
+                ]
+            }
+        ]
+    };
 
-            // Obtener el elemento div contenedor
-            const container = document.getElementById('graph2');
+    // Establecer las opciones y renderizar el gráfico
+    myChart.setOption(option);
+}
 
-            // Crear la instancia de la gráfica de radar
-            new Chartist.Line(container, data, options);
-        }
+   
+
+
+
         
 
         
@@ -290,7 +304,7 @@
             createGraphI(graphDataI);     
 
             let graphDataII = modDataII(datos_MRF, datosII);
-            //console.log(graphDataII);
+            console.log(graphDataII);
             createGraphII(graphDataII);
             
             
@@ -303,12 +317,10 @@
     </script>
 
 <div id="graph1" style="width: 800px; height: 600px;"></div>
-<canvas id="graph1"></canvas>
-<canvas id="graph2"></canvas>
 <div id="graph2" style="width: 800px; height: 600px;"></div>
 
-    <svelte:head>
-        <script src="https://code.highcharts.com/highcharts.js"></script>
-        <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0"></script>
-    </svelte:head>
+<svelte:head>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0"></script>
+</svelte:head>
