@@ -127,37 +127,6 @@ function backend_MRF_v2(app, db_MRF){
         });
     });
     
-    /**
-    app.get(API_BASE + "/search", (req, res) => {
-        const queryParams = req.query;
-    
-        // Convertir los atributos numéricos a enteros si están presentes
-        const numericAttributes = ["time_period", "obs_value", "growth_rate_2030", "growth_rate_2040"];
-        numericAttributes.forEach(attr => {
-          if (queryParams[attr]) {
-            queryParams[attr] = parseInt(queryParams[attr]);
-            if (isNaN(queryParams[attr])) {
-              return res.sendStatus(400);
-            }
-          }
-        });
-    
-        // Consultar la base de datos con el filtro construido
-        db_MRF.find(queryParams, { _id: 0, id: 0 }, (err, filteredData) => {
-          if (err) {
-            return res.sendStatus(500);
-          }
-    
-          if (filteredData.length === 0) {
-            return res.sendStatus(404);
-          }else{
-            return res.send(filteredData);
-          }
-    
-          
-        });
-    });*/
-    
     
 
     app.get(API_BASE + "/:geo", (req, res) => {
@@ -241,31 +210,7 @@ function backend_MRF_v2(app, db_MRF){
             }
         });
     });
-    /*
-    app.post(API_BASE + "/", (req, res) => {
-        const newData = req.body;
-        if (!newData.geo || !newData.time_period || !newData.frequency || !newData.unit
-            || !newData.na_item || !newData.obs_value || !newData.growth_rate_2030 || !newData.growth_rate_2040) {
-            return res.sendStatus(400);
-        }
-
-        db_MRF.findOne({ id: newData.id }, (err, doc) => {
-            if (err) {
-                return res.sendStatus(500);
-            } else if (doc) {
-                res.sendStatus(409);
-            } else {
-                db_MRF.insert(newData, (err, newDoc) => {
-                    if (err) {
-                        return res.sendStatus(500);
-                    } else {
-                        res.sendStatus(201);
-                    }
-                });
-            }
-        });
-    });*/
-
+   
 
     // -------------------------------------- PUT -----------------------------
 
@@ -741,7 +686,80 @@ function backend_MRF_v2(app, db_MRF){
             obs_value: -3.5, 
             growth_rate_2030: 19837, 
             growth_rate_2040: 25398
+        },
+        {
+            dataflow: "estat:teco0115(1.0)",
+            last_update: "02/02/24 23:00:00",
+            frequency: "a",
+            unit: "clv_pch_pre",
+            na_item: "b1gq",
+            geo: "malta",
+            time_period: 2023,
+            obs_value: 2.3,
+            growth_rate_2030: 15000,
+            growth_rate_2040: 18200
+        },
+        {
+            dataflow: "estat:teco0115(1.0)",
+            last_update: "02/02/24 23:00:00",
+            frequency: "a",
+            unit: "clv_pch_pre",
+            na_item: "b1gq",
+            geo: "portugal",
+            time_period: 2023,
+            obs_value: 2.6,
+            growth_rate_2030: 17000,
+            growth_rate_2040: 20200
+        },
+        {
+            dataflow: "estat:teco0115(1.0)",
+            last_update: "02/02/24 23:00:00",
+            frequency: "a",
+            unit: "clv_pch_pre",
+            na_item: "b1gq",
+            geo: "luxembourg",
+            time_period: 2023,
+            obs_value: 3.5,
+            growth_rate_2030: 44723,
+            growth_rate_2040: 42311
+        },
+        {
+            dataflow: "estat:teco0115(1.0)",
+            last_update: "02/02/24 23:00:00",
+            frequency: "a",
+            unit: "clv_pch_pre",
+            na_item: "b1gq",
+            geo: "malta",
+            time_period: 2021,
+            obs_value: 2.1,
+            growth_rate_2030: 14500,
+            growth_rate_2040: 17700
+        },
+        {
+            dataflow: "estat:teco0115(1.0)",
+            last_update: "02/02/24 23:00:00",
+            frequency: "a",
+            unit: "clv_pch_pre",
+            na_item: "b1gq",
+            geo: "portugal",
+            time_period: 2021,
+            obs_value: 2.8,
+            growth_rate_2030: 16500,
+            growth_rate_2040: 19800
+        },
+        {
+            dataflow: "estat:teco0115(1.0)",
+            last_update: "02/02/24 23:00:00",
+            frequency: "a",
+            unit: "clv_pch_pre",
+            na_item: "b1gq",
+            geo: "luxembourg",
+            time_period: 2021,
+            obs_value: 3.2,
+            growth_rate_2030: 46231,
+            growth_rate_2040: 48772
         }
+        
     ];
 
     const datos_MRF = data.map((entry, index) => {

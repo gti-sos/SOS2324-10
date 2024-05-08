@@ -33,12 +33,14 @@ const whitelist = [
     'https://car-api2.p.rapidapi.com/api/vin/1GTG6CEN0L1139305'
 ];
 
+app.use(cors());
+/*
 app.use(cors({
     "origin": "*",
     "preflightContinue": false,
     "optionsSuccessStatus": 204
 }));
-
+*/
 
 
 app.listen(PORT);
@@ -188,16 +190,16 @@ app.use("/proxyTLR4", function (req, res) {
 
 
 
-app.use("/proxyMRF", function (req, res) {
+app.use("/proxyMRF1", function(req,res){
 
-    const url = 'https://world-countries-data.p.rapidapi.com/countries/all-countries';
-
+    const url = 'https://beers-list.p.rapidapi.com/beers';
+    
     const options = {
-        url: url,
-        headers: {
-            'X-RapidAPI-Key': '77e71d3380msh154aec6377535a9p1b8f1ajsnec607687032a',
-            'X-RapidAPI-Host': 'world-countries-data.p.rapidapi.com'
-        }
+      url: url,
+      headers: {
+        'X-RapidAPI-Key': '77e71d3380msh154aec6377535a9p1b8f1ajsnec607687032a',
+        'X-RapidAPI-Host': 'beers-list.p.rapidapi.com'
+      }
     };
 
     request(options, (error, response, body) => {
