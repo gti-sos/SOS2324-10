@@ -212,8 +212,26 @@ app.use("/proxyMRF1", function(req,res){
             res.send(body);
         }
     });
-    
+
 });
+app.use("/proxyASC1", function (req, res) {
+    const url = 'https://covid-19-statistics.p.rapidapi.com/reports?iso=ESP';
+    const options = {
+        url: url,
+        headers: {
+            'X-RapidAPI-Key': '85099dfe9emsh2e80361b8f26190p1f3cdejsnc4545794f7f2',
+            'X-RapidAPI-Host': 'covid-19-statistics.p.rapidapi.com'
+        }
+    };
+    request(options, (error, response, body) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send(error);
+        } else {
+            res.send(body);
+        }
+    });
+})
 
 
 app.use("/proxyMRF2", function(req,res){
