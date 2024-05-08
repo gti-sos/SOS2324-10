@@ -260,7 +260,7 @@ app.use("/proxyASC2", function (req, res) {
 app.use("/proxyASC3", function (req, res) {
     const url = 'https://cheapshark-game-deals.p.rapidapi.com/games?title=batman&exact=0&limit=5';
     const options = {
-        url:url,
+        url: url,
         headers: {
             'X-RapidAPI-Key': '85099dfe9emsh2e80361b8f26190p1f3cdejsnc4545794f7f2',
             'X-RapidAPI-Host': 'cheapshark-game-deals.p.rapidapi.com'
@@ -280,16 +280,16 @@ app.use("/proxyASC3", function (req, res) {
 })
 
 
-app.use("/proxyMRF2", function(req,res){
+app.use("/proxyMRF2", function (req, res) {
 
     const url = 'https://deaths-by-european-countries.p.rapidapi.com/4mjf2k/deaths_by_country';
-    
+
     const options = {
-      url: url,
-      headers: {
-        'X-RapidAPI-Key': '77e71d3380msh154aec6377535a9p1b8f1ajsnec607687032a',
-        'X-RapidAPI-Host': 'deaths-by-european-countries.p.rapidapi.com'
-      }
+        url: url,
+        headers: {
+            'X-RapidAPI-Key': '77e71d3380msh154aec6377535a9p1b8f1ajsnec607687032a',
+            'X-RapidAPI-Host': 'deaths-by-european-countries.p.rapidapi.com'
+        }
     };
 
     request(options, (error, response, body) => {
@@ -302,8 +302,52 @@ app.use("/proxyMRF2", function(req,res){
             res.send(body);
         }
     });
-    
+
 });
+
+app.use("/proxyASB1", function (req, res) {
+    const url = 'https://algobook-stock-api.p.rapidapi.com/api/v1/stocks?tickers=AMZN';
+    const options = {
+        url: url,
+        headers: {
+            'X-RapidAPI-Key': '1ae5868997msh0a3205e591a7ed8p195ba3jsn5cbea63c1c53',
+            'X-RapidAPI-Host': 'truncgil-finance.p.rapidapi.com'
+        }
+    };
+
+    request(options, (error, response, body) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send(error);
+        } else {
+            console.log(response.statusCode);
+            console.log(body);
+            res.send(body);
+        }
+    });
+})
+
+app.use("/proxyASB2", function (req, res) {
+    const url = 'https://nutrition-calculator.p.rapidapi.com/api/bmi?measurement_units=std&feet=5&inches=2&lbs=120';
+    const options = {
+        url: url,
+        headers: {
+            'X-RapidAPI-Key': '1ae5868997msh0a3205e591a7ed8p195ba3jsn5cbea63c1c53',
+            'X-RapidAPI-Host': 'nutrition-calculator.p.rapidapi.com'
+        }
+    };
+
+    request(options, (error, response, body) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send(error);
+        } else {
+            console.log(response.statusCode);
+            console.log(body);
+            res.send(body);
+        }
+    });
+})
 
 //Uso del handler
 app.use(handler);
