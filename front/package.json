@@ -26,6 +26,7 @@
 	"type": "module",
 	"dependencies": {
 		"@sveltestrap/sveltestrap": "^6.2.7",
-		"cors": "^2.8.5"
+		"cors": "^2.8.5",
+		"quickchart-js": "^3.1.3"
 	}
 }

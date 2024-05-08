@@ -686,7 +686,80 @@ function backend_MRF_v2(app, db_MRF){
             obs_value: -3.5, 
             growth_rate_2030: 19837, 
             growth_rate_2040: 25398
+        },
+        {
+            dataflow: "estat:teco0115(1.0)",
+            last_update: "02/02/24 23:00:00",
+            frequency: "a",
+            unit: "clv_pch_pre",
+            na_item: "b1gq",
+            geo: "malta",
+            time_period: 2023,
+            obs_value: 2.3,
+            growth_rate_2030: 15000,
+            growth_rate_2040: 18200
+        },
+        {
+            dataflow: "estat:teco0115(1.0)",
+            last_update: "02/02/24 23:00:00",
+            frequency: "a",
+            unit: "clv_pch_pre",
+            na_item: "b1gq",
+            geo: "portugal",
+            time_period: 2023,
+            obs_value: 2.6,
+            growth_rate_2030: 17000,
+            growth_rate_2040: 20200
+        },
+        {
+            dataflow: "estat:teco0115(1.0)",
+            last_update: "02/02/24 23:00:00",
+            frequency: "a",
+            unit: "clv_pch_pre",
+            na_item: "b1gq",
+            geo: "luxembourg",
+            time_period: 2023,
+            obs_value: 3.5,
+            growth_rate_2030: 44723,
+            growth_rate_2040: 42311
+        },
+        {
+            dataflow: "estat:teco0115(1.0)",
+            last_update: "02/02/24 23:00:00",
+            frequency: "a",
+            unit: "clv_pch_pre",
+            na_item: "b1gq",
+            geo: "malta",
+            time_period: 2021,
+            obs_value: 2.1,
+            growth_rate_2030: 14500,
+            growth_rate_2040: 17700
+        },
+        {
+            dataflow: "estat:teco0115(1.0)",
+            last_update: "02/02/24 23:00:00",
+            frequency: "a",
+            unit: "clv_pch_pre",
+            na_item: "b1gq",
+            geo: "portugal",
+            time_period: 2021,
+            obs_value: 2.8,
+            growth_rate_2030: 16500,
+            growth_rate_2040: 19800
+        },
+        {
+            dataflow: "estat:teco0115(1.0)",
+            last_update: "02/02/24 23:00:00",
+            frequency: "a",
+            unit: "clv_pch_pre",
+            na_item: "b1gq",
+            geo: "luxembourg",
+            time_period: 2021,
+            obs_value: 3.2,
+            growth_rate_2030: 46231,
+            growth_rate_2040: 48772
         }
+        
     ];
 
     const datos_MRF = data.map((entry, index) => {
