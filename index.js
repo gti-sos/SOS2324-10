@@ -214,6 +214,45 @@ app.use("/proxyMRF1", function(req,res){
     });
 
 });
+
+app.use("/proxyMRF2", function(req, res){
+
+    const url = 'https://deaths-by-european-countries.p.rapidapi.com/4mjf2k/deaths_by_country';
+    
+    const options = {
+      url: url,
+      headers: {
+        'X-RapidAPI-Key': '77e71d3380msh154aec6377535a9p1b8f1ajsnec607687032a',
+        'X-RapidAPI-Host': 'deaths-by-european-countries.p.rapidapi.com'
+      }
+    };
+
+    request(options, (error, response, body) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send(error);
+        } else {
+            console.log(response.statusCode);
+            console.log(body);
+
+            const data = JSON.parse(body);
+
+            // Función para transformar los datos en el formato deseado
+            const transformarDatos = (datos) => {
+                const geo = datos["Country or Group"].toLowerCase();; // Cambiado a "geo"
+                // Verificar si datos["2020"] es null o undefined antes de acceder a la propiedad replace
+                const deaths_2020 = datos["2020"] !== null && datos["2020"] !== undefined ? parseInt(datos["2020"]) : undefined;
+                return deaths_2020 !== undefined ? { geo, deaths_2020 } : null;
+            };
+
+            const transformedData = data.map(transformarDatos).filter(obj => obj !== null);
+
+            res.send(transformedData);
+        }
+    });
+    
+});
+
 app.use("/proxyASC1", function (req, res) {
     const url = 'https://covid-19-statistics.p.rapidapi.com/reports?iso=ESP';
     const options = {
@@ -234,30 +273,7 @@ app.use("/proxyASC1", function (req, res) {
 })
 
 
-app.use("/proxyMRF2", function(req,res){
 
-    const url = 'https://deaths-by-european-countries.p.rapidapi.com/4mjf2k/deaths_by_country';
-    
-    const options = {
-      url: url,
-      headers: {
-        'X-RapidAPI-Key': '77e71d3380msh154aec6377535a9p1b8f1ajsnec607687032a',
-        'X-RapidAPI-Host': 'deaths-by-european-countries.p.rapidapi.com'
-      }
-    };
-
-    request(options, (error, response, body) => {
-        if (error) {
-            console.error(error);
-            res.status(500).send(error);
-        } else {
-            console.log(response.statusCode);
-            console.log(body);
-            res.send(body);
-        }
-    });
-    
-});
 
 //Uso del handler
 app.use(handler);
