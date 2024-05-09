@@ -316,7 +316,7 @@
 			animationEnabled: true,
 			zoomEnabled: true,
 			title: {
-				text: 'Real Estate Rates'
+				text: 'Jugadores vs Precio'
 			},
 			axisX: {
 				title: 'Cantidad de Jugadores'
