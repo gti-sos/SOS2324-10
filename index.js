@@ -121,7 +121,6 @@ app.use("/proxyTLR2", function (req, res) {
                     deaths: item.deaths.total
                 };
             });
-
             // Send the transformed data
             res.send(transformedData);
         }
@@ -252,6 +251,30 @@ app.use("/proxyMRF2", function(req, res){
     });
     
 });
+app.use("/proxyMRF3", function(req, res){
+
+    const url = 'https://forbes-worlds-billionaires-list.p.rapidapi.com/billionaires/2023?page=0&size=10';
+    
+    const options = {
+        url: url,
+        headers: {
+            'X-RapidAPI-Key': '77e71d3380msh154aec6377535a9p1b8f1ajsnec607687032a',
+            'X-RapidAPI-Host': 'forbes-worlds-billionaires-list.p.rapidapi.com'
+        }
+    };
+
+    request(options, (error, response, body) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send(error);
+        } else {
+            console.log(response.statusCode);
+            let data = JSON.parse(body);
+            delete data.page;
+        }
+    });
+});
+
 
 app.use("/proxyASC1", function (req, res) {
     const url = 'https://covid-19-statistics.p.rapidapi.com/reports?iso=ESP';

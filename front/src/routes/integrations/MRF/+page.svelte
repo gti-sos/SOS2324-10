@@ -7,6 +7,7 @@
         let API_MRF = '/api/v2/gdp-growth-rates';
         let API_MRF_I = '/proxyMRF1';
         let API_MRF_II = '/proxyMRF2';
+        let API_MRF_III = '/proxyMRF3';
 
         let errorMsg = '';
         let gdp = [];
@@ -21,6 +22,7 @@
             API_MRF = 'http://localhost:8080' + API_MRF;
             API_MRF_I = 'http://localhost:8080' + API_MRF_I;
             API_MRF_II = 'http://localhost:8080' + API_MRF_II;
+            API_MRF_III = 'http://localhost:8080' + API_MRF_III;
         }
 
         async function getInitialGDP(){
@@ -242,47 +244,47 @@
         }
 
         function createGraphII(data) {
-    // Preparar los datos para el gráfico de radar
-    let countries = data.map(item => item.country);
-    let growthRates = data.map(item => item.growth_rate_2030 !== null ? item.growth_rate_2030 : 0);
-    let deaths = data.map(item => item.deaths_2020 !== null ? item.deaths_2020 : 0);
+            // Preparar los datos para el gráfico de radar
+            let countries = data.map(item => item.country);
+            let growthRates = data.map(item => item.growth_rate_2030 !== null ? item.growth_rate_2030 : 0);
+            let deaths = data.map(item => item.deaths_2020 !== null ? item.deaths_2020 : 0);
 
-    // Inicializar el gráfico de radar
-    const myChart = echarts.init(document.getElementById('graph2'));
+            // Inicializar el gráfico de radar
+            const myChart = echarts.init(document.getElementById('graph2'));
 
-    // Configurar las opciones del gráfico de radar
-    const option = {
-        title: {
-            text: 'Basic Radar Chart'
-        },
-        legend: {
-            data: ['Growth Rate 2030', 'Deaths 2020']
-        },
-        radar: {
-            // shape: 'circle',
-            indicator: countries.map(country => ({ name: country })),
-        },
-        series: [
-            {
-                name: 'Growth Rate vs Deaths',
-                type: 'radar',
-                data: [
+            // Configurar las opciones del gráfico de radar
+            const option = {
+                title: {
+                    text: 'Growth Rate and Deaths per Country'
+                },
+                legend: {
+                    data: ['Growth Rate 2030', 'Deaths 2020']
+                },
+                radar: {
+                    // shape: 'circle',
+                    indicator: countries.map(country => ({ name: country })),
+                },
+                series: [
                     {
-                        value: growthRates,
-                        name: 'Growth Rate 2030'
-                    },
-                    {
-                        value: deaths,
-                        name: 'Deaths 2020'
+                        name: 'Growth Rate vs Deaths',
+                        type: 'radar',
+                        data: [
+                            {
+                                value: growthRates,
+                                name: 'Growth Rate 2030'
+                            },
+                            {
+                                value: deaths,
+                                name: 'Deaths 2020'
+                            }
+                        ]
                     }
                 ]
-            }
-        ]
-    };
+            };
 
-    // Establecer las opciones y renderizar el gráfico
-    myChart.setOption(option);
-}
+            // Establecer las opciones y renderizar el gráfico
+            myChart.setOption(option);
+        }
 
    
 
@@ -293,13 +295,54 @@
         
 
         // ------------------ INTEGRACIÓN III -----------------------
+
+
+
+        async function API_MRF_Third() {
+            try {
+                let response = await fetch(API_MRF_III, {
+                    method: 'GET',
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                        Pragma: 'no-cache',
+                        'X-RapidAPI-Key': '77e71d3380msh154aec6377535a9p1b8f1ajsnec607687032a',
+                        'X-RapidAPI-Host': 'forbes-worlds-billionaires-list.p.rapidapi.com'
+                    }
+                });
+
+                if (response.ok) {
+                    let data = await response.json();
+                    return data;
+                } else {
+                    if (response.status == 404) {
+                        errorMsg = 'Error: no hay datos';
+                    } else {
+                        errorMsg = `Error ${response.status}: ${response.statusText}`;
+                    }
+                }
+            } catch (e) {
+                errorMsg = e;
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
         
         async function initDatos() {
             await getInitialGDP();
             let datos_MRF = await getGDP();
             let datosI = await API_MRF_First();
             let datosII = await API_MRF_Second();
-
+            let datosIII = await API_MRF_Third();
+            console.log(datosIII);
             let graphDataI = modDataI(datos_MRF, datosI);
             createGraphI(graphDataI);     
 
