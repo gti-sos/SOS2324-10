@@ -298,7 +298,7 @@ app.use("/proxyASC1", function (req, res) {
 })
 
 app.use("/proxyASC2", function (req, res) {
-    const url = 'https://ski-resort-forecast.p.rapidapi.com/Jackson%20Hole/forecast?units=i&el=mid';
+    const url = 'https://ski-resort-forecast.p.rapidapi.com/Jackson%20Hole/forecast?units=i&el=top';
     const options = {
         url: url,
         headers: {
@@ -320,12 +320,34 @@ app.use("/proxyASC2", function (req, res) {
 })
 
 app.use("/proxyASC3", function (req, res) {
-    const url = 'https://cheapshark-game-deals.p.rapidapi.com/games?title=batman&exact=0&limit=5';
+    const url = 'https://cheapshark-game-deals.p.rapidapi.com/games?title=batman&exact=0&limit=15';
     const options = {
         url: url,
         headers: {
             'X-RapidAPI-Key': '85099dfe9emsh2e80361b8f26190p1f3cdejsnc4545794f7f2',
             'X-RapidAPI-Host': 'cheapshark-game-deals.p.rapidapi.com'
+        }
+    };
+
+    request(options, (error, response, body) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send(error);
+        } else {
+            console.log(response.statusCode);
+            console.log(body);
+            res.send(body);
+        }
+    });
+})
+
+app.use("/proxyASC4", function (req, res) {
+    const url = 'https://gamerpower.p.rapidapi.com/api/filter?platform=epic-games-store.steam.android&type=game.loot';
+    const options = {
+        url:url,
+        headers: {
+            'X-RapidAPI-Key': '85099dfe9emsh2e80361b8f26190p1f3cdejsnc4545794f7f2',
+            'X-RapidAPI-Host': 'gamerpower.p.rapidapi.com'
         }
     };
 
@@ -372,6 +394,50 @@ app.use("/proxyASB2", function (req, res) {
         headers: {
             'X-RapidAPI-Key': '1ae5868997msh0a3205e591a7ed8p195ba3jsn5cbea63c1c53',
             'X-RapidAPI-Host': 'nutrition-calculator.p.rapidapi.com'
+        }
+    };
+
+    request(options, (error, response, body) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send(error);
+        } else {
+            console.log(response.statusCode);
+            console.log(body);
+            res.send(body);
+        }
+    });
+})
+
+app.use("/proxyASB3", function (req, res) {
+    const url = 'https://mineable-coins.p.rapidapi.com/coins';
+    const options = {
+        url: url,
+        headers: {
+            'X-RapidAPI-Key': '1ae5868997msh0a3205e591a7ed8p195ba3jsn5cbea63c1c53',
+            'X-RapidAPI-Host': 'mineable-coins.p.rapidapi.com'
+        }
+    };
+
+    request(options, (error, response, body) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send(error);
+        } else {
+            console.log(response.statusCode);
+            console.log(body);
+            res.send(body);
+        }
+    });
+})
+
+app.use("/proxyASB4", function (req, res) {
+    const url = 'https://mmo-games.p.rapidapi.com/games';
+    const options = {
+        url: url,
+        headers: {
+            'X-RapidAPI-Key': '1ae5868997msh0a3205e591a7ed8p195ba3jsn5cbea63c1c53',
+            'X-RapidAPI-Host': 'mmo-games.p.rapidapi.com'
         }
     };
 

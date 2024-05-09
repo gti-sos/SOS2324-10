@@ -194,55 +194,260 @@
 		});
 	}
 
+	async function API_ASB_3() {
+		try {
+			const url = 'https://mineable-coins.p.rapidapi.com/coins';
+			const options = {
+				method: 'GET',
+				headers: {
+					'X-RapidAPI-Key': '1ae5868997msh0a3205e591a7ed8p195ba3jsn5cbea63c1c53',
+					'X-RapidAPI-Host': 'mineable-coins.p.rapidapi.com'
+				}
+			};
+
+			const response = await fetch(url, options);
+			if (response.ok) {
+				let data = await response.json();
+				datos = data;
+				console.log(datos);
+				getGrafica3(datos);
+				return datos;
+			} else {
+				if (response.status == 404) {
+					errorMsg = 'No hay datos en la base de datos';
+				} else {
+					errorMsg = `Error ${response.status}: ${response.statusText}`;
+				}
+			}
+		} catch (e) {
+			errorMsg = e;
+		}
+	}
+
+	async function getGrafica3(data) {
+		try {
+			const parsedData = parseData3(data); // Parsear los datos del backend
+			createDynamicChart3(parsedData); // Crear el gráfico dinámico con los datos parseados
+		} catch (error) {
+			console.error('Error al procesar los datos:', error);
+		}
+	}
+
+	function parseData3(data) {
+		// Filtrar las monedas con datos válidos
+		const validCoins = data.filter(
+			(item) =>
+				typeof item.name === 'string' &&
+				typeof item.volume === 'number' &&
+				!isNaN(item.volume) &&
+				typeof item.reward_block === 'number' &&
+				!isNaN(item.reward_block) &&
+				typeof item.difficulty === 'number' &&
+				!isNaN(item.difficulty)
+		);
+
+		// Ordenar los datos por volumen en orden descendente
+		const sortedCoins = validCoins.sort((a, b) => b.volume - a.volume);
+
+		// Tomar los primeros 5 elementos con el mayor volumen
+		const topFiveCoins = sortedCoins.slice(0, 5);
+
+		// Crear un array con los valores de volumen, reward_block y difficulty de las monedas seleccionadas
+		const parsedData = topFiveCoins.map((item) => {
+			return {
+				name: item.name,
+				volume: item.volume,
+				reward_block: item.reward_block,
+				difficulty: item.difficulty
+			};
+		});
+
+		return parsedData;
+	}
+
+	function createDynamicChart3(data) {
+		var chart = JSC.Chart('container3', {
+			debug: true,
+			title_label_text: 'Top Five Cryptos by Volume',
+			yAxis: {
+				label_text: 'Cryptocurrency'
+			},
+			xAxis: {
+				label_text: 'Value'
+			},
+			series: [
+				{
+					type: 'horizontal column',
+					points: data.map((coin) => ({
+						name: coin.name,
+						y: coin.volume,
+						x: coin.price
+					}))
+				}
+			]
+		});
+	}
+
+	async function API_ASB_4() {
+		try {
+			const url = 'https://mmo-games.p.rapidapi.com/games';
+			const options = {
+				method: 'GET',
+				headers: {
+					'X-RapidAPI-Key': '1ae5868997msh0a3205e591a7ed8p195ba3jsn5cbea63c1c53',
+					'X-RapidAPI-Host': 'mmo-games.p.rapidapi.com'
+				}
+			};
+
+			const response = await fetch(url, options);
+			if (response.ok) {
+				let data = await response.json();
+				datos = data;
+				console.log(datos);
+				getGrafica4(datos);
+				return datos;
+			} else {
+				if (response.status == 404) {
+					errorMsg = 'No hay datos en la base de datos';
+				} else {
+					errorMsg = `Error ${response.status}: ${response.statusText}`;
+				}
+			}
+		} catch (e) {
+			errorMsg = e;
+		}
+	}
+
+	async function getGrafica4(data) {
+		try {
+			const parsedData = parseData4(data); // Parsear los datos del backend
+			createDynamicChart4(parsedData); // Crear el gráfico dinámico con los datos parseados
+		} catch (error) {
+			console.error('Error al procesar los datos:', error);
+		}
+	}
+
+	function parseData4(data) {
+		// Inicializar un objeto para almacenar el recuento de juegos por género
+		var genreCount = {};
+
+		// Recorrer los datos y contar el número de juegos por género
+		data.forEach((game) => {
+			var genre = game.genre;
+
+			// Verificar si el género ya está en el objeto genreCount
+			if (genreCount[genre]) {
+				// Si ya existe, incrementar el contador
+				genreCount[genre]++;
+			} else {
+				// Si no existe, inicializar el contador en 1
+				genreCount[genre] = 1;
+			}
+		});
+
+		// Convertir el objeto en un array de objetos clave-valor
+		var parsedData = Object.keys(genreCount).map((genre) => ({
+			genre: genre,
+			count: genreCount[genre]
+		}));
+
+		return parsedData;
+	}
+
+	function createDynamicChart4(data) {
+		var chart = JSC.chart('container3', {
+			debug: true,
+			title_position: 'center',
+			legend: {
+				position: 'left', // Cambiar la posición de la leyenda a la izquierda
+				template: '%value {%percentOfTotal:n1}% %icon %name',
+				label: { style_fontSize: '12px' } // Tamaño de fuente más pequeño en la leyenda
+			},
+			defaultSeries_type: 'pie donut',
+			defaultPoint: {
+				label_text: '<b>%name</b> ',
+				outline: { color: 'white', width: 3 },
+				label: { style_fontSize: '12px' } // Tamaño de fuente más pequeño en las etiquetas de los puntos
+			},
+			title_label_text: 'Juegos por Género',
+			yAxis: { label_text: 'Número de Juegos' },
+			series: [
+				{
+					name: 'Géneros',
+					points: data.map((genre) => ({
+						name: genre.genre,
+						y: genre.count
+					}))
+				}
+			]
+		});
+	}
+
 	onMount(async () => {
 		await API_ASB_1();
+		await API_ASB_3();
+		await API_ASB_4();
 	});
 </script>
 
 <svelte:head>
 	<script src="https://code.jscharting.com/latest/jscharting.js"></script>
-    <script src="https://code.jscharting.com/latest/modules/types.js"></script>
+	<script src="https://code.jscharting.com/latest/modules/types.js"></script>
 </svelte:head>
 
-<form on:submit={handleSubmit} style="margin-top: 20px; padding: 20px; background-color: #f5f5f5; border-radius: 8px;">
-    <label style="display: block; margin-bottom: 10px;">
-        Sex:
-        <select name="sex" style="margin-left: 10px;">
-            <option value="male">Male</option>
-            <option value="female" selected>Female</option>
-        </select>
-    </label>
-    <label style="display: block; margin-bottom: 10px;">
-        Age:
-        <input type="number" name="age" value="20" required style="margin-left: 10px;" />
-    </label>
-    <label style="display: block; margin-bottom: 10px;">
-        Height (cm):
-        <input type="number" name="cm" value="170" required style="margin-left: 10px;" />
-    </label>
-    <label style="display: block; margin-bottom: 10px;">
-        Weight (kg):
-        <input type="number" name="kilos" value="70" required style="margin-left: 10px;" />
-    </label>
-    <button type="submit" style="background-color: #007bff; color: #fff; border: none; border-radius: 4px; padding: 10px 20px; cursor: pointer;">Calculate</button>
+<form
+	on:submit={handleSubmit}
+	style="margin-top: 20px; padding: 20px; background-color: #f5f5f5; border-radius: 8px;"
+>
+	<label style="display: block; margin-bottom: 10px;">
+		Sex:
+		<select name="sex" style="margin-left: 10px;">
+			<option value="male">Male</option>
+			<option value="female" selected>Female</option>
+		</select>
+	</label>
+	<label style="display: block; margin-bottom: 10px;">
+		Age:
+		<input type="number" name="age" value="20" required style="margin-left: 10px;" />
+	</label>
+	<label style="display: block; margin-bottom: 10px;">
+		Height (cm):
+		<input type="number" name="cm" value="170" required style="margin-left: 10px;" />
+	</label>
+	<label style="display: block; margin-bottom: 10px;">
+		Weight (kg):
+		<input type="number" name="kilos" value="70" required style="margin-left: 10px;" />
+	</label>
+	<button
+		type="submit"
+		style="background-color: #007bff; color: #fff; border: none; border-radius: 4px; padding: 10px 20px; cursor: pointer;"
+		>Calculate</button
+	>
 </form>
 
-
-<div id="container1" style="width:100%; height:400px;"></div>
 <div id="container2" style="width:100%; height:400px;"></div>
+<div id="container1" style="width:100%; height:400px;"></div>
 <div id="container3" style="width:100%; height:400px;"></div>
+<div id="container4" style="width:100%; height:400px;"></div>
 
 <style>
 	#container1 {
 		max-width: 600px;
 		margin: 1em auto;
 	}
-    form {
-        margin-top: 20px;
-    }
-    #container2 {
+	form {
+		margin-top: 20px;
+	}
+	#container2 {
 		max-width: 600px;
 		margin: 1em auto;
 	}
-    
+	#container3 {
+		max-width: 600px;
+		margin: 1em auto;
+	}
+	#container4 {
+		max-width: 600px;
+		margin: 1em auto;
+	}
 </style>

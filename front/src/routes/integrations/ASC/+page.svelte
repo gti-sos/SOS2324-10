@@ -6,6 +6,7 @@
 	let API_ASC1 = '/proxyASC1';
 	let API_ASC2 = '/proxyASC2';
 	let API_ASC3 = '/proxyASC3';
+	let API_ASC4 = '/proxyASC4';
 	let errorMsg = '';
 
 	if (dev) {
@@ -13,6 +14,7 @@
 		API_ASC1 = 'http://localhost:8080' + API_ASC1;
 		API_ASC2 = 'http://localhost:8080' + API_ASC2;
 		API_ASC3 = 'http://localhost:8080' + API_ASC3;
+		API_ASC4 = 'http://localhost:8080' + API_ASC4;
 	}
 
 	// 1er gráfico
@@ -211,6 +213,7 @@
 			if (response.ok) {
 				let data = await response.json();
 				let gamesData = transformgamesData(data);
+				console.log(gamesData);
 				crearGrafico3(gamesData);
 			} else {
 				if (response.status == 404) {
@@ -266,10 +269,79 @@
 		chart.render();
 	}
 
+	// 4to gráfico
+	async function API_ASC_4() {
+		try {
+			let response = await fetch(API_ASC4, {
+				method: 'GET'
+			});
+
+			if (response.ok) {
+				let data = await response.json();
+				console.log(data);
+				let games2Data = transformgames2Data(data);
+				//console.log(games2Data);
+				crearGrafico4(games2Data);
+			} else {
+				if (response.status == 404) {
+					errorMsg = 'No hay datos en la base de datos';
+				} else {
+					errorMsg = `Error ${response.status}: ${response.statusText}`;
+				}
+			}
+		} catch (e) {
+			errorMsg = e;
+		}
+	}
+	function transformgames2Data(data) {
+		// Mapear los datos para obtener el precio y la cantidad de usuarios
+		return data.map((item) => ({
+			price: parseFloat(item.worth.replace(/\$/, '')), // Convertir el precio a un número
+			users: item.users,
+			image: item.thumbnail, // URL de la imagen del juego
+			title: item.title
+		}));
+	}
+
+	function crearGrafico4(games2Data) {
+		let dataPoints = games2Data.map((item) => ({
+			x: item.users,
+			y: item.price,
+			toolTipContent: `<div style="text-align:center;"><img src="${item.image}" style="width:50px;height:50px;"></img><br>${item.title}<br>${item.users} Jugadores<br>Precio: $${item.price.toFixed(2)}</div>`,
+			markerType: 'circle',
+			markerSize: 8
+		}));
+
+		let options = {
+			animationEnabled: true,
+			zoomEnabled: true,
+			title: {
+				text: 'Jugadores vs Precio'
+			},
+			axisX: {
+				title: 'Cantidad de Jugadores'
+			},
+			axisY: {
+				title: 'Precio del Juego (en USD)',
+				valueFormatString: '$#,##0'
+			},
+			data: [
+				{
+					type: 'scatter',
+					dataPoints: dataPoints
+				}
+			]
+		};
+
+		let chart = new CanvasJS.Chart('chartContainer3', options);
+		chart.render();
+	}
+
 	onMount(async () => {
 		await API_ASC_1();
 		await API_ASC_2();
 		await API_ASC_3();
+		await API_ASC_4();
 	});
 </script>
 
@@ -280,4 +352,4 @@
 <div id="chart1" style="height: 300px; width: 100%;"></div>
 <div id="chartContainer" style="height: 300px; width: 100%;"></div>
 <div id="chartContainer2" style="height: 300px; width: 100%;"></div>
-
+<div id="chartContainer3" style="height: 300px; width: 100%;"></div>
