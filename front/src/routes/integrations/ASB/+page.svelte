@@ -288,9 +288,105 @@
 		});
 	}
 
+	async function API_ASB_4() {
+		try {
+			const url = 'https://mmo-games.p.rapidapi.com/games';
+			const options = {
+				method: 'GET',
+				headers: {
+					'X-RapidAPI-Key': '1ae5868997msh0a3205e591a7ed8p195ba3jsn5cbea63c1c53',
+					'X-RapidAPI-Host': 'mmo-games.p.rapidapi.com'
+				}
+			};
+
+			const response = await fetch(url, options);
+			if (response.ok) {
+				let data = await response.json();
+				datos = data;
+				console.log(datos);
+				getGrafica4(datos);
+				return datos;
+			} else {
+				if (response.status == 404) {
+					errorMsg = 'No hay datos en la base de datos';
+				} else {
+					errorMsg = `Error ${response.status}: ${response.statusText}`;
+				}
+			}
+		} catch (e) {
+			errorMsg = e;
+		}
+	}
+
+	async function getGrafica4(data) {
+		try {
+			const parsedData = parseData4(data); // Parsear los datos del backend
+			createDynamicChart4(parsedData); // Crear el gráfico dinámico con los datos parseados
+		} catch (error) {
+			console.error('Error al procesar los datos:', error);
+		}
+	}
+
+	function parseData4(data) {
+		// Inicializar un objeto para almacenar el recuento de juegos por género
+		var genreCount = {};
+
+		// Recorrer los datos y contar el número de juegos por género
+		data.forEach((game) => {
+			var genre = game.genre;
+
+			// Verificar si el género ya está en el objeto genreCount
+			if (genreCount[genre]) {
+				// Si ya existe, incrementar el contador
+				genreCount[genre]++;
+			} else {
+				// Si no existe, inicializar el contador en 1
+				genreCount[genre] = 1;
+			}
+		});
+
+		// Convertir el objeto en un array de objetos clave-valor
+		var parsedData = Object.keys(genreCount).map((genre) => ({
+			genre: genre,
+			count: genreCount[genre]
+		}));
+
+		return parsedData;
+	}
+
+	function createDynamicChart4(data) {
+		var chart = JSC.chart('container3', {
+			debug: true,
+			title_position: 'center',
+			legend: {
+				position: 'left', // Cambiar la posición de la leyenda a la izquierda
+				template: '%value {%percentOfTotal:n1}% %icon %name',
+				label: { style_fontSize: '12px' } // Tamaño de fuente más pequeño en la leyenda
+			},
+			defaultSeries_type: 'pie donut',
+			defaultPoint: {
+				label_text: '<b>%name</b> ',
+				outline: { color: 'white', width: 3 },
+				label: { style_fontSize: '12px' } // Tamaño de fuente más pequeño en las etiquetas de los puntos
+			},
+			title_label_text: 'Juegos por Género',
+			yAxis: { label_text: 'Número de Juegos' },
+			series: [
+				{
+					name: 'Géneros',
+					points: data.map((genre) => ({
+						name: genre.genre,
+						y: genre.count
+					}))
+				}
+			]
+		});
+	}
+
 	onMount(async () => {
 		await API_ASB_1();
 		await API_ASB_3();
+		await API_ASB_4();
 	});
 </script>
 
