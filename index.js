@@ -33,14 +33,14 @@ const whitelist = [
     'https://car-api2.p.rapidapi.com/api/vin/1GTG6CEN0L1139305'
 ];
 
-app.use(cors());
-/*
+//app.use(cors());
+
 app.use(cors({
     "origin": "*",
     "preflightContinue": false,
     "optionsSuccessStatus": 204
 }));
-*/
+
 
 
 app.listen(PORT);

@@ -1,7 +1,8 @@
 <script>
     import { onMount } from 'svelte';
     import { dev } from '$app/environment';
-    import * as echarts from 'echarts';
+    //import * as echarts from 'echarts';
+    import echarts from './echarts'
 
     let API_MRF = '/api/v2/gdp-growth-rates';
     let API_MRF_I = '/proxyMRF1';
