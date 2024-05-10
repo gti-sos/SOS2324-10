@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { dev } from '$app/environment';
 	import * as echarts from 'echarts';
-	import QuickChart from 'quickchart-js';
+
 
 	let API_TLR = '/api/v2/vehicles-stock';
 	let API_TLR1 = '/proxyTLR1';

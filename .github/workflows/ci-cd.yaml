@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: npm install chart.js@latest
+      - run: npm install echarts
       - run: cd front; npm install; cd ..
       - run: cd front; npm run build; cd ..
       - run: npm install

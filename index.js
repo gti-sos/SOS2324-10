@@ -57,6 +57,7 @@ API_ASB_v2(app, db_ASB);
 
 //Hacemos uso de proxy
 app.use("/proxyTLR1", function (req, res) {
+    console.log("proxyTLR1 cargado");
     const url = 'https://streaming-availability.p.rapidapi.com/countries';
     const options = {
         url: url,
@@ -95,6 +96,7 @@ app.use("/proxyTLR1", function (req, res) {
 
 
 app.use("/proxyTLR2", function (req, res) {
+    console.log("proxyTLR2 cargado");
     const url = 'https://covid-193.p.rapidapi.com/statistics';
     const options = {
         url: url,
@@ -129,6 +131,7 @@ app.use("/proxyTLR2", function (req, res) {
 });
 
 app.use("/proxyTLR3", function (req, res) {
+    console.log("proxyTLR3 cargado");
     const url = 'https://restcountries.com/v3.1/all';
     const options = {
         url: url
@@ -154,6 +157,7 @@ app.use("/proxyTLR3", function (req, res) {
 });
 
 app.use("/proxyTLR4", function (req, res) {
+    console.log("proxyTLR4 cargado");
     const url = 'https://free-to-play-games-database.p.rapidapi.com/api/games';
     const options = {
         url: url,
