@@ -4,11 +4,36 @@
 
 	let API_ASB = '/api/v2/cars-by-motor';
 	let errMsg = '';
+	let exitoMsg = '';
 
 	if (dev) {
 		API_ASB = 'http://localhost:8080' + API_ASB;
 	}
 
+	async function getInitialCars(){
+        try{
+           
+            if(gdp.length === 0){
+
+                let response = await fetch(API_ASB+"/loadInitialData",{
+                                      method: "GET"
+                });
+
+                if(response.ok){
+                    exitoMsg = "Datos cargados correctamente";
+                    errorMsg = "";
+                } else {
+                    errorMsg = "Ya existen datos en la base de datos";
+                }
+            } else {
+                errorMsg = "Ya existen datos en la base de datos";
+            }
+            
+        } catch(e){
+            errorMsg = e;
+        }
+        
+    }
 	async function getCars() {
 		try {
 			let response = await fetch(`${API_ASB}?limit=10000`, {
