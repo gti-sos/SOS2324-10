@@ -30,6 +30,7 @@ jobs:
       - name: 'Use gcloud CLI'
         run: 'gcloud info'
 
+      - run: npm install echarts
       - run: cd front; npm install; cd ..
       - run: cd front; npm run build; cd ..
 
