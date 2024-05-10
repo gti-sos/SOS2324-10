@@ -258,7 +258,7 @@
 					fontWeight: 'bold'
 				}
 			},
-			title_label_text: '<span class="chart-title">Games by Gender</span>',
+			title_label_text: '<span class="chart-title">Million of passenger per KM</span>',
 			title_label_align: 'center',
 			series: [
 				{
