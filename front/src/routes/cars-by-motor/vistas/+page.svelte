@@ -4,6 +4,7 @@
 
 	let API_ASB = '/api/v2/cars-by-motor';
 	let errMsg = '';
+	let errorMsg = '';
 	let exitoMsg = '';
 
 	if (dev) {
@@ -36,6 +37,7 @@
     }
 	async function getCars() {
 		try {
+			await getInitialCars();
 			let response = await fetch(`${API_ASB}?limit=10000`, {
 				method: 'GET'
 			});
@@ -301,7 +303,8 @@
 	}
 
 	onMount(async () => {
-		getCars();
+		await getInitialCars();
+		await getCars();
 	});
 </script>
 
