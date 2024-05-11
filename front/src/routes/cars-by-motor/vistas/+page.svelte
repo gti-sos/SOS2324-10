@@ -4,13 +4,40 @@
 
 	let API_ASB = '/api/v2/cars-by-motor';
 	let errMsg = '';
+	let errorMsg = '';
+	let exitoMsg = '';
 
 	if (dev) {
 		API_ASB = 'http://localhost:8080' + API_ASB;
 	}
 
+	async function getInitialCars(){
+        try{
+           
+            if(gdp.length === 0){
+
+                let response = await fetch(API_ASB+"/loadInitialData",{
+                                      method: "GET"
+                });
+
+                if(response.ok){
+                    exitoMsg = "Datos cargados correctamente";
+                    errorMsg = "";
+                } else {
+                    errorMsg = "Ya existen datos en la base de datos";
+                }
+            } else {
+                errorMsg = "Ya existen datos en la base de datos";
+            }
+            
+        } catch(e){
+            errorMsg = e;
+        }
+        
+    }
 	async function getCars() {
 		try {
+			await getInitialCars();
 			let response = await fetch(`${API_ASB}?limit=10000`, {
 				method: 'GET'
 			});
@@ -19,6 +46,7 @@
 				let data = await response.json();
 				getGrafica1(data);
 				getGrafica2(data);
+				getGrafica3(data);
 				return data;
 			} else {
 				if (response.status == 404) {
@@ -123,34 +151,33 @@
 	}
 
 	function parseData2(data) {
-    // Crear un objeto para almacenar los valores de road_deaths_per_million_inhabitants por país
-    const countryData = {};
+		// Crear un objeto para almacenar los valores de road_deaths_per_million_inhabitants por país
+		const countryData = {};
 
-    // Iterar sobre los datos y acumular los valores por país
-    data.forEach((item) => {
-        const countryName = item.geo; // Nombre del país
-        const roadDeaths = item.road_deaths_per_million_inhabitants; // Valor de road_deaths_per_million_inhabitants
+		// Iterar sobre los datos y acumular los valores por país
+		data.forEach((item) => {
+			const countryName = item.geo; // Nombre del país
+			const roadDeaths = item.road_deaths_per_million_inhabitants; // Valor de road_deaths_per_million_inhabitants
 
-        // Si el país ya existe en el objeto, acumular el valor de roadDeaths
-        if (countryData.hasOwnProperty(countryName)) {
-            countryData[countryName] += roadDeaths;
-        } else {
-            // Si el país no existe en el objeto, inicializarlo con el valor de roadDeaths
-            countryData[countryName] = roadDeaths;
-        }
-    });
+			// Si el país ya existe en el objeto, acumular el valor de roadDeaths
+			if (countryData.hasOwnProperty(countryName)) {
+				countryData[countryName] += roadDeaths;
+			} else {
+				// Si el país no existe en el objeto, inicializarlo con el valor de roadDeaths
+				countryData[countryName] = roadDeaths;
+			}
+		});
 
-    // Convertir el objeto acumulado en un array de objetos para Highcharts
-    const parsedData = Object.keys(countryData).map((countryName) => {
-        return {
-            name: countryName,
-            y: countryData[countryName]
-        };
-    });
+		// Convertir el objeto acumulado en un array de objetos para Highcharts
+		const parsedData = Object.keys(countryData).map((countryName) => {
+			return {
+				name: countryName,
+				y: countryData[countryName]
+			};
+		});
 
-    return parsedData;
-}
-
+		return parsedData;
+	}
 
 	function createDynamicChart2(data) {
 		// Aquí creas el gráfico dinámico utilizando Highcharts.chart y los datos parseados.
@@ -206,332 +233,118 @@
 		});
 	}
 
-	// async function getGrafica1() {
-	// 	const chart = // Create the chart
-	// 		Highcharts.chart('container', {
-	// 			chart: {
-	// 				type: 'pie'
-	// 			},
-	// 			title: {
-	// 				text: 'Cars by motor enrgy',
-	// 				align: 'center'
-	// 			},
+	async function getGrafica3(data) {
+		try {
+			const parsedData = parseData3(data); // Parsear los datos del backend
+			createDynamicChart3(parsedData); // Crear el gráfico dinámico con los datos parseados
+		} catch (error) {
+			console.error('Error al procesar los datos:', error);
+		}
+	}
 
-	// 			accessibility: {
-	// 				announceNewData: {
-	// 					enabled: true
-	// 				},
-	// 				point: {
-	// 					valueSuffix: '%'
-	// 				}
-	// 			},
+	function parseData3(data) {
+		// Crear un objeto para almacenar los valores de millions_of_passenger_per_kilometres por país
+		const countryData = {};
 
-	// 			plotOptions: {
-	// 				series: {
-	// 					borderRadius: 5,
-	// 					dataLabels: [
-	// 						{
-	// 							enabled: true,
-	// 							distance: 15,
-	// 							format: '{point.name}'
-	// 						},
-	// 						{
-	// 							enabled: true,
-	// 							distance: '-30%',
-	// 							filter: {
-	// 								property: 'percentage',
-	// 								operator: '>',
-	// 								value: 5
-	// 							},
-	// 							format: '{point.y:.1f}%',
-	// 							style: {
-	// 								fontSize: '0.9em',
-	// 								textOutline: 'none'
-	// 							}
-	// 						}
-	// 					]
-	// 				}
-	// 			},
+		// Iterar sobre los datos y acumular los valores por país
+		data.forEach((item) => {
+			const countryName = item.geo; // Nombre del país
+			const passengerKilometres = item.millions_of_passenger_per_kilometres; // Valor de millions_of_passenger_per_kilometres
 
-	// 			tooltip: {
-	// 				headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-	// 				pointFormat:
-	// 					'<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
-	// 			},
+			// Si el país ya existe en el objeto, acumular el valor de passengerKilometres
+			if (countryData.hasOwnProperty(countryName)) {
+				countryData[countryName] += passengerKilometres;
+			} else {
+				// Si el país no existe en el objeto, inicializarlo con el valor de passengerKilometres
+				countryData[countryName] = passengerKilometres;
+			}
+		});
 
-	// 			series: [
-	// 				{
-	// 					name: 'Motor Energies',
-	// 					colorByPoint: true,
-	// 					data: [
-	// 						{
-	// 							name: 'GAS',
-	// 							y: (2190805 / 4568994) * 100,
-	// 							drilldown: 'GAS'
-	// 						},
-	// 						{
-	// 							name: 'DIE',
-	// 							y: (161095 / 4568994) * 100,
-	// 							drilldown: 'DIE'
-	// 						},
-	// 						{
-	// 							name: 'ALT',
-	// 							y: (1509492 / 4568994) * 100,
-	// 							drilldown: 'ALT'
-	// 						},
-	// 						{
-	// 							name: 'PET',
-	// 							y: (163951 / 4568994) * 100,
-	// 							drilldown: 'PET'
-	// 						},
-	// 						{
-	// 							name: 'ELC_PET_HYB',
-	// 							y: (374094 / 4568994) * 100,
-	// 							drilldown: 'ELC_PET_HYB'
-	// 						},
-	// 						{
-	// 							name: 'ELC_PET_PI',
-	// 							y: (115885 / 4568994) * 100,
-	// 							drilldown: 'ELC_PET_PI'
-	// 						},
-	// 						{
-	// 							name: 'LPG',
-	// 							y: (53672 / 4568994) * 100,
-	// 							drilldown: 'LPG'
-	// 						}
-	// 					]
-	// 				}
-	// 			],
-	// 			drilldown: {
-	// 				series: [
-	// 					{
-	// 						name: 'GAS',
-	// 						id: 'GAS',
-	// 						data: [
-	// 							['AT', 10125],
-	// 							['DE', 2180680]
-	// 						]
-	// 					},
-	// 					{
-	// 						name: 'DIE',
-	// 						id: 'DIE',
-	// 						data: [
-	// 							['AT', 14459],
-	// 							['CZ', 146636]
-	// 						]
-	// 					},
-	// 					{
-	// 						name: 'ALT',
-	// 						id: 'ALT',
-	// 						data: [
-	// 							['AT', 20180],
-	// 							['BG', 352488],
-	// 							['DE', 1042733],
-	// 							['DK', 66926],
-	// 							['ES', 8059],
-	// 							['FI', 19106]
-	// 						]
-	// 					},
-	// 					{
-	// 						name: 'PET',
-	// 						id: 'PET',
-	// 						data: [
-	// 							['BE', 18859],
-	// 							['DK', 145092]
-	// 						]
-	// 					},
-	// 					{
-	// 						name: 'ELC_PET_HYB',
-	// 						id: 'ELC_PET_HYB',
-	// 						data: [['BG', 374094]]
-	// 					},
-	// 					{
-	// 						name: 'ELC_PET_PI',
-	// 						id: 'ELC_PET_PI',
-	// 						data: [['CZ', 15885]]
-	// 					},
-	// 					{
-	// 						name: 'LPG',
-	// 						id: 'LPG',
-	// 						data: [
-	// 							['ES', 13290],
-	// 							['FI', 40382]
-	// 						]
-	// 					}
-	// 				]
-	// 			}
-	// 		});
-	// }
-	// async function getGrafica2() {
-	// 	(function (H) {
-	// 		H.seriesTypes.pie.prototype.animate = function (init) {
-	// 			const series = this,
-	// 				chart = series.chart,
-	// 				points = series.points,
-	// 				{ animation } = series.options,
-	// 				{ startAngleRad } = series;
+		// Convertir el objeto acumulado en un array de objetos para Highcharts
+		const parsedData = Object.keys(countryData).map((countryName) => {
+			return {
+				name: countryName,
+				y: countryData[countryName]
+			};
+		});
 
-	// 			function fanAnimate(point, startAngleRad) {
-	// 				const graphic = point.graphic,
-	// 					args = point.shapeArgs;
+		return parsedData;
+	}
 
-	// 				if (graphic && args) {
-	// 					graphic
-	// 						// Set inital animation values
-	// 						.attr({
-	// 							start: startAngleRad,
-	// 							end: startAngleRad,
-	// 							opacity: 1
-	// 						})
-	// 						// Animate to the final position
-	// 						.animate(
-	// 							{
-	// 								start: args.start,
-	// 								end: args.end
-	// 							},
-	// 							{
-	// 								duration: animation.duration / points.length
-	// 							},
-	// 							function () {
-	// 								// On complete, start animating the next point
-	// 								if (points[point.index + 1]) {
-	// 									fanAnimate(points[point.index + 1], args.end);
-	// 								}
-	// 								// On the last point, fade in the data labels, then
-	// 								// apply the inner size
-	// 								if (point.index === series.points.length - 1) {
-	// 									series.dataLabelsGroup.animate(
-	// 										{
-	// 											opacity: 1
-	// 										},
-	// 										void 0,
-	// 										function () {
-	// 											points.forEach((point) => {
-	// 												point.opacity = 1;
-	// 											});
-	// 											series.update(
-	// 												{
-	// 													enableMouseTracking: true
-	// 												},
-	// 												false
-	// 											);
-	// 											chart.update({
-	// 												plotOptions: {
-	// 													pie: {
-	// 														innerSize: '40%',
-	// 														borderRadius: 8
-	// 													}
-	// 												}
-	// 											});
-	// 										}
-	// 									);
-	// 								}
-	// 							}
-	// 						);
-	// 				}
-	// 			}
-
-	// 			if (init) {
-	// 				// Hide points on init
-	// 				points.forEach((point) => {
-	// 					point.opacity = 0;
-	// 				});
-	// 			} else {
-	// 				fanAnimate(points[0], startAngleRad);
-	// 			}
-	// 		};
-	// 	})(Highcharts);
-
-	// 	Highcharts.chart('container2', {
-	// 		chart: {
-	// 			type: 'pie'
-	// 		},
-	// 		title: {
-	// 			text: 'Deaths per million inhabitants by country',
-	// 			align: 'center'
-	// 		},
-	// 		tooltip: {
-	// 			pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-	// 		},
-	// 		accessibility: {
-	// 			point: {
-	// 				valueSuffix: '%'
-	// 			}
-	// 		},
-	// 		plotOptions: {
-	// 			pie: {
-	// 				allowPointSelect: true,
-	// 				borderWidth: 2,
-	// 				cursor: 'pointer',
-	// 				dataLabels: {
-	// 					enabled: true,
-	// 					format: '<b>{point.name}</b><br>{point.percentage}%',
-	// 					distance: 20
-	// 				}
-	// 			}
-	// 		},
-	// 		series: [
-	// 			{
-	// 				// Disable mouse tracking on load, enable after custom animation
-	// 				enableMouseTracking: false,
-	// 				animation: {
-	// 					duration: 2000
-	// 				},
-	// 				colorByPoint: true,
-	// 				//total = 16859
-	// 				data: [
-	// 					{
-	// 						name: 'AT',
-	// 						y: (1325 / 16859) * 100
-	// 					},
-	// 					{
-	// 						name: 'BE',
-	// 						y: (764 / 16859) * 100
-	// 					},
-	// 					{
-	// 						name: 'BG',
-	// 						y: (1024 / 16859) * 100
-	// 					},
-	// 					{
-	// 						name: 'CZ',
-	// 						y: (1188 / 16859) * 100
-	// 					},
-	// 					{
-	// 						name: 'DE',
-	// 						y: (8069 / 16859) * 100
-	// 					},
-	// 					{
-	// 						name: 'DK',
-	// 						y: (447 / 16859) * 100
-	// 					},
-	// 					{
-	// 						name: 'ES',
-	// 						y: (3369 / 16859) * 100
-	// 					},
-	// 					{
-	// 						name: 'FI',
-	// 						y: (673 / 16859) * 100
-	// 					}
-	// 				]
-	// 			}
-	// 		]
-	// 	});
-	// }
+	function createDynamicChart3(data) {
+		var chart = JSC.chart('container3', {
+			debug: true,
+			defaultSeries_type: 'column',
+			legend_visible: false,
+			defaultPoint_label_visible: true,
+			yAxis_visible: false,
+			xAxis_defaultTick: {
+				placement: 'outside',
+				label_style: {
+					color: '#000',
+					fontWeight: 'bold'
+				}
+			},
+			title_label_text: '<span class="chart-title">Million of passenger per KM</span>',
+			title_label_align: 'center',
+			series: [
+				{
+					name: 'Country',
+					palette: 'default',
+					points: data.map((item) => {
+						return {
+							name: item.name,
+							y: item.y
+						};
+					})
+				}
+			]
+		});
+	}
 
 	onMount(async () => {
-		getCars();
-		// getGrafica2();
+		await getInitialCars();
+		await getCars();
 	});
 </script>
 
 <svelte:head>
-	<script src="https://code.highcharts.com/highcharts.js"></script>
-	<script src="https://code.highcharts.com/highcharts-3d.js"></script>
-	<script src="https://code.highcharts.com/modules/exporting.js"></script>
-	<script src="https://code.highcharts.com/modules/export-data.js"></script>
-	<script src="https://code.highcharts.com/modules/accessibility.js"></script>
-	<script src="https://code.highcharts.com/modules/cylinder.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-3d.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://code.highcharts.com/modules/cylinder.js"></script>
+
+    <script src="https://code.jscharting.com/latest/jscharting.js"></script>
+    <script src="https://code.jscharting.com/latest/modules/types.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        #container,
+        #container2,
+        #container3 {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
 </svelte:head>
 
 <div id="container" style="width:100%; height:400px;"></div>
 <div id="container2" style="width:100%; height:400px;"></div>
+<div id="container3" style="width:100%; height:400px;"></div>

@@ -1,7 +1,8 @@
 <script>
-	import { onMount } from 'svelte';
-	import { dev } from '$app/environment';
-	import * as echarts from 'echarts';
+    import { onMount } from 'svelte';
+    import { dev } from '$app/environment';
+    //import * as echarts from 'echarts';
+    let echarts = window.echarts;
 
 	let API_MRF = '/api/v2/gdp-growth-rates';
 	let API_MRF_I = '/proxyMRF1';
@@ -360,7 +361,8 @@
 <div id="graph3" style="width: 800px; height: 600px;"></div>
 
 <svelte:head>
-	<script src="https://code.highcharts.com/highcharts.js"></script>
-	<script src="https://code.highcharts.com/modules/accessibility.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@latest/dist/echarts.min.js"></script>
 </svelte:head>

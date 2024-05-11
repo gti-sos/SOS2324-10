@@ -41,13 +41,12 @@
 	let showSearchForm = false;
 
 	let currentPage = 1;
-    let totalItems = 0;
-    const pageSize = 10;
-
+	let totalItems = 0;
+	let pageSize = 10;
 
 	onMount(async () => {
 		await getCars();
-		// await getCarsTotal();
+		await getCarsTotal();
 	});
 
 	async function loadInitialData() {
@@ -71,58 +70,55 @@
 		}
 	}
 
-	// async function getCarsTotal() {
-	// 	try {
-	// 		let response = await fetch(API_ASB + '?limit=100', {
-	// 			method: 'GET'
-	// 		});
-	// 		let dataT = await response.json();
-	// 		totalDatos = dataT.length;
-	// 		totalPages = Math.ceil(totalDatos / 10);
-	// 	} catch (e) {
-	// 		errorMsg = e;
-	// 	}
-	// }
+	async function getCarsTotal() {
+		try {
+			let response = await fetch(API_ASB + '?limit=100', {
+				method: 'GET'
+			});
+			let dataT = await response.json();
+			totalItems = dataT.length;
+		} catch (e) {
+			errorMsg = e;
+		}
+	}
 
-	async function getCars(){
-        try{
-            let offset = (currentPage - 1) * pageSize;
-            let response = await fetch(`${API_ASB}?limit=${pageSize}&offset=${offset}`
-            ,{
-                                      method: "GET"
-            });
-            if(response.ok){
-                let data = await response.json();
-                cars = data;
-                console.log(data);
-                totalItems = data.length;
-                errorMsg = "";
-            } else {
-                if(response.status == 404){
-                    errorMsg = "No hay datos en la base de datos";
-                } else {
-                    errorMsg = `Error ${response.status}: ${response.statusText}`;
-                }
-            }
-        } catch(e){
-            errorMsg = e;
-        }
-        
-    }
+	async function getCars() {
+		try {
+			let offset = (currentPage - 1) * pageSize;
+			let response = await fetch(`${API_ASB}?limit=${pageSize}&offset=${offset}`, {
+				method: 'GET'
+			});
+			if (response.ok) {
+				let data = await response.json();
+				cars = data;
+				console.log(data);
+				totalItems = data.length;
+				errorMsg = '';
+			} else {
+				if (response.status == 404) {
+					errorMsg = 'No hay datos en la base de datos';
+				} else {
+					errorMsg = `Error ${response.status}: ${response.statusText}`;
+				}
+			}
+		} catch (e) {
+			errorMsg = e;
+		}
+	}
 
-    async function nextPage() {
-        if ((currentPage * pageSize) <= totalItems) {
-            currentPage++;
-            getCars();
-        }
-    }
+	async function nextPage() {
+		if (currentPage * pageSize < totalItems) {
+			currentPage++;
+			getCars();
+		}
+	}
 
-    async function prevPage() {
-        if (currentPage > 1) {
-            currentPage--;
-            getCars();
-        }
-    }
+	async function prevPage() {
+		if (currentPage > 1) {
+			currentPage--;
+			getCars();
+		}
+	}
 
 	async function createCar() {
 		try {

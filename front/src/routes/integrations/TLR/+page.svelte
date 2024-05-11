@@ -1,8 +1,9 @@
 <script>
 	import { onMount } from 'svelte';
 	import { dev } from '$app/environment';
-	import * as echarts from 'echarts';
-	import QuickChart from 'quickchart-js';
+	//import * as echarts from 'echarts';
+	let echarts = window.echarts;
+
 
 	let API_TLR = '/api/v2/vehicles-stock';
 	let API_TLR1 = '/proxyTLR1';
@@ -592,6 +593,7 @@
 	<script src="https://code.highcharts.com/modules/accessibility.js"></script>
 	<script src="https://d3js.org/d3.v7.min.js"></script>
 	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/echarts@latest/dist/echarts.min.js"></script>
 </svelte:head>
 
 <div class="container">
