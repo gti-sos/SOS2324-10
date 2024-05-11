@@ -2,10 +2,11 @@
 	import { onMount } from 'svelte';
 
 	let API_DATA = 'https://sos2324-10.appspot.com/api/v2/gdp-growth-rates';
+    let ALL_DATA_API = 'https://sos2324-10.appspot.com/api/v2/gdp-growth-rates/all';
 
 	async function getGDP() {
 		try {
-			const res = await fetch(API_DATA);
+			const res = await fetch(ALL_DATA_API);
 			const data = await res.json();
 			console.log(data);
 			if (data.length > 0) {
@@ -242,7 +243,9 @@
 
 	
 	function createRadarChart(data) {
-        const countries = data.map(entry => entry.geo);
+        const countriesSet = new Set(data.map(entry => entry.geo));
+        const countries = Array.from(countriesSet);
+        
         const growth_2030 = data.map(entry => entry.growth_rate_2030);
         const growth_2040 = data.map(entry => entry.growth_rate_2040);
         const obs_values = data.map(entry => entry.obs_value);
