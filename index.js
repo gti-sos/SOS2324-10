@@ -206,8 +206,8 @@ app.use("/proxyMRF1", function (req, res) {
             console.error(error);
             res.status(500).send(error);
         } else {
-            console.log(response.statusCode);
-            console.log(body);
+            //console.log(response.statusCode);
+
             res.send(body);
         }
     });
@@ -231,8 +231,7 @@ app.use("/proxyMRF2", function(req, res){
             console.error(error);
             res.status(500).send(error);
         } else {
-            console.log(response.statusCode);
-            console.log(body);
+            //console.log(response.statusCode);
 
             const data = JSON.parse(body);
 
@@ -251,15 +250,16 @@ app.use("/proxyMRF2", function(req, res){
     });
     
 });
+
 app.use("/proxyMRF3", function(req, res){
 
-    const url = 'https://forbes-worlds-billionaires-list.p.rapidapi.com/billionaires/2023?page=0&size=10';
+    const url = 'https://cancer-rates-by-usa-state.p.rapidapi.com/YDaHXO/cancer_rates_by_usa_state';
     
     const options = {
         url: url,
         headers: {
             'X-RapidAPI-Key': '77e71d3380msh154aec6377535a9p1b8f1ajsnec607687032a',
-            'X-RapidAPI-Host': 'forbes-worlds-billionaires-list.p.rapidapi.com'
+            'X-RapidAPI-Host': 'cancer-rates-by-usa-state.p.rapidapi.com'
         }
     };
 
@@ -270,7 +270,8 @@ app.use("/proxyMRF3", function(req, res){
         } else {
             console.log(response.statusCode);
             let data = JSON.parse(body);
-            delete data.page;
+            //console.log(data);
+            res.send(data);
         }
     });
 });
