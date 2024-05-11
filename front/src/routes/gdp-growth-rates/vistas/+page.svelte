@@ -12,7 +12,7 @@
 			if (data.length > 0) {
 				createBubbleChart(meanGrowthRate(data));
 				createTreemapChart(meanGrowthRate(data));
-				createRadarChart(data);
+				createRadarChart(meanGrowthRate(data));
 			}
 		} catch (error) {
 			console.log(`Error fetching data: ${error}`);
@@ -37,27 +37,30 @@
 	}
 
 	function meanGrowthRate(data) {
-		const groupedData = data.reduce((acc, curr) => {
-			if (!acc[curr.geo]) {
-				acc[curr.geo] = { total2030: 0, total2040: 0, count: 0 };
-			}
-			acc[curr.geo].total2030 += curr.growth_rate_2030;
-			acc[curr.geo].total2040 += curr.growth_rate_2040;
-			acc[curr.geo].count++;
-			return acc;
-		}, {});
+        const groupedData = data.reduce((acc, curr) => {
+            if (!acc[curr.geo]) {
+                acc[curr.geo] = { total2030: 0, total2040: 0, totalObs: 0, count: 0 };
+            }
+            acc[curr.geo].total2030 += curr.growth_rate_2030;
+            acc[curr.geo].total2040 += curr.growth_rate_2040;
+            acc[curr.geo].totalObs += curr.obs_value;
+            acc[curr.geo].count++;
+            return acc;
+        }, {});
 
-		const averagedData = Object.keys(groupedData).map((country) => {
-			const { total2030, total2040, count } = groupedData[country];
-			return {
-				geo: country,
-				growth_rate_2030: total2030 / count,
-				growth_rate_2040: total2040 / count
-			};
-		});
+        const averagedData = Object.keys(groupedData).map((country) => {
+            const { total2030, total2040, totalObs, count } = groupedData[country];
+            return {
+                geo: country,
+                growth_rate_2030: total2030 / count,
+                growth_rate_2040: total2040 / count,
+                obs_value: totalObs / count
+            };
+        });
 
-		return averagedData;
-	}
+        return averagedData;
+    }
+
 
 	// Crear un gráfico de dispersión utilizando Highcharts
 	function createBubbleChart(data) {
