@@ -377,7 +377,7 @@
 		var contador = 0;
 
 		data.forEach(function (item) {
-			if (item.geo !== '') {
+			if (item.geo !== undefined && item.geo !== '') {
 				nodos.push({ name: item.geo });
 				enlaces.push({
 					source: contador,
