@@ -3,7 +3,7 @@ import express from "express";
 const app = express();
 const API_BASE = "/api/v2";
 app.use(bodyParser.json());
-
+console.log("D");
 let backupData = [
     {
         frequency: 'A',
@@ -349,9 +349,9 @@ let backupData = [
 const backupDatas = backupData.map((entry, index) => {
     return { id: index + 1, ...entry };
 });
-
+console.log("E");
 function API_ASC_v2(app, db_ASC) {
-
+console.log("F");
     // ------------ GET -------------
     // ----------- CUALQUIER CONSULTA GET --------------
 
@@ -481,7 +481,7 @@ function API_ASC_v2(app, db_ASC) {
 
     app.post(API_BASE + "/tourisms-per-age", (req, res) => {
         const growth = req.body;
-
+console.log("G");
         // Validar el JSON recibido
         const expectedKeys = ['frequency', 'unit', 'age', 'geo', 'time_period', 'obs_value', 'gdp', 'volgdp'];
         const actualKeys = Object.keys(growth);
@@ -498,7 +498,7 @@ function API_ASC_v2(app, db_ASC) {
                 // Si hay un error en la base de datos, enviar error 500 Internal Server Error
                 return res.status(500).send("Internal Error");
             }
-
+console.log("H");
             if (existingEntry) {
                 // Si ya existe un elemento con los mismos valores para 'geo' y 'time_period', devolver error 409 Conflict
                 return res.status(409).send("Conflict: Element with same 'geo' and 'time_period' already exists");
@@ -521,13 +521,13 @@ function API_ASC_v2(app, db_ASC) {
                         return res.status(500).send("Internal Error");
                     }
                     // Enviar respuesta con código 201 Created
-                    res.status(201).send("Created");
+console.log("I");                    res.status(201).send("Created");
                 });
             });
-        });
-    });
+console.log("J");        });
+console.log("K");    });
 
-
+console.log("L");
 
 
     // -------------- PUT --------------
@@ -728,7 +728,7 @@ function API_ASC_v2(app, db_ASC) {
     //     console.error(err.stack);
     //     res.status(500).send('Internal Server Error');
     // });
-
+console.log("N");
 };
-
+console.log("O");
 export { API_ASC_v2 };
