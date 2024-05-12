@@ -1,13 +1,14 @@
 <script>
-    import { onMount } from 'svelte';
-    import { dev } from '$app/environment';
-    //import * as echarts from 'echarts';
-    let echarts = window.echarts;
+	import { onMount } from 'svelte';
+	import { dev } from '$app/environment';
+	//import * as echarts from 'echarts';
+	let echarts = window.echarts;
 
 	let API_MRF = '/api/v2/gdp-growth-rates';
 	let API_MRF_I = '/proxyMRF1';
 	let API_MRF_II = '/proxyMRF2';
 	let API_MRF_III = '/proxyMRF3';
+	let API_MRF_IV = '/proxyMRF4';
 
 	let errorMsg = '';
 	let gdp = [];
@@ -22,6 +23,7 @@
 		API_MRF_I = 'http://localhost:8080' + API_MRF_I;
 		API_MRF_II = 'http://localhost:8080' + API_MRF_II;
 		API_MRF_III = 'http://localhost:8080' + API_MRF_III;
+		API_MRF_IV = 'http://localhost:8080' + API_MRF_IV;
 	}
 
 	async function getInitialGDP() {
@@ -274,7 +276,7 @@
 		myChart.setOption(option);
 	}
 
-	// ------------------ INTEGRACIÓN III -----------------------
+	// ------------------ USO III -----------------------
 
 	async function API_MRF_Third() {
 		try {
@@ -335,12 +337,83 @@
 		myChart.setOption(option);
 	}
 
+	// ------------------ USO IV -----------------------
+
+	async function API_MRF_Forth() {
+		try {
+			let response = await fetch(API_MRF_IV, {
+				method: 'GET',
+				headers: {
+					'Cache-Control': 'no-cache',
+					Pragma: 'no-cache',
+					'X-RapidAPI-Key': '77e71d3380msh154aec6377535a9p1b8f1ajsnec607687032a',
+					'X-RapidAPI-Host': 'everyearthquake.p.rapidapi.com'
+				}
+			});
+
+			if (response.ok) {
+				let data = await response.json();
+				return data;
+			} else {
+				if (response.status == 404) {
+					errorMsg = 'Error: no hay datos';
+				} else {
+					errorMsg = `Error ${response.status}: ${response.statusText}`;
+				}
+			}
+		} catch (e) {
+			errorMsg = e;
+		}
+	}
+
+	function createGraphIV(data) {
+		var chartDom = document.getElementById('graph4');
+		var myChart = echarts.init(chartDom);
+		var option;
+
+		// Convertir los datos en el formato requerido para el gráfico Sankey
+		var nodos = [];
+		var enlaces = [];
+		var contador = 0;
+
+		data.forEach(function (item) {
+			if (item.geo !== '') {
+				nodos.push({ name: item.geo });
+				enlaces.push({
+					source: contador,
+					target: nodos.length - 1,
+					value: parseFloat(item.magnitude)
+				});
+			} else {
+				contador++;
+			}
+		});
+
+		// Configuración del gráfico Sankey
+		option = {
+			series: {
+				type: 'sankey',
+				layout: 'none',
+				emphasis: {
+					focus: 'adjacency'
+				},
+				data: nodos,
+				links: enlaces
+			}
+		};
+
+		// Establecer opciones y renderizar el gráfico
+		option && myChart.setOption(option);
+	}
+	// -------------------- CARGA DE DATOS -----------------
+
 	async function initDatos() {
 		await getInitialGDP();
 		let datos_MRF = await getGDP();
 		let datosI = await API_MRF_First();
 		let datosII = await API_MRF_Second();
 		let datosIII = await API_MRF_Third();
+		let datosIV = await API_MRF_Forth();
 
 		let graphDataI = modDataI(datos_MRF, datosI);
 		createGraphI(graphDataI);
@@ -349,6 +422,8 @@
 		createGraphII(graphDataII);
 
 		createGraphIII(datosIII);
+
+		createGraphIV(datosIV);
 	}
 
 	onMount(async () => {
@@ -359,10 +434,11 @@
 <div id="graph1" style="width: 800px; height: 600px;"></div>
 <div id="graph2" style="width: 800px; height: 600px;"></div>
 <div id="graph3" style="width: 800px; height: 600px;"></div>
+<div id="graph4" style="width: 800px; height: 600px;"></div>
 
 <svelte:head>
-    <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0"></script>
-    <script src="https://cdn.jsdelivr.net/npm/echarts@latest/dist/echarts.min.js"></script>
+	<script src="https://code.highcharts.com/highcharts.js"></script>
+	<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0"></script>
+	<script src="https://cdn.jsdelivr.net/npm/echarts@latest/dist/echarts.min.js"></script>
 </svelte:head>

@@ -280,6 +280,38 @@ app.use("/proxyMRF3", function(req, res){
 });
 
 
+app.use("/proxyMRF4", function(req, res){
+
+    const url = 'https://everyearthquake.p.rapidapi.com/earthquakes?start=1&count=50&type=earthquake&latitude=37.2324&longitude=5.5924&radius=1000&units=miles&magnitude=3&intensity=1';
+    
+    const options = {
+        url: url,
+        headers: {
+            'X-RapidAPI-Key': '77e71d3380msh154aec6377535a9p1b8f1ajsnec607687032a',
+            'X-RapidAPI-Host': 'everyearthquake.p.rapidapi.com'
+        }
+    };
+
+    request(options, (error, response, body) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send(error);
+        } else {
+            console.log(response.statusCode);
+            let data = JSON.parse(body);
+            // Parsear los datos y extraer solo los atributos 'magnitude' y 'country'
+            const earthquakesInfo = data.data.map(earthquake => ({
+                magnitude: earthquake.magnitude,
+                geo: earthquake.country
+            }));
+            // Enviar los datos parseados como respuesta
+            res.send(earthquakesInfo);
+        }
+    });
+});
+
+
+
 app.use("/proxyASC1", function (req, res) {
     const url = 'https://covid-19-statistics.p.rapidapi.com/reports?iso=ESP';
     const options = {
