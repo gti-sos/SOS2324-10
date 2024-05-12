@@ -134,7 +134,7 @@
 		const myChart = echarts.init(chartDom);
 		const option = {
 			title: {
-				text: 'Growth Rate 2030 vs. Beer Count by Country'
+				text: 'Growth Rate 2030 vs. Beer Count'
 			},
 			tooltip: {
 				trigger: 'axis'
@@ -245,7 +245,7 @@
 		// Configurar las opciones del gráfico de radar
 		const option = {
 			title: {
-				text: 'Growth Rate and Deaths per Country'
+				text: 'Growth Rate and Deaths'
 			},
 			legend: {
 				data: ['Growth Rate 2030', 'Deaths 2020']
@@ -325,6 +325,9 @@
 		const myChart = echarts.init(document.getElementById('graph3'));
 
 		const option = {
+			title: {
+				text: 'Cancer Rate per State'
+			},
 			series: [
 				{
 					type: 'treemap',
@@ -402,7 +405,7 @@
 				labels: paises,
 				datasets: [
 					{
-						label: 'Media de magnitudes por país',
+						label: 'Media de terremotos por país',
 						data: medias,
 						backgroundColor: 'rgba(54, 162, 235, 0.2)',
 						borderColor: 'rgba(54, 162, 235, 1)',
