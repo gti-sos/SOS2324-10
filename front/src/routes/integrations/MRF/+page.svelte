@@ -367,43 +367,67 @@
 	}
 
 	function createGraphIV(data) {
-		var chartDom = document.getElementById('graph4');
-		var myChart = echarts.init(chartDom);
-		var option;
+		// Objeto para almacenar las sumas y el número de terremotos por país
+		const sumasPorPais = {};
+		const numTerremotosPorPais = {};
 
-		// Convertir los datos en el formato requerido para el gráfico Sankey
-		var nodos = [];
-		var enlaces = [];
-		var contador = 0;
-
-		data.forEach(function (item) {
-			if (item.geo !== undefined && item.geo !== '') {
-				nodos.push({ name: item.geo });
-				enlaces.push({
-					source: contador,
-					target: nodos.length - 1,
-					value: parseFloat(item.magnitude)
-				});
-			} else {
-				contador++;
+		// Calcular la suma de las magnitudes y el número de terremotos por país
+		data.forEach((terremoto) => {
+			if (terremoto.geo && terremoto.magnitude) {
+				if (!sumasPorPais[terremoto.geo]) {
+					sumasPorPais[terremoto.geo] = parseFloat(terremoto.magnitude);
+					numTerremotosPorPais[terremoto.geo] = 1;
+				} else {
+					sumasPorPais[terremoto.geo] += parseFloat(terremoto.magnitude);
+					numTerremotosPorPais[terremoto.geo]++;
+				}
 			}
 		});
 
-		// Configuración del gráfico Sankey
-		option = {
-			series: {
-				type: 'sankey',
-				layout: 'none',
-				emphasis: {
-					focus: 'adjacency'
-				},
-				data: nodos,
-				links: enlaces
-			}
-		};
+		// Calcular la media de las magnitudes por país
+		const mediasPorPais = {};
+		Object.keys(sumasPorPais).forEach((pais) => {
+			mediasPorPais[pais] = sumasPorPais[pais] / numTerremotosPorPais[pais];
+		});
 
-		// Establecer opciones y renderizar el gráfico
-		option && myChart.setOption(option);
+		// Preparar datos para el gráfico de barras
+		const paises = Object.keys(mediasPorPais);
+		const medias = paises.map((pais) => mediasPorPais[pais]);
+
+		// Configurar el gráfico de barras
+		const ctx = document.getElementById('graph4').getContext('2d');
+		const myChart = new Chart(ctx, {
+			type: 'bar',
+			data: {
+				labels: paises,
+				datasets: [
+					{
+						label: 'Media de magnitudes por país',
+						data: medias,
+						backgroundColor: 'rgba(54, 162, 235, 0.2)',
+						borderColor: 'rgba(54, 162, 235, 1)',
+						borderWidth: 1
+					}
+				]
+			},
+			options: {
+				scales: {
+					y: {
+						beginAtZero: true,
+						title: {
+							display: true,
+							text: 'Media de magnitudes'
+						}
+					},
+					x: {
+						title: {
+							display: true,
+							text: 'País'
+						}
+					}
+				}
+			}
+		});
 	}
 	// -------------------- CARGA DE DATOS -----------------
 
@@ -431,14 +455,17 @@
 	});
 </script>
 
-<div id="graph1" style="width: 800px; height: 600px;"></div>
-<div id="graph2" style="width: 800px; height: 600px;"></div>
-<div id="graph3" style="width: 800px; height: 600px;"></div>
-<div id="graph4" style="width: 800px; height: 600px;"></div>
+<figure class="highcharts-figure">
+	<div id="graph1" style="width: 800px; height: 600px;"></div>
+	<div id="graph2" style="width: 800px; height: 600px;"></div>
+	<div id="graph3" style="width: 800px; height: 600px;"></div>
+	<canvas id="graph4" width="400" height="400"></canvas>
+</figure>
 
 <svelte:head>
 	<script src="https://code.highcharts.com/highcharts.js"></script>
 	<script src="https://code.highcharts.com/modules/accessibility.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0"></script>
 	<script src="https://cdn.jsdelivr.net/npm/echarts@latest/dist/echarts.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </svelte:head>

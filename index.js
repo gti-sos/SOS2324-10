@@ -304,7 +304,7 @@ app.use("/proxyMRF4", function(req, res){
             const earthquakesInfo = data.data.map(earthquake => ({
                 magnitude: earthquake.magnitude,
                 geo: earthquake.country
-            }));
+            })).filter(earthquake => earthquake.geo !== "");
             // Enviar los datos parseados como respuesta
             res.send(earthquakesInfo);
         }
