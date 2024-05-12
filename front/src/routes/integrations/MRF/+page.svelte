@@ -1,13 +1,14 @@
 <script>
-    import { onMount } from 'svelte';
-    import { dev } from '$app/environment';
-    //import * as echarts from 'echarts';
-    let echarts = window.echarts;
+	import { onMount } from 'svelte';
+	import { dev } from '$app/environment';
+	//import * as echarts from 'echarts';
+	let echarts = window.echarts;
 
 	let API_MRF = '/api/v2/gdp-growth-rates';
 	let API_MRF_I = '/proxyMRF1';
 	let API_MRF_II = '/proxyMRF2';
 	let API_MRF_III = '/proxyMRF3';
+	let API_MRF_IV = '/proxyMRF4';
 
 	let errorMsg = '';
 	let gdp = [];
@@ -22,6 +23,7 @@
 		API_MRF_I = 'http://localhost:8080' + API_MRF_I;
 		API_MRF_II = 'http://localhost:8080' + API_MRF_II;
 		API_MRF_III = 'http://localhost:8080' + API_MRF_III;
+		API_MRF_IV = 'http://localhost:8080' + API_MRF_IV;
 	}
 
 	async function getInitialGDP() {
@@ -132,7 +134,7 @@
 		const myChart = echarts.init(chartDom);
 		const option = {
 			title: {
-				text: 'Growth Rate 2030 vs. Beer Count by Country'
+				text: 'Growth Rate 2030 vs. Beer Count'
 			},
 			tooltip: {
 				trigger: 'axis'
@@ -243,7 +245,7 @@
 		// Configurar las opciones del gráfico de radar
 		const option = {
 			title: {
-				text: 'Growth Rate and Deaths per Country'
+				text: 'Growth Rate and Deaths'
 			},
 			legend: {
 				data: ['Growth Rate 2030', 'Deaths 2020']
@@ -274,7 +276,7 @@
 		myChart.setOption(option);
 	}
 
-	// ------------------ INTEGRACIÓN III -----------------------
+	// ------------------ USO III -----------------------
 
 	async function API_MRF_Third() {
 		try {
@@ -323,6 +325,9 @@
 		const myChart = echarts.init(document.getElementById('graph3'));
 
 		const option = {
+			title: {
+				text: 'Cancer Rate per State'
+			},
 			series: [
 				{
 					type: 'treemap',
@@ -335,12 +340,107 @@
 		myChart.setOption(option);
 	}
 
+	// ------------------ USO IV -----------------------
+
+	async function API_MRF_Forth() {
+		try {
+			let response = await fetch(API_MRF_IV, {
+				method: 'GET',
+				headers: {
+					'Cache-Control': 'no-cache',
+					Pragma: 'no-cache',
+					'X-RapidAPI-Key': '77e71d3380msh154aec6377535a9p1b8f1ajsnec607687032a',
+					'X-RapidAPI-Host': 'everyearthquake.p.rapidapi.com'
+				}
+			});
+
+			if (response.ok) {
+				let data = await response.json();
+				return data;
+			} else {
+				if (response.status == 404) {
+					errorMsg = 'Error: no hay datos';
+				} else {
+					errorMsg = `Error ${response.status}: ${response.statusText}`;
+				}
+			}
+		} catch (e) {
+			errorMsg = e;
+		}
+	}
+
+	function createGraphIV(data) {
+		// Objeto para almacenar las sumas y el número de terremotos por país
+		const sumasPorPais = {};
+		const numTerremotosPorPais = {};
+
+		// Calcular la suma de las magnitudes y el número de terremotos por país
+		data.forEach((terremoto) => {
+			if (terremoto.geo && terremoto.magnitude) {
+				if (!sumasPorPais[terremoto.geo]) {
+					sumasPorPais[terremoto.geo] = parseFloat(terremoto.magnitude);
+					numTerremotosPorPais[terremoto.geo] = 1;
+				} else {
+					sumasPorPais[terremoto.geo] += parseFloat(terremoto.magnitude);
+					numTerremotosPorPais[terremoto.geo]++;
+				}
+			}
+		});
+
+		// Calcular la media de las magnitudes por país
+		const mediasPorPais = {};
+		Object.keys(sumasPorPais).forEach((pais) => {
+			mediasPorPais[pais] = sumasPorPais[pais] / numTerremotosPorPais[pais];
+		});
+
+		// Preparar datos para el gráfico de barras
+		const paises = Object.keys(mediasPorPais);
+		const medias = paises.map((pais) => mediasPorPais[pais]);
+
+		// Configurar el gráfico de barras
+		const ctx = document.getElementById('graph4').getContext('2d');
+		const myChart = new Chart(ctx, {
+			type: 'bar',
+			data: {
+				labels: paises,
+				datasets: [
+					{
+						label: 'Media de terremotos por país',
+						data: medias,
+						backgroundColor: 'rgba(54, 162, 235, 0.2)',
+						borderColor: 'rgba(54, 162, 235, 1)',
+						borderWidth: 1
+					}
+				]
+			},
+			options: {
+				scales: {
+					y: {
+						beginAtZero: true,
+						title: {
+							display: true,
+							text: 'Media de magnitudes'
+						}
+					},
+					x: {
+						title: {
+							display: true,
+							text: 'País'
+						}
+					}
+				}
+			}
+		});
+	}
+	// -------------------- CARGA DE DATOS -----------------
+
 	async function initDatos() {
 		await getInitialGDP();
 		let datos_MRF = await getGDP();
 		let datosI = await API_MRF_First();
 		let datosII = await API_MRF_Second();
 		let datosIII = await API_MRF_Third();
+		let datosIV = await API_MRF_Forth();
 
 		let graphDataI = modDataI(datos_MRF, datosI);
 		createGraphI(graphDataI);
@@ -349,6 +449,8 @@
 		createGraphII(graphDataII);
 
 		createGraphIII(datosIII);
+
+		createGraphIV(datosIV);
 	}
 
 	onMount(async () => {
@@ -356,13 +458,17 @@
 	});
 </script>
 
-<div id="graph1" style="width: 800px; height: 600px;"></div>
-<div id="graph2" style="width: 800px; height: 600px;"></div>
-<div id="graph3" style="width: 800px; height: 600px;"></div>
+<figure class="highcharts-figure">
+	<div id="graph1" style="width: 800px; height: 600px;"></div>
+	<div id="graph2" style="width: 800px; height: 600px;"></div>
+	<div id="graph3" style="width: 800px; height: 600px;"></div>
+	<canvas id="graph4" width="400" height="400"></canvas>
+</figure>
 
 <svelte:head>
-    <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0"></script>
-    <script src="https://cdn.jsdelivr.net/npm/echarts@latest/dist/echarts.min.js"></script>
+	<script src="https://code.highcharts.com/highcharts.js"></script>
+	<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0"></script>
+	<script src="https://cdn.jsdelivr.net/npm/echarts@latest/dist/echarts.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </svelte:head>

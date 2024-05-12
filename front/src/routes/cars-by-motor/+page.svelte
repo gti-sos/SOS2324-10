@@ -45,8 +45,8 @@
 	let pageSize = 10;
 
 	onMount(async () => {
+		await loadInitialData();
 		await getCars();
-		await getCarsTotal();
 	});
 
 	async function loadInitialData() {
@@ -83,6 +83,7 @@
 	}
 
 	async function getCars() {
+		await getCarsTotal();
 		try {
 			let offset = (currentPage - 1) * pageSize;
 			let response = await fetch(`${API_ASB}?limit=${pageSize}&offset=${offset}`, {
@@ -92,7 +93,7 @@
 				let data = await response.json();
 				cars = data;
 				console.log(data);
-				totalItems = data.length;
+				//totalItems = data.length;
 				errorMsg = '';
 			} else {
 				if (response.status == 404) {
