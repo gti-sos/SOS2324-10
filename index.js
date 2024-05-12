@@ -371,12 +371,12 @@ app.use("/proxyASC4", function (req, res) {
 
 
 app.use("/proxyASB1", function (req, res) {
-    const url = 'https://algobook-stock-api.p.rapidapi.com/api/v1/stocks?tickers=AMZN';
+    const url = 'https://algobook-stock-api.p.rapidapi.com/api/v1/stocks?tickers=AMZN,AAPL,MSFT,GOOGL,KO,MCD';
     const options = {
         url: url,
         headers: {
             'X-RapidAPI-Key': '1ae5868997msh0a3205e591a7ed8p195ba3jsn5cbea63c1c53',
-            'X-RapidAPI-Host': 'truncgil-finance.p.rapidapi.com'
+			'X-RapidAPI-Host': 'algobook-stock-api.p.rapidapi.com'
         }
     };
 
@@ -392,27 +392,6 @@ app.use("/proxyASB1", function (req, res) {
     });
 })
 
-app.use("/proxyASB2", function (req, res) {
-    const url = 'https://nutrition-calculator.p.rapidapi.com/api/bmi?measurement_units=std&feet=5&inches=2&lbs=120';
-    const options = {
-        url: url,
-        headers: {
-            'X-RapidAPI-Key': '1ae5868997msh0a3205e591a7ed8p195ba3jsn5cbea63c1c53',
-            'X-RapidAPI-Host': 'nutrition-calculator.p.rapidapi.com'
-        }
-    };
-
-    request(options, (error, response, body) => {
-        if (error) {
-            console.error(error);
-            res.status(500).send(error);
-        } else {
-            console.log(response.statusCode);
-            console.log(body);
-            res.send(body);
-        }
-    });
-})
 
 app.use("/proxyASB3", function (req, res) {
     const url = 'https://mineable-coins.p.rapidapi.com/coins';
