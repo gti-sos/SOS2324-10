@@ -4,6 +4,8 @@
 
 	let API_ASB = '/api/v2/cars_by_motor';
 	let API_ASB1 = '/proxyASB1';
+	let API_ASB3 = '/proxyASB3';
+	let API_ASB4 = '/proxyASB4';
 
 	let errorMsg = '';
 	let datos = {};
@@ -11,21 +13,15 @@
 	if (dev) {
 		API_ASB = 'http://localhost:8080' + API_ASB;
 		API_ASB1 = 'http://localhost:8080' + API_ASB1;
+		API_ASB3 = 'http://localhost:8080' + API_ASB3;
+		API_ASB4 = 'http://localhost:8080' + API_ASB4;
 	}
 
 	async function API_ASB_1() {
 		try {
-			const url =
-				'https://algobook-stock-api.p.rapidapi.com/api/v1/stocks?tickers=AMZN,AAPL,MSFT,GOOGL,KO,MCD';
-			const options = {
-				method: 'GET',
-				headers: {
-					'X-RapidAPI-Key': '1ae5868997msh0a3205e591a7ed8p195ba3jsn5cbea63c1c53',
-					'X-RapidAPI-Host': 'algobook-stock-api.p.rapidapi.com'
-				}
-			};
-
-			const response = await fetch(url, options);
+			let response = await fetch(API_ASB1, {
+				method: 'GET'
+			});
 			if (response.ok) {
 				let data = await response.json();
 				datos = data;
@@ -196,16 +192,9 @@
 
 	async function API_ASB_3() {
 		try {
-			const url = 'https://mineable-coins.p.rapidapi.com/coins';
-			const options = {
-				method: 'GET',
-				headers: {
-					'X-RapidAPI-Key': '1ae5868997msh0a3205e591a7ed8p195ba3jsn5cbea63c1c53',
-					'X-RapidAPI-Host': 'mineable-coins.p.rapidapi.com'
-				}
-			};
-
-			const response = await fetch(url, options);
+			let response = await fetch(API_ASB3, {
+				method: 'GET'
+			});
 			if (response.ok) {
 				let data = await response.json();
 				datos = data;
@@ -290,16 +279,9 @@
 
 	async function API_ASB_4() {
 		try {
-			const url = 'https://mmo-games.p.rapidapi.com/games';
-			const options = {
-				method: 'GET',
-				headers: {
-					'X-RapidAPI-Key': '1ae5868997msh0a3205e591a7ed8p195ba3jsn5cbea63c1c53',
-					'X-RapidAPI-Host': 'mmo-games.p.rapidapi.com'
-				}
-			};
-
-			const response = await fetch(url, options);
+			let response = await fetch(API_ASB4, {
+				method: 'GET'
+			});
 			if (response.ok) {
 				let data = await response.json();
 				datos = data;

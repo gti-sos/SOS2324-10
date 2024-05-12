@@ -88,6 +88,16 @@ function backend_MRF_v2(app, db_MRF){
         
     });
 
+    app.get(API_BASE + "/all", (req, res) => {
+        db_MRF.find({}, { _id: 0, id: 0 }, (error, results) => {
+            if (error) {
+                res.sendStatus(500);
+            } else {
+                res.status(200).json(results);
+            }
+        });
+    });
+    
     app.get(API_BASE + "/search", (req, res) => {
         const queryParams = req.query;
         const limit = parseInt(queryParams.limit) || 10; // Tamaño predeterminado de la página

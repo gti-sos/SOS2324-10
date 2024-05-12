@@ -33,14 +33,14 @@ const whitelist = [
     'https://car-api2.p.rapidapi.com/api/vin/1GTG6CEN0L1139305'
 ];
 
-app.use(cors());
-/*
+//app.use(cors());
+
 app.use(cors({
     "origin": "*",
     "preflightContinue": false,
     "optionsSuccessStatus": 204
 }));
-*/
+
 
 
 app.listen(PORT);
@@ -57,6 +57,7 @@ API_ASB_v2(app, db_ASB);
 
 //Hacemos uso de proxy
 app.use("/proxyTLR1", function (req, res) {
+    console.log("proxyTLR1 cargado");
     const url = 'https://streaming-availability.p.rapidapi.com/countries';
     const options = {
         url: url,
@@ -95,6 +96,7 @@ app.use("/proxyTLR1", function (req, res) {
 
 
 app.use("/proxyTLR2", function (req, res) {
+    console.log("proxyTLR2 cargado");
     const url = 'https://covid-193.p.rapidapi.com/statistics';
     const options = {
         url: url,
@@ -121,7 +123,6 @@ app.use("/proxyTLR2", function (req, res) {
                     deaths: item.deaths.total
                 };
             });
-
             // Send the transformed data
             res.send(transformedData);
         }
@@ -129,6 +130,7 @@ app.use("/proxyTLR2", function (req, res) {
 });
 
 app.use("/proxyTLR3", function (req, res) {
+    console.log("proxyTLR3 cargado");
     const url = 'https://restcountries.com/v3.1/all';
     const options = {
         url: url
@@ -154,6 +156,7 @@ app.use("/proxyTLR3", function (req, res) {
 });
 
 app.use("/proxyTLR4", function (req, res) {
+    console.log("proxyTLR4 cargado");
     const url = 'https://free-to-play-games-database.p.rapidapi.com/api/games';
     const options = {
         url: url,
@@ -207,13 +210,77 @@ app.use("/proxyMRF1", function (req, res) {
             console.error(error);
             res.status(500).send(error);
         } else {
-            console.log(response.statusCode);
-            console.log(body);
+            //console.log(response.statusCode);
+
             res.send(body);
         }
     });
 
 });
+
+app.use("/proxyMRF2", function(req, res){
+
+    const url = 'https://deaths-by-european-countries.p.rapidapi.com/4mjf2k/deaths_by_country';
+    
+    const options = {
+      url: url,
+      headers: {
+        'X-RapidAPI-Key': '77e71d3380msh154aec6377535a9p1b8f1ajsnec607687032a',
+        'X-RapidAPI-Host': 'deaths-by-european-countries.p.rapidapi.com'
+      }
+    };
+
+    request(options, (error, response, body) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send(error);
+        } else {
+            //console.log(response.statusCode);
+
+            const data = JSON.parse(body);
+
+            // Función para transformar los datos en el formato deseado
+            const transformarDatos = (datos) => {
+                const geo = datos["Country or Group"].toLowerCase();; // Cambiado a "geo"
+                // Verificar si datos["2020"] es null o undefined antes de acceder a la propiedad replace
+                const deaths_2020 = datos["2020"] !== null && datos["2020"] !== undefined ? parseInt(datos["2020"]) : undefined;
+                return deaths_2020 !== undefined ? { geo, deaths_2020 } : null;
+            };
+
+            const transformedData = data.map(transformarDatos).filter(obj => obj !== null);
+
+            res.send(transformedData);
+        }
+    });
+    
+});
+
+app.use("/proxyMRF3", function(req, res){
+
+    const url = 'https://cancer-rates-by-usa-state.p.rapidapi.com/YDaHXO/cancer_rates_by_usa_state';
+    
+    const options = {
+        url: url,
+        headers: {
+            'X-RapidAPI-Key': '77e71d3380msh154aec6377535a9p1b8f1ajsnec607687032a',
+            'X-RapidAPI-Host': 'cancer-rates-by-usa-state.p.rapidapi.com'
+        }
+    };
+
+    request(options, (error, response, body) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send(error);
+        } else {
+            console.log(response.statusCode);
+            let data = JSON.parse(body);
+            //console.log(data);
+            res.send(data);
+        }
+    });
+});
+
+
 app.use("/proxyASC1", function (req, res) {
     const url = 'https://covid-19-statistics.p.rapidapi.com/reports?iso=ESP';
     const options = {
@@ -302,38 +369,14 @@ app.use("/proxyASC4", function (req, res) {
 })
 
 
-app.use("/proxyMRF2", function (req, res) {
-
-    const url = 'https://deaths-by-european-countries.p.rapidapi.com/4mjf2k/deaths_by_country';
-
-    const options = {
-        url: url,
-        headers: {
-            'X-RapidAPI-Key': '77e71d3380msh154aec6377535a9p1b8f1ajsnec607687032a',
-            'X-RapidAPI-Host': 'deaths-by-european-countries.p.rapidapi.com'
-        }
-    };
-
-    request(options, (error, response, body) => {
-        if (error) {
-            console.error(error);
-            res.status(500).send(error);
-        } else {
-            console.log(response.statusCode);
-            console.log(body);
-            res.send(body);
-        }
-    });
-
-});
 
 app.use("/proxyASB1", function (req, res) {
-    const url = 'https://algobook-stock-api.p.rapidapi.com/api/v1/stocks?tickers=AMZN';
+    const url = 'https://algobook-stock-api.p.rapidapi.com/api/v1/stocks?tickers=AMZN,AAPL,MSFT,GOOGL,KO,MCD';
     const options = {
         url: url,
         headers: {
             'X-RapidAPI-Key': '1ae5868997msh0a3205e591a7ed8p195ba3jsn5cbea63c1c53',
-            'X-RapidAPI-Host': 'truncgil-finance.p.rapidapi.com'
+			'X-RapidAPI-Host': 'algobook-stock-api.p.rapidapi.com'
         }
     };
 
@@ -349,27 +392,6 @@ app.use("/proxyASB1", function (req, res) {
     });
 })
 
-app.use("/proxyASB2", function (req, res) {
-    const url = 'https://nutrition-calculator.p.rapidapi.com/api/bmi?measurement_units=std&feet=5&inches=2&lbs=120';
-    const options = {
-        url: url,
-        headers: {
-            'X-RapidAPI-Key': '1ae5868997msh0a3205e591a7ed8p195ba3jsn5cbea63c1c53',
-            'X-RapidAPI-Host': 'nutrition-calculator.p.rapidapi.com'
-        }
-    };
-
-    request(options, (error, response, body) => {
-        if (error) {
-            console.error(error);
-            res.status(500).send(error);
-        } else {
-            console.log(response.statusCode);
-            console.log(body);
-            res.send(body);
-        }
-    });
-})
 
 app.use("/proxyASB3", function (req, res) {
     const url = 'https://mineable-coins.p.rapidapi.com/coins';
