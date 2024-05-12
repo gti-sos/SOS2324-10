@@ -1,4 +1,4 @@
-import express, { response } from "express";
+console.log("A"); import express, { response } from "express";
 import bodyParser from "body-parser";
 
 import { API_TLR_v1 } from "./api/api-TLR-v1.js";
@@ -9,7 +9,7 @@ import { API_ASC_v1 } from "./api/api-ASC_v1.js";
 import { API_ASC_v2 } from "./api/api-ASC_v2.js";
 import { API_ASB_v1 } from "./api/api-ASB_v1.js";
 import { API_ASB_v2 } from "./api/api-ASB_v2.js";
-
+console.log("B"); 
 //neDB
 import dataStore from "nedb";
 let db_TLR = new dataStore();
@@ -419,7 +419,7 @@ app.use("/proxyASB4", function (req, res) {
 app.use(handler);
 
 // Establecemos subdirectorios de la web
-import path from "path";
+console.log("C");  import path from "path";
 //const path = require('path');
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
