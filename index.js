@@ -204,6 +204,7 @@ app.use("/proxyMRF1", function (req, res) {
             'X-RapidAPI-Host': 'beers-list.p.rapidapi.com'
         }
     };
+
     request(options, (error, response, body) => {
         if (error) {
             console.error(error);
