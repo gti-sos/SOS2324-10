@@ -232,13 +232,18 @@
 	}
 
 	function createGraphII(data) {
-		// Preparar los datos para el gráfico de radar
-		let countries = data.map((item) => item.country);
-		let growthRates = data.map((item) =>
-			item.growth_rate_2030 !== null ? item.growth_rate_2030 : 0
-		);
-		let deaths = data.map((item) => (item.deaths_2020 !== null ? item.deaths_2020 : 0));
+		const uniqueCountries = [...new Set(data.map((item) => item.country))];
 
+		// Preparar los datos únicos para el gráfico de radar
+		const countries = uniqueCountries;
+		const growthRates = uniqueCountries.map((country) => {
+			const item = data.find((item) => item.country === country);
+			return item ? (item.growth_rate_2030 !== null ? item.growth_rate_2030 : 0) : 0;
+		});
+		const deaths = uniqueCountries.map((country) => {
+			const item = data.find((item) => item.country === country);
+			return item ? (item.deaths_2020 !== null ? item.deaths_2020 : 0) : 0;
+		});
 		// Inicializar el gráfico de radar
 		const myChart = echarts.init(document.getElementById('graph2'));
 
