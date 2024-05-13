@@ -55,6 +55,10 @@ API_ASC_v2(app, db_ASC);
 API_ASB_v1(app, db_ASB);
 API_ASB_v2(app, db_ASB);
 
+//Crear ruta estática para poder mostrar vídeos
+app.use('/videos', express.static('videos'))
+
+
 //Hacemos uso de proxy
 app.use("/proxyTLR1", function (req, res) {
     console.log("proxyTLR1 cargado");

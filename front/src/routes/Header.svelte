@@ -2,6 +2,7 @@
 <nav class="container">
 	<a href="/" class="nav-link">Inicio</a>
 	<a href="/analytics" class="nav-link">Vista Grupal</a>
+	<a href="/about" class="nav-link">About</a>
 	<div class="dropdown">
 		<button class="dropbtn">Integraciones</button>
 		<div class="dropdown-content">
