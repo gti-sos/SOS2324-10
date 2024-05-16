@@ -4,11 +4,14 @@
 	let API_DATA = 'https://sos2324-10.appspot.com/api/v2/gdp-growth-rates';
     let ALL_DATA_API = 'https://sos2324-10.appspot.com/api/v2/gdp-growth-rates/all';
 
+
+	
 	async function getGDP() {
 		try {
 			const res = await fetch(ALL_DATA_API);
 			const data = await res.json();
 			console.log(data);
+			// Si hay datos se crean las graficas
 			if (data.length > 0) {
 				createBubbleChart(meanGrowthRate(data));
 				createTreemapChart(meanGrowthRate(data));
@@ -36,6 +39,8 @@
 		}
 	}
 
+
+	// Calculamos las medias para cada dato por pais
 	function meanGrowthRate(data) {
         const groupedData = data.reduce((acc, curr) => {
             if (!acc[curr.geo]) {
@@ -62,13 +67,13 @@
     }
 
 
-	// Crear un gráfico de dispersión utilizando Highcharts
+	// Creacion de un gráfico de dispersión utilizando Highcharts
 	function createBubbleChart(data) {
 		const seriesData = data.map((entry) => ({
 			x: entry.growth_rate_2030,
 			y: entry.growth_rate_2040,
 			name: entry.geo,
-			country: entry.geo // Si deseas mantener la propiedad 'country' como en tu ejemplo original
+			country: entry.geo 
 		}));
 
 		const scatterChart = Highcharts.chart('bubble-container', {
@@ -184,6 +189,7 @@
 		});
 	}
 
+	// Creación de un mapa Tree que representa el PIB de los paises para 2030
 	async function createTreemapChart(data) {
 		let points = [];
 		let regionI = 0;
@@ -245,6 +251,7 @@
 	}
 
 	
+	// Creacion del grafo de Radar que muestra los 3 campos de abajo
 	function createRadarChart(data) {
         const countriesSet = new Set(data.map(entry => entry.geo));
         const countries = Array.from(countriesSet);
@@ -291,57 +298,6 @@
             }
         });
     }
-    /**
-	function createRadarChart(data) {
-		const countries = data.map((entry) => entry.geo);
-		const growth_2030 = data.map((entry) => entry.growth_rate_2030);
-		const growth_2040 = data.map((entry) => entry.growth_rate_2040);
-		const obs_values = data.map((entry) => entry.obs_value);
-
-		const ctx = document.getElementById('radarChart').getContext('2d');
-
-		// Verificar si hay un gráfico existente y destruirlo si es necesario
-		if (window.radarChart) {
-			window.radarChart.destroy();
-		}
-
-		window.radarChart = new Chart(ctx, {
-			type: 'radar',
-			data: {
-				labels: countries,
-				datasets: [
-					{
-						label: 'GROWTH_2030',
-						data: growth_2030,
-						backgroundColor: 'rgba(255, 99, 132, 0.2)',
-						borderColor: 'rgba(255, 99, 132, 1)',
-						borderWidth: 1
-					},
-					{
-						label: 'GROWTH_2040',
-						data: growth_2040,
-						backgroundColor: 'rgba(54, 162, 235, 0.2)',
-						borderColor: 'rgba(54, 162, 235, 1)',
-						borderWidth: 1
-					},
-					{
-						label: 'OBS_VALUES',
-						data: obs_values,
-						backgroundColor: 'rgba(75, 192, 192, 0.2)',
-						borderColor: 'rgba(75, 192, 192, 1)',
-						borderWidth: 1
-					}
-				]
-			},
-			options: {
-				scale: {
-					ticks: {
-						beginAtZero: true
-					}
-				}
-			}
-		});
-	}*/
 
 	onMount(async () => {
 		await loadInitialGDP();
@@ -350,6 +306,7 @@
 </script>
 
 <svelte:head>
+	<!--- Importaciones -->
 	<script src="https://code.highcharts.com/highcharts.js"></script>
 	<script src="https://code.highcharts.com/highcharts-more.js"></script>
 	<script src="https://code.highcharts.com/modules/accessibility.js"></script>

@@ -17,37 +17,12 @@
     let geo = $page.params.geo;
     let time_period = $page.params.time_period;
 
-    /**
-    let formData = {
-        frequency: '',
-        unit: '',
-        na_item: '',
-        time_period: 0,
-        obs_value: 0,
-        growth_rate_2030: 0,
-        growth_rate_2040: 0
-    };*/
 
     onMount(async () => {
         await getGDP(geo, time_period);
     });
-
-    /**
-    async function fetchGeoDetails() {
-        try {
-            const response = await fetch(API_MRF+`/${geo}/${time_period}`,{
-                                        method: "GET"
-                                        
-            }); 
-
-            const data = await response.json();
-            formData = { ...data }; // Copiar los datos obtenidos en el formulario
-        } catch (error) {
-            console.error('Error al obtener los detalles de la geo:', error);
-        }
-    }
-    */
    
+    //Obtenemos el objeto con pais y año concreto
     async function getGDP(geo, time_period) {
         try {
             let response = await fetch(API_MRF + '/' + geo + '/' + time_period, {
@@ -79,6 +54,8 @@
         }
     }
 
+
+    // LLamamos al método PUT para actualizar los valores del dato
     async function updateGeoDetails() {
         try {
             const response = await fetch(API_MRF+`/${geo}/${time_period}`,{
@@ -112,7 +89,7 @@
 
 <h1>Modificar datos de {geo} en el año {time_period}</h1>
 {#if !showForm}
-    <!-- Vista de detalles del vehículo -->
+    <!-- Vista de detalles del datos -->
     {#if Object.keys(dato).length > 0}
         <div class="container">
             <div class="card">
@@ -155,9 +132,11 @@
     <div class="container">
         <div class="card">
             <h2>Modificar dato</h2>
+            <!-- Asignamos el boton -->
             <form on:submit|preventDefault={updateGeoDetails}>
 				<table>
 					<tbody>
+                        <!-- Iteramos en cada objetos -->
 						{#each Object.entries(dato) as [key, value]}
 							<tr>
 								<td class="attribute">{key}:</td>

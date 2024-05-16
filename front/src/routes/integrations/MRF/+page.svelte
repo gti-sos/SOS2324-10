@@ -15,8 +15,6 @@
 
 	let currentPage = 1;
 	const pageSize = 10;
-	let totalDatos = 0;
-	let totalPages = 1;
 
 	if (dev) {
 		API_MRF = 'http://localhost:8080' + API_MRF;
@@ -76,6 +74,7 @@
 
 	// ------------------ INTEGRACIÓN I -----------------------
 
+	//LLamamos a la primera API por proxy antes definido
 	async function API_MRF_First() {
 		try {
 			let response = await fetch(API_MRF_I, {
@@ -83,6 +82,7 @@
 				headers: {
 					'Cache-Control': 'no-cache',
 					Pragma: 'no-cache',
+					// Añadimos claves de la API
 					'X-RapidAPI-Key': '77e71d3380msh154aec6377535a9p1b8f1ajsnec607687032a',
 					'X-RapidAPI-Host': 'beers-list.p.rapidapi.com'
 				}
@@ -103,15 +103,12 @@
 		}
 	}
 
+	// Tratamos los datos obtenidos y los comparamos con los mios para obteneer la union entre ambas
 	function modDataI(array1, array2) {
-		//console.log("Datos del primer array:", array1);
-		//console.log("Datos del segundo array:", array2);
-
 		// Filtrar los países que están en ambas listas de datos
 		const commonCountries = array1.filter((entry) => {
 			return array2.some((item) => item.country === entry.geo);
 		});
-		//console.log("Países comunes:", commonCountries);
 
 		// Obtener los países comunes y sus datos combinados
 		const combinedData = commonCountries.map((country) => {
@@ -124,11 +121,11 @@
 				beerCount: totalBeerCount
 			};
 		});
-		//console.log("Datos combinados:", combinedData);
 
 		return combinedData;
 	}
 
+	/**
 	function createGraphI(data) {
 		const chartDom = document.getElementById('graph1');
 		const myChart = echarts.init(chartDom);
@@ -180,6 +177,47 @@
 			]
 		};
 		option && myChart.setOption(option);
+	}
+	*/
+
+
+	function createGraphI(data) {
+		const countries = data.map((entry) => entry.country);
+		const growthRates = data.map((entry) => entry.growth_rate_2030);
+		const beerCounts = data.map((entry) => entry.beerCount);
+
+		const trace1 = {
+			x: countries,
+			y: growthRates,
+			type: 'bar',
+			name: 'Growth Rate 2030',
+			yaxis: 'y1'
+		};
+
+		const trace2 = {
+			x: countries,
+			y: beerCounts,
+			type: 'bar',
+			name: 'Beer Count',
+			yaxis: 'y2'
+		};
+
+		const layout = {
+			title: 'Growth Rate 2030 vs. Beer Count',
+			yaxis: {
+				title: 'Growth Rate 2030',
+				side: 'left'
+			},
+			yaxis2: {
+				title: 'Beer Count',
+				side: 'right',
+				overlaying: 'y'
+			}
+		};
+
+		const dataFin = [trace1, trace2];
+
+		Plotly.newPlot('graph1', dataFin, layout);
 	}
 
 	// ------------------ INTEGRACIÓN II -----------------------
@@ -447,14 +485,18 @@
 		let datosIII = await API_MRF_Third();
 		let datosIV = await API_MRF_Forth();
 
+		// Integracion 1 -> Biblioteca: Plotly.js, Tipo: Bar
 		let graphDataI = modDataI(datos_MRF, datosI);
 		createGraphI(graphDataI);
 
+		// Integracion 2 -> Biblioteca: Echarts, Tipo: Radar
 		let graphDataII = modDataII(datos_MRF, datosII);
 		createGraphII(graphDataII);
 
+		// Uso 1 -> Biblioteca: Echarts, Tipo: TreeMap
 		createGraphIII(datosIII);
 
+		// Uso 2 -> Biblioteca: Chart.js, Tipo: Bar
 		createGraphIV(datosIV);
 	}
 
@@ -476,4 +518,5 @@
 	<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0"></script>
 	<script src="https://cdn.jsdelivr.net/npm/echarts@latest/dist/echarts.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </svelte:head>
