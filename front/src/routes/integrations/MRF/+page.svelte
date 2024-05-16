@@ -503,6 +503,7 @@
 	onMount(async () => {
 		initDatos();
 	});
+	
 </script>
 
 <figure class="highcharts-figure">
