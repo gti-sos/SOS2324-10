@@ -52,6 +52,7 @@
   "devDependencies": {
     "@playwright/test": "^1.43.0",
     "@sveltejs/adapter-node": "^5.0.1",
+    "@sveltejs/adapter-static": "^3.0.1",
     "@types/node": "^20.12.2"
   }
 }
