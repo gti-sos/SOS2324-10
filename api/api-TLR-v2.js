@@ -304,9 +304,11 @@ function API_TLR_v2(app, db_TLR) {
     db_TLR.remove({ geo: geoURL, year: yearURL }, {}, (err, numRemoved) => {
       if (err) {
         return res.sendStatus(500);
+    
       } else {
         if (numRemoved >= 1) {
           return res.sendStatus(200);
+          
         } else {
           return res.sendStatus(404);
         }

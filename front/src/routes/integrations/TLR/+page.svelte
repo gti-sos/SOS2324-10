@@ -31,7 +31,7 @@
 
 			if (response.ok) {
 				let data = await response.json();
-				console.log('Datos obtenidos de API_TLR');
+				console.log('Datos obtenidos de API_TLR');g
 				return data;
 			} else {
 				if (response.status == 404) {
