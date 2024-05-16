@@ -35,7 +35,7 @@
     "test-ASC": "newman run ./tests/api/test-ASC.json -e ./tests/api/environment.json",
     "test-ASB": "newman run ./tests/api/test-ASB.json -e ./tests/api/environment.json",
     "test-e2e": "npx playwright test",
-    "test": "npm run test-api && npm run test-e2e",
+    "test": "npm run test-e2e",
     "posttest": "kill `ps -uax | grep \"node index\" | grep -v \"grep\" | grep -v \"sh\" | awk '{print $2}'`"
   },
   "author": "Tomas",

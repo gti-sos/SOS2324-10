@@ -194,6 +194,10 @@ function backend_MRF_v2(app, db_MRF) {
             });
     });
 
+    app.post(API_BASE + "/*", (req, res) => {
+        res.sendStatus(405);
+    });
+
     // Ruta POST para crear nuevos datos
     app.post(API_BASE + "/", (req, res) => {
         // Extraer los datos del cuerpo de la solicitud
@@ -255,14 +259,59 @@ function backend_MRF_v2(app, db_MRF) {
         });
     });
 
+
+    app.put(API_BASE + "/:geo/:time_period", (req, res) => {
+        const geoURL = req.params.geo;
+        const time_periodURL = parseInt(req.params.time_period);
+        const updatedGdp = req.body;
+
+
+        if (isNaN(time_periodURL)) {
+            return res.sendStatus(400);
+        }
+
+        const expectedFields = ["frequency", "unit", "na_item", "geo", "time_period", "obs_value", "growth_rate_2030", "growth_rate_2040"];
+        const parametersBody = Object.keys(updatedGdp);
+        const missingFields = expectedFields.filter(field => !parametersBody.includes(field));
+        if (missingFields.length > 0) {
+            return res.sendStatus(400);
+        }
+
+        if (geoURL !== updatedGdp.geo || time_periodURL !== updatedGdp.time_period) {
+            return res.sendStatus(400);
+        }
+
+        db_MRF.findOne({ geo: geoURL, time_period: time_periodURL }, (err, existingGdp) => {
+            if (err) {
+                return res.sendStatus(500);
+            }
+            if (!existingGdp) {
+                return res.sendStatus(404);
+            }
+
+            db_MRF.update({ geo: geoURL, time_period: time_periodURL }, updatedGdp, {}, (err, numReplaced) => {
+                if (err) {
+                    return res.sendStatus(500);
+                }
+                if (numReplaced === 0) {
+                    return res.sendStatus(500);
+                }
+                return res.sendStatus(200);
+            });
+        });
+    });
+
     // Rutas DELETE para eliminar datos
     // El código de estas rutas sigue un patrón similar al de las rutas PUT, se explicará el primer caso y el patrón se repetirá para los siguientes
 
     // Ruta DELETE para eliminar todos los datos
-    app.delete(API_BASE + "/", (req, res) => {
-        // Eliminar todos los datos de la base de datos
+     app.delete(API_BASE + "/", (req, res) => {
         db_MRF.remove({}, { multi: true }, (err, numRemoved) => {
-            // Manejar errores y enviar respuesta de acuerdo al resultado de la eliminación
+            if (err) {
+                console.error(err);
+                return res.sendStatus(500);
+            }
+            return res.sendStatus(200);
         });
     });
 
@@ -290,7 +339,15 @@ function backend_MRF_v2(app, db_MRF) {
 
         // Eliminar el dato específico por ubicación geográfica y período de tiempo
         db_MRF.remove({ geo: geoURL, time_period: time_periodURL }, {}, (err, numRemoved) => {
-            // Manejar errores y enviar respuesta de acuerdo al resultado de la eliminación
+            if (err) {
+                return res.sendStatus(500);
+            } else {
+                if (numRemoved >= 1) {
+                    return res.sendStatus(200);
+                } else {
+                    return res.sendStatus(404);
+                }
+            }
         });
     });
 
