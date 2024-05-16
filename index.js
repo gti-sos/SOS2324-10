@@ -33,7 +33,7 @@ const whitelist = [
     'https://car-api2.p.rapidapi.com/api/vin/1GTG6CEN0L1139305'
 ];
 
-//app.use(cors());
+
 
 app.use(cors({
     "origin": "*",
@@ -61,7 +61,7 @@ app.use('/videos', express.static('videos'))
 
 //Hacemos uso de proxy
 app.use("/proxyTLR1", function (req, res) {
-    console.log("proxyTLR1 cargado");
+    console.log("/proxyTLR1 --> se accede a ruta");
     const url = 'https://streaming-availability.p.rapidapi.com/countries';
     const options = {
         url: url,
@@ -91,7 +91,7 @@ app.use("/proxyTLR1", function (req, res) {
                 };
             });
 
-            console.log(transformedData);
+
             res.send(transformedData);
         }
     });
@@ -100,7 +100,7 @@ app.use("/proxyTLR1", function (req, res) {
 
 
 app.use("/proxyTLR2", function (req, res) {
-    console.log("proxyTLR2 cargado");
+    console.log("proxyTLR2 --> se accede a ruta");
     const url = 'https://covid-193.p.rapidapi.com/statistics';
     const options = {
         url: url,
@@ -134,7 +134,7 @@ app.use("/proxyTLR2", function (req, res) {
 });
 
 app.use("/proxyTLR3", function (req, res) {
-    console.log("proxyTLR3 cargado");
+    console.log("proxyTLR3 --> se accede a ruta");
     const url = 'https://restcountries.com/v3.1/all';
     const options = {
         url: url
@@ -160,7 +160,7 @@ app.use("/proxyTLR3", function (req, res) {
 });
 
 app.use("/proxyTLR4", function (req, res) {
-    console.log("proxyTLR4 cargado");
+    console.log("proxyTLR4 --> se accede a ruta");
     const url = 'https://free-to-play-games-database.p.rapidapi.com/api/games';
     const options = {
         url: url,
@@ -198,7 +198,7 @@ app.use("/proxyTLR4", function (req, res) {
 
 
 app.use("/proxyMRF1", function (req, res) {
-
+    console.log("/proxyMRF1 --> se accede a ruta");
     const url = 'https://beers-list.p.rapidapi.com/beers';
 
     const options = {
@@ -223,7 +223,7 @@ app.use("/proxyMRF1", function (req, res) {
 });
 
 app.use("/proxyMRF2", function(req, res){
-
+    console.log("/proxyMRF2 --> se accede a ruta");
     const url = 'https://deaths-by-european-countries.p.rapidapi.com/4mjf2k/deaths_by_country';
     
     const options = {
@@ -260,7 +260,7 @@ app.use("/proxyMRF2", function(req, res){
 });
 
 app.use("/proxyMRF3", function(req, res){
-
+    console.log("/proxyMRF3 --> se accede a ruta");
     const url = 'https://cancer-rates-by-usa-state.p.rapidapi.com/YDaHXO/cancer_rates_by_usa_state';
     
     const options = {
@@ -286,7 +286,7 @@ app.use("/proxyMRF3", function(req, res){
 
 
 app.use("/proxyMRF4", function(req, res){
-
+    console.log("/proxyMRF4 --> se accede a ruta");
     const url = 'https://everyearthquake.p.rapidapi.com/earthquakes?start=1&count=50&type=earthquake&latitude=37.2324&longitude=5.5924&radius=1000&units=miles&magnitude=3&intensity=1';
     
     const options = {
@@ -318,6 +318,7 @@ app.use("/proxyMRF4", function(req, res){
 
 
 app.use("/proxyASC1", function (req, res) {
+    console.log("/proxyASC1 --> se accede a ruta");
     const url = 'https://covid-19-statistics.p.rapidapi.com/reports?iso=ESP';
     const options = {
         url: url,
@@ -339,6 +340,7 @@ app.use("/proxyASC1", function (req, res) {
 })
 
 app.use("/proxyASC2", function (req, res) {
+    console.log("/proxyASC2 --> se accede a ruta");
     const url = 'https://ski-resort-forecast.p.rapidapi.com/Jackson%20Hole/forecast?units=i&el=top';
     const options = {
         url: url,
@@ -361,6 +363,7 @@ app.use("/proxyASC2", function (req, res) {
 })
 
 app.use("/proxyASC3", function (req, res) {
+    console.log("/proxyASC3 --> se accede a ruta");
     const url = 'https://cheapshark-game-deals.p.rapidapi.com/games?title=batman&exact=0&limit=15';
     const options = {
         url: url,
@@ -383,6 +386,7 @@ app.use("/proxyASC3", function (req, res) {
 })
 
 app.use("/proxyASC4", function (req, res) {
+    console.log("/proxyASC4 --> se accede a ruta");
     const url = 'https://gamerpower.p.rapidapi.com/api/filter?platform=epic-games-store.steam.android&type=game.loot';
     const options = {
         url:url,
@@ -407,6 +411,7 @@ app.use("/proxyASC4", function (req, res) {
 
 
 app.use("/proxyASB1", function (req, res) {
+    console.log("/proxyASB1 --> se accede a ruta");
     const url = 'https://algobook-stock-api.p.rapidapi.com/api/v1/stocks?tickers=AMZN,AAPL,MSFT,GOOGL,KO,MCD';
     const options = {
         url: url,
@@ -430,6 +435,7 @@ app.use("/proxyASB1", function (req, res) {
 
 
 app.use("/proxyASB3", function (req, res) {
+    console.log("/proxyASB3 --> se accede a ruta");
     const url = 'https://mineable-coins.p.rapidapi.com/coins';
     const options = {
         url: url,
@@ -452,6 +458,7 @@ app.use("/proxyASB3", function (req, res) {
 })
 
 app.use("/proxyASB4", function (req, res) {
+    console.log("/proxyASB4 --> se accede a ruta");
     const url = 'https://mmo-games.p.rapidapi.com/games';
     const options = {
         url: url,

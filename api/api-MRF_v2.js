@@ -1,4 +1,4 @@
-
+console.log("Carga api-MRF-v1");
 const API_BASE = "/api/v2/gdp-growth-rates"
 import express from "express";
 const app = express();

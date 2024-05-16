@@ -1,4 +1,4 @@
-
+console.log("Carga api-TLR-v1");
 const API_BASE = "/api/v1";
 import express from "express";
 const app = express();

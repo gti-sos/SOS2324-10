@@ -1,4 +1,4 @@
-import bodyParser from "body-parser";
+console.log("¿Primero de Todo?");import bodyParser from "body-parser";
 import express from "express";
 const app = express();
 const API_BASE = "/api/v1"

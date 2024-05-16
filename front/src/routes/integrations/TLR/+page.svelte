@@ -4,7 +4,6 @@
 	//import * as echarts from 'echarts';
 	let echarts = window.echarts;
 
-
 	let API_TLR = '/api/v2/vehicles-stock';
 	let API_TLR1 = '/proxyTLR1';
 	let API_TLR2 = '/proxyTLR2';
@@ -32,6 +31,7 @@
 
 			if (response.ok) {
 				let data = await response.json();
+				console.log('Datos obtenidos de API_TLR');
 				return data;
 			} else {
 				if (response.status == 404) {
@@ -46,6 +46,7 @@
 	}
 
 	async function API_TLR_1() {
+		console.log('Llamada a BD API_TLR_1');
 		try {
 			let response = await fetch(API_TLR1, {
 				method: 'GET',
@@ -59,6 +60,7 @@
 
 			if (response.ok) {
 				let data = await response.json();
+				console.log('Respuesta API_TLR_1');
 				return data;
 			} else {
 				if (response.status == 404) {
@@ -244,36 +246,42 @@
 		return arrayObjetos;
 	}
 
+	// Función que transforma los datos para su visualización en un gráfico
 	function transformData1(datos) {
+		// Paso 1: Reducir los datos a un objeto que contenga la suma de pasajeros de vuelo y muertes por país
 		const countryData = datos.reduce((acc, curr) => {
 			if (!acc[curr.geo]) {
-				acc[curr.geo] = { flights_passangers: 0, deaths: 0 };
+				acc[curr.geo] = { flights_passangers: 0, deaths: 0 }; // Inicializar si no existe
 			}
 			if (curr.flights_passangers) {
-				acc[curr.geo].flights_passangers += curr.flights_passangers;
+				acc[curr.geo].flights_passangers += curr.flights_passangers; // Sumar pasajeros de vuelo por país
 			}
 			if (curr.deaths) {
-				acc[curr.geo].deaths += curr.deaths;
+				acc[curr.geo].deaths += curr.deaths; // Sumar muertes por país
 			}
 			return acc;
 		}, {});
 
+		// Paso 2: Convertir el objeto countryData en un array de objetos con el formato adecuado
 		const sortedData = Object.entries(countryData).map(([country, data]) => ({
 			country,
 			flights_passangers: data.flights_passangers,
 			deaths: data.deaths
 		}));
 
+		// Paso 3: Ordenar el array de objetos en función del número de pasajeros de vuelo (de mayor a menor)
 		sortedData.sort((a, b) => b.flights_passangers - a.flights_passangers);
 
+		// Paso 4: Preparar los datos para el gráfico
 		const chartData = {
-			categories: sortedData.map((item) => item.country),
+			categories: sortedData.map((item) => item.country), // Obtener los países
 			series: sortedData.map((item) => ({
-				flights_passangers: item.flights_passangers,
-				deaths: item.deaths
+				flights_passangers: item.flights_passangers, // Obtener los pasajeros de vuelo por país
+				deaths: item.deaths // Obtener las muertes por país
 			}))
 		};
 
+		// Paso 5: Devolver los datos preparados para el gráfico
 		return chartData;
 	}
 
@@ -311,21 +319,28 @@
 		myChart.setOption(option);
 	}
 
+	// Función para transformar los datos relacionados con la moneda
 	function transformData2(datos) {
+		// Reducción de los datos para contar la frecuencia de cada moneda
 		const currencyCounts = datos.reduce((acc, curr) => {
+			// Verificar si el dato tiene información sobre la moneda
 			if (curr.currency) {
+				// Incrementar el contador de la moneda en el acumulador
 				acc[curr.currency] = (acc[curr.currency] || 0) + 1;
 			}
 			return acc;
 		}, {});
 
+		// Filtrar las cuentas de moneda para incluir solo aquellas que tienen al menos 3 ocurrencias
 		const filteredCounts = Object.entries(currencyCounts)
-			.filter(([currency, count]) => count >= 3)
+			.filter(([currency, count]) => count >= 3) // Filtrar las entradas con al menos 3 ocurrencias
 			.reduce((acc, [currency, count]) => {
-				acc[currency] = count;
+				// Reducir los datos filtrados a un objeto con las cuentas de moneda filtradas
+				acc[currency] = count; // Asignar el contador al acumulador
 				return acc;
 			}, {});
 
+		// Devolver las cuentas de moneda filtradas
 		return filteredCounts;
 	}
 
@@ -503,71 +518,78 @@
 	}
 
 	function crearGrafico4(datos) {
+		// Extraer los géneros y los recuentos para configurar las series
+		let labels = datos.map((item) => item.genre);
+		let values = datos.map((item) => item.count);
 
-    // Extraer los géneros y los recuentos para configurar las series
-    let labels = datos.map((item) => item.genre);
-    let values = datos.map((item) => item.count);
+		// Configurar los datos del gráfico
+		let data = {
+			xAxis: {
+				type: 'category',
+				data: labels
+			},
+			yAxis: {
+				type: 'category',
+				data: labels
+			},
+			visualMap: {
+				min: Math.min(...values),
+				max: Math.max(...values),
+				calculable: true,
+				orient: 'horizontal',
+				left: 'center',
+				bottom: '15%'
+			},
+			series: [
+				{
+					name: 'Número de Juegos por Género',
+					type: 'heatmap',
+					data: values.map((value, index) => [index, index, value]),
+					label: {
+						show: true
+					},
+					itemStyle: {
+						emphasis: {
+							shadowBlur: 10,
+							shadowColor: 'rgba(0, 0, 0, 0.5)'
+						}
+					}
+				}
+			]
+		};
 
-    // Configurar los datos del gráfico
-    let data = {
-        xAxis: {
-            type: 'category',
-            data: labels
-        },
-        yAxis: {
-            type: 'category',
-            data: labels
-        },
-        visualMap: {
-            min: Math.min(...values),
-            max: Math.max(...values),
-            calculable: true,
-            orient: 'horizontal',
-            left: 'center',
-            bottom: '15%'
-        },
-        series: [{
-            name: 'Número de Juegos por Género',
-            type: 'heatmap',
-            data: values.map((value, index) => [index, index, value]),
-            label: {
-                show: true
-            },
-            itemStyle: {
-                emphasis: {
-                    shadowBlur: 10,
-                    shadowColor: 'rgba(0, 0, 0, 0.5)'
-                }
-            }
-        }]
-    };
+		// Inicializar el gráfico
+		let chart = echarts.init(document.getElementById('graph04'));
 
-    // Inicializar el gráfico
-    let chart = echarts.init(document.getElementById('graph04'));
-
-    // Dibujar el gráfico
-    chart.setOption(data);
-}
-
-
-
+		// Dibujar el gráfico
+		chart.setOption(data);
+	}
 
 	async function inicializarDatos() {
+		console.log('Inicializamos datos');
 		let datos_TLR = await getVehicles();
+		
+
 		let datos1 = await API_TLR_1();
+		console.log('Datos obtenidos de API_TLR_1');
+
 		let datos2 = await API_TLR_2();
+		console.log('Datos obtenidos de API_TLR_2');
+
 		let datos3 = await API_TLR_3();
+		console.log('Datos obtenidos de API_TLR_3');
+
 		let datos4 = await API_TLR_4();
+		console.log('Datos obtenidos de API_TLR_4');
 
 		datos1 = geoEspana(datos1);
 		datos2 = geoEspana(datos2);
 		datos3 = geoEspana(datos3);
 
 		datos = unificarBD(datos_TLR, datos1, datos2, datos3);
-		console.log(datos);
 
 		let chartData1 = transformData1(datos);
-		console.log('Datos graph01: ' + JSON.stringify(chartData1));
+
 		crearGrafico1(chartData1);
 
 		let chartData2 = transformData2(datos3);
@@ -577,13 +599,12 @@
 		crearGrafico3(chartData3);
 
 		let chartData4 = transformData4(datos4);
-		console.log('Datos 4 Sin Tratar: ' + JSON.stringify(datos4));
-		console.log('Datos 4 Tratados: ' + JSON.stringify(chartData4));
 		crearGrafico4(chartData4);
+		console.log('Finaliza inicializacion...');
 	}
-	
 
 	onMount(async () => {
+		console.log('Cargamos onMount');
 		inicializarDatos();
 	});
 </script>

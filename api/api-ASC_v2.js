@@ -1,3 +1,4 @@
+console.log("Carga api-ASC-v1");
 import bodyParser from "body-parser";
 import express from "express";
 const app = express();

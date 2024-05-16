@@ -1,9 +1,10 @@
-
+console.log("Carga api-TLR-v2");
 const API_BASE = "/api/v2";
 import express from "express";
 const app = express();
 import bodyParser from "body-parser";
 app.use(bodyParser.json());
+
 
 //Datos Iniciales
 let initialDatos = [
@@ -50,12 +51,14 @@ function API_TLR_v2(app, db_TLR) {
   });
 
   app.get(API_BASE + "/vehicles-stock/loadInitialData", (req, res) => {
+    console.log("Se intenta accede a /loadInitialData")
     // Comprobar si la base de datos está vacía
     db_TLR.find({}, (err, data) => {
       if (err) {
         res.sendStatus(500, "Internal Error");
       }
       if (data.length === 0) {
+
         // Insertar los datos iniciales solo si la base de datos está vacía
         db_TLR.insert(datos_TLR, (err, newDocs) => {
           if (err) {
@@ -67,6 +70,7 @@ function API_TLR_v2(app, db_TLR) {
 
         res.sendStatus(201, "OK");
       }
+      console.log("/loadInitialData cargado")
     });
   });
 
@@ -122,7 +126,7 @@ function API_TLR_v2(app, db_TLR) {
   app.get(API_BASE + "/vehicles-stock/", (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const offset = parseInt(req.query.offset) || 0;
-    console.log("Limit :" + limit + "  Offset: "+offset)
+    
 
     db_TLR.find({}, { _id: 0, id: 0 })
       .skip(parseInt(offset)) // Saltar los documentos anteriores según el offset
