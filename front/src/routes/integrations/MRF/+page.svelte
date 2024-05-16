@@ -12,6 +12,7 @@
 
 	let errorMsg = '';
 	let gdp = [];
+	
 
 	let currentPage = 1;
 	const pageSize = 10;
@@ -503,7 +504,7 @@
 	onMount(async () => {
 		initDatos();
 	});
-	
+
 </script>
 
 <figure class="highcharts-figure">
