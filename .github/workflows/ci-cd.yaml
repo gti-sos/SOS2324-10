@@ -6,9 +6,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: cd front; npm install; cd ..
-      - run: npm install
       - run: cd front; npm run build; cd ..
-      
+      - run: npm install
       - run: npx playwright install --with-deps
       - run: npm test
 
