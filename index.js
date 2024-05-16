@@ -1,3 +1,4 @@
+console.log("Carga Index.js");
 console.log("A"); import express, { response } from "express";
 import bodyParser from "body-parser";
 
