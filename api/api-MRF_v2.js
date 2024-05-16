@@ -194,6 +194,10 @@ function backend_MRF_v2(app, db_MRF) {
             });
     });
 
+    app.post(API_BASE + "/*", (req, res) => {
+        res.sendStatus(405);
+    });
+    
     // Ruta POST para crear nuevos datos
     app.post(API_BASE + "/", (req, res) => {
         // Extraer los datos del cuerpo de la solicitud
