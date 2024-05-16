@@ -1,5 +1,6 @@
 console.log("Carga Index.js");
-console.log("A"); import express, { response } from "express";
+console.log("A"); 
+ import express, { response } from "express";
 import bodyParser from "body-parser";
 
 import { API_TLR_v1 } from "./api/api-TLR-v1.js";
