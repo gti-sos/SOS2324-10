@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { dev } from '$app/environment';
 	//import * as echarts from 'echarts';
-	let echarts = window.echarts;
+	import echarts from 'echarts';
 
 	let API_TLR = '/api/v2/vehicles-stock';
 	let API_TLR1 = '/proxyTLR1';
@@ -11,6 +11,9 @@
 	let API_TLR4 = '/proxyTLR4';
 	let errorMsg = '';
 	let datos = {};
+
+	
+
 	if (dev) {
 		API_TLR = 'http://localhost:8080' + API_TLR;
 		API_TLR1 = 'http://localhost:8080' + API_TLR1;
@@ -151,9 +154,13 @@
 
 	function unificarBD(datos1, datos2, datos3, datos4) {
 		const geoSet1 = new Set(datos1.map((item) => item.geo));
+		console.log(geoSet1);
 		const geoSet2 = new Set(datos2.map((item) => item.geo));
+		console.log(geoSet2);
 		const geoSet3 = new Set(datos3.map((item) => item.geo));
+		console.log(geoSet3);
 		const geoSet4 = new Set(datos4.map((item) => item.geo));
+		console.log(geoSet4);
 
 		const commonGeoSet = new Set(
 			[...geoSet1].filter((geo) => geoSet2.has(geo) && geoSet3.has(geo) && geoSet4.has(geo))

@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@sveltejs/kit": "^2.5.7",
+    "@sveltejs/kit": "^2.5.8",
     "@sveltestrap/sveltestrap": "^6.2.7",
     "body-parser": "^1.20.2",
     "build": "^0.1.4",
@@ -52,6 +52,7 @@
   "devDependencies": {
     "@playwright/test": "^1.43.0",
     "@sveltejs/adapter-node": "^5.0.1",
+    "@sveltejs/adapter-static": "^3.0.1",
     "@types/node": "^20.12.2"
   }
 }
