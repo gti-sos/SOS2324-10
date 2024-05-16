@@ -1,8 +1,8 @@
 <script>
 	import { onMount } from 'svelte';
 	import { dev } from '$app/environment';
-	//import * as echarts from 'echarts';
-	let echarts = window.echarts;
+	import * as echarts from 'echarts';
+	
 
 	let API_TLR = '/api/v2/vehicles-stock';
 	let API_TLR1 = '/proxyTLR1';
