@@ -5,9 +5,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: npm install;cd front; npm install; cd ..
-      - run: cd front; npm run build; cd ..
+      - run: cd front; npm install; cd ..
       - run: npm install
+      - run: cd front; npm run build; cd ..
+      
       - run: npx playwright install --with-deps
       - run: npm test
 
