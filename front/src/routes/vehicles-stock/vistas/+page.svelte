@@ -44,6 +44,7 @@
 			errorMsg = e;
 		}
 	}
+	
 
 
 	async function getChart() {
