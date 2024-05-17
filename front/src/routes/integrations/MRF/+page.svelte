@@ -6,7 +6,7 @@
 
 
     let API_MRF = '/api/v2/gdp-growth-rates';
-    let API_MRF_I = '/proxyMRF1';
+    //let API_MRF_I = '/proxyMRF1';
     let API_MRF_II = '/proxyMRF2';
     let API_MRF_III = '/proxyMRF3';
     let API_MRF_IV = '/proxyMRF4';
@@ -24,7 +24,7 @@
 
     if (dev) {
         API_MRF = 'http://localhost:8080' + API_MRF;
-        API_MRF_I = 'http://localhost:8080' + API_MRF_I;
+        //API_MRF_I = 'http://localhost:8080' + API_MRF_I;
         API_MRF_II = 'http://localhost:8080' + API_MRF_II;
         API_MRF_III = 'http://localhost:8080' + API_MRF_III;
         API_MRF_IV = 'http://localhost:8080' + API_MRF_IV;
@@ -479,14 +479,14 @@
     async function initDatos() {
         await getInitialGDP();
         let datos_MRF = await getGDP();
-        let datosI = await API_MRF_First();
+        //let datosI = await API_MRF_First();
         let datosII = await API_MRF_Second();
         let datosIII = await API_MRF_Third();
         let datosIV = await API_MRF_Forth();
 
 
-        let graphDataI = modDataI(datos_MRF, datosI);
-        createGraphI(graphDataI);
+        //let graphDataI = modDataI(datos_MRF, datosI);
+        //createGraphI(graphDataI);
 
 
         let graphDataII = modDataII(datos_MRF, datosII);

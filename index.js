@@ -198,7 +198,7 @@ app.use("/proxyTLR4", function (req, res) {
 });
 
 
-
+/**
 app.use("/proxyMRF1", function (req, res) {
     console.log("/proxyMRF1 --> se accede a ruta");
     const url = 'https://beers-list.p.rapidapi.com/beers';
@@ -222,7 +222,7 @@ app.use("/proxyMRF1", function (req, res) {
         }
     });
 
-});
+});*/
 
 app.use("/proxyMRF2", function(req, res){
     console.log("/proxyMRF2 --> se accede a ruta");
@@ -494,8 +494,5 @@ app.get('/', (req, res) => {
 
 app.use("/", express.static("./public"));
 console.log(`Server listening on port ${PORT}`);
-
-
-
 
 
