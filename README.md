@@ -29,4 +29,5 @@
     - TLR: [FrontEnd-TLR](http://sos2324-10.appspot.com/vehicles-stock) (developed by Tomás Lozano Romero)
     
 - **Docker**:
-  - docker run "suarovsski/sos2324-10:0.0.4"
+  - docker run -p 12000:8080 -d "suarovsski/sos2324-10:0.0.4"
+  - docker run -p 12000:8080 -d "suarovsski/sos2324-10:0.0.5"
