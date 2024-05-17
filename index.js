@@ -224,6 +224,42 @@ app.use("/proxyMRF1", function (req, res) {
 
 });*/
 
+app.use("/proxyMRF1", function (req, res) {
+    console.log("/proxyMRF1 --> se accede a ruta");
+    const url = 'https://spotify23.p.rapidapi.com/concerts/';
+    
+    const options = {
+        url: url,
+        headers: {
+            'X-RapidAPI-Key': '77e71d3380msh154aec6377535a9p1b8f1ajsnec607687032a',
+            'X-RapidAPI-Host': 'spotify23.p.rapidapi.com'
+        }
+    };
+
+    request(options, (error, response, body) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send(error);
+        } else {
+            try {
+                const data = JSON.parse(body);
+                // Obtener solo los primeros 21 objetos dentro de 'events'
+                const events = (data.events || []).slice(0, 21);
+
+                const filteredEvents = events.map(event => ({
+                    venue: event.venue,
+                    location: event.location
+                }));
+
+                res.json(filteredEvents);
+            } catch (e) {
+                console.error(e);
+                res.status(500).send(e.toString());
+            }
+        }
+    });
+});
+
 app.use("/proxyMRF2", function(req, res){
     console.log("/proxyMRF2 --> se accede a ruta");
     const url = 'https://deaths-by-european-countries.p.rapidapi.com/4mjf2k/deaths_by_country';
@@ -294,7 +330,7 @@ app.use("/proxyMRF4", function(req, res){
     const options = {
         url: url,
         headers: {
-            'X-RapidAPI-Key': '77e71d3380msh154aec6377535a9p1b8f1ajsnec607687032a',
+            'X-RapidAPI-Key': '1aadf5ce53msh199300bed84e271p129a87jsn45a312038c14',
             'X-RapidAPI-Host': 'everyearthquake.p.rapidapi.com'
         }
     };
