@@ -6,14 +6,18 @@
 <script>
 	import { onMount } from 'svelte';
 	import { dev } from '$app/environment';
-	import * as d3 from 'd3';
+	//import * as d3 from 'd3';
+	
 
 	let API_TLR = '/api/v2/vehicles-stock';
 	let errorMsg = '';
 
+
 	if (dev) {
 		API_TLR = 'http://localhost:8080' + API_TLR;
 	}
+	
+
 
 	async function getVehicles() {
 		try {
@@ -24,6 +28,7 @@
 					Pragma: 'no-cache'
 				}
 			});
+
 
 			if (response.ok) {
 				let data = await response.json();
@@ -39,6 +44,7 @@
 			errorMsg = e;
 		}
 	}
+
 
 	async function getChart() {
 		let datos = await getVehicles();
@@ -82,6 +88,7 @@
 		//getChart2('España');
 	}
 
+
 	function transformData(datos) {
 		const countrySales = datos.reduce((acc, curr) => {
 			if (!acc[curr.geo]) {
@@ -91,30 +98,38 @@
 			return acc;
 		}, {});
 
+
 		const sortedData = Object.entries(countrySales).map(([country, totalSales]) => ({
 			country,
 			totalSales
 		}));
 
+
 		sortedData.sort((a, b) => b.totalSales - a.totalSales);
+
 
 		const chartData = {
 			categories: sortedData.map((item) => item.country),
 			series: sortedData.map((item) => item.totalSales)
 		};
 
+
 		return chartData;
 	}
+
 
 	//Gráficos d3js
 	async function getChart2(country) {
     d3.select('#graphD3').selectAll('*').remove();
 
+
     const chartData = transformData2(datos, country);
+
 
     const margin = { top: 20, right: 30, bottom: 30, left: 70 };
     const width = 800 - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
+
 
     const svg = d3
         .select("#graphD3")
@@ -124,26 +139,32 @@
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
+
     const x = d3.scaleBand()
         .domain(chartData.categories)
         .range([0, width])
         .padding(0.1);
+
 
     const y = d3.scaleLinear()
         .domain([0, d3.max(chartData.series.flatMap(serie => serie.data))])
         .nice()
         .range([height, 0]);
 
+
     const color = d3.scaleOrdinal()
         .domain(chartData.series.map(serie => serie.name))
         .range(d3.schemeCategory10);
+
 
     svg.append("g")
         .attr("transform", `translate(0,${height})`)
         .call(d3.axisBottom(x));
 
+
     svg.append("g")
         .call(d3.axisLeft(y));
+
 
     const barGroups = svg.selectAll(".barGroup")
         .data(chartData.categories)
@@ -151,6 +172,7 @@
         .append("g")
         .attr("class", "barGroup")
         .attr("transform", d => `translate(${x(d)},0)`);
+
 
     barGroups.selectAll("rect")
         .data((d, i) => chartData.series.map(serie => ({ serie: serie.name, value: serie.data[i] })))
@@ -162,6 +184,7 @@
         .attr("height", d => height - y(d.value))
         .attr("fill", d => color(d.serie));
 
+
     const legend = svg.selectAll(".legend")
         .data(chartData.series)
         .enter()
@@ -169,11 +192,13 @@
         .attr("class", "legend")
         .attr("transform", (d, i) => `translate(${width -120},${i * 20})`);
 
+
     legend.append("rect")
         .attr("x", 0)
         .attr("width", 18)
         .attr("height", 18)
         .attr("fill", d => color(d.name));
+
 
     legend.append("text")
         .attr("x", 24)
@@ -181,11 +206,13 @@
         .attr("dy", ".35em")
         .text(d => d.name);
 
+
     svg.append("text")
         .attr("x", width / 2)
         .attr("y", height + margin.bottom / 1.5)
         .style("text-anchor", "middle")
         .text("Años");
+
 
     svg.append("text")
         .attr("transform", "rotate(-90)")
@@ -194,6 +221,7 @@
         .attr("dy", "1em")
         .style("text-anchor", "middle")
         .text("Cantidad");
+
 
     svg.append("text")
         .attr("x", width / 2)
@@ -204,9 +232,13 @@
 
 
 
+
+
+
 	//Función para obtener grafo completo dado un país
 	function transformData2(datos, country) {
 		const countryFilter = datos.filter((item) => item.geo === country);
+
 
 		const transformedData = countryFilter.reduce((acc, curr) => {
 			const { year, obs_value, flights_passangers, cars_deaths } = curr;
@@ -223,7 +255,9 @@
 			return acc;
 		}, {});
 
+
 		const sortedYears = Object.keys(transformedData).sort((a, b) => a - b);
+
 
 		const countryData = {
 			categories: sortedYears,
@@ -243,10 +277,13 @@
 			]
 		};
 
+
 		return countryData;
 	}
 
+
 	let datos;
+
 
 	onMount(async () => {
 		datos = await getVehicles();
@@ -255,24 +292,29 @@
 	});
 </script>
 
+
 <div class="container">
 	<div class="graph1">
 		<div id="graph" style="width:100%; height:400px;"></div>
 	</div>
 
+
 	<div class="message">
 		<span>! </span> Pinche en un país para mostrar más información
 	</div>
+
 
 	<div class="graph1">
 		<div id="graphD3" style="width:100%; height:400px;"></div>
 	</div>
 </div>
 
+
 <style>
 	.container {
 		width: 100%;
 		height: 100%;
+
 
 		background-color: #89deff;
 		color: #333;
@@ -281,6 +323,7 @@
 		box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 		padding: 20px;
 	}
+
 
 	.graph1{
 		width: 80%;
@@ -292,12 +335,19 @@
 		padding: 20px;
 	}
 
+
 	.message {
 		text-align: center;
 	}
+
 
 	.message span {
 		font-size: 24px;
 		color: #ff0000;
 	}
 </style>
+
+
+
+
+
